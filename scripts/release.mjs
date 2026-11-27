@@ -25,7 +25,7 @@ import { tar } from './lib/tar.mjs';
 import { loadSources, verify } from './sources.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-const TOP_FILES = ['LICENSE', 'NOTICE', 'sources.json', 'bundle.json', 'catalog-external.json'];
+const TOP_FILES = ['LICENSE', 'NOTICE', 'sources.json', 'bundle.json', 'catalog-external.json', 'classification.json'];
 
 export function collect(base = root) {
   const files = [...TOP_FILES, ...walkFiles(join(base, 'skills')).map((p) => `skills/${p}`)].sort();
@@ -54,6 +54,7 @@ export function index(version, base = root) {
     sources: read('sources.json'),
     bundled: new Set(read('bundle.json').bundled),
     external: read('catalog-external.json').entries,
+    classification: read('classification.json'),
   });
 }
 

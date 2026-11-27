@@ -469,7 +469,8 @@
           "local": "skills/addyosmani/webperf/SKILL.md",
           "local_sha256": "fcbbf7f7218a34ed416a6674a86724741783075673c222e5e693c899fb8fb316"
         }
-      ]
+      ],
+      "attribution": "Agent Skills by Addy Osmani, MIT, https://github.com/addyosmani/agent-skills (edited)"
     },
     {
       "id": "callstack",
@@ -1203,7 +1204,8 @@
           "local": "skills/callstack/writing-user-docs/SKILL.md",
           "local_sha256": "b631015f194cae5c40dbadff8d1a67da3124613157c58c033b7a503cbaad59ba"
         }
-      ]
+      ],
+      "attribution": "Callstack Agent Skills, MIT, https://github.com/callstackincubator/agent-skills"
     },
     {
       "id": "lambdatest",
@@ -2832,7 +2834,8 @@
           "local": "skills/lambdatest/xunit-skill/reference/playbook.md",
           "local_sha256": "4ee4da33cc83f12e1556e227d20e736cb35cf4d8a7e1e93c43a4ff96dc680526"
         }
-      ]
+      ],
+      "attribution": "Agent Skills by TestMu AI / LambdaTest, MIT, https://github.com/LambdaTest/agent-skills"
     },
     {
       "id": "trailofbits",
@@ -3443,7 +3446,8 @@
           "local": "skills/trailofbits/wycheproof/assets/trail-of-bits-mark.svg",
           "local_sha256": "4bf74c789b38dcf6ad762c136b6832363d27ae19fbaa9a18ec18d66ecce6ca05"
         }
-      ]
+      ],
+      "attribution": "Made by Trail of Bits, CC BY-SA 4.0, https://github.com/trailofbits/skills; unchanged; keep this notice and the license when serving"
     }
   ]
 }

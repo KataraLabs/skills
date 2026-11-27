@@ -55,8 +55,28 @@ function oneLine(s) {
   return String(s ?? '').replace(/\s+/g, ' ').trim();
 }
 
+const KINDS = new Set(['language', 'framework', 'workflow']);
+
+// Adds kind, detect, default and servable from classification.json. A skill's own entry wins
+// over its folder's; skills from other repositories that are not listed are workflow skills.
+export function classify(entry, c) {
+  const own = c.skills?.[entry.name] ?? {};
+  const folder = entry.folder ? Object.entries(c.folders ?? {}).find(([f]) => entry.folder === f || entry.folder.startsWith(`${f}/`))?.[1] : null;
+  const kind = own.kind ?? folder?.kind ?? 'workflow';
+  if (!KINDS.has(kind)) throw new Error(`${entry.name}: unknown kind ${kind}`);
+  entry.kind = kind;
+  if (own.detect) entry.detect = { ...(entry.detect ?? {}), ...own.detect };
+  if (kind === 'workflow') entry.default = (c.default_on ?? []).includes(entry.name) ? 'on' : 'off';
+  else if (!entry.detect || !Object.values(entry.detect).some((v) => v.length)) {
+    throw new Error(`${entry.name}: a ${kind} skill needs detect signals`);
+  }
+  const blocked = (c.not_servable_licenses ?? []).includes(entry.license);
+  entry.servable = !entry.source?.external && !blocked;
+  return entry;
+}
+
 // skills: paths like "skills/katara/go"; sources: parsed sources.json; bundled: set of names.
-export function buildIndex({ root, version, skills, sources, bundled, external = [] }) {
+export function buildIndex({ root, version, skills, sources, bundled, external = [], classification = null }) {
   const sourceFor = (dir) => sources.sources.find((s) => dir === s.folder || dir.startsWith(`${s.folder}/`));
   const entries = skills.map((dir) => {
     const { data } = parseFrontMatter(readFileSync(join(root, dir, 'SKILL.md'), 'utf8'));
@@ -73,6 +93,7 @@ export function buildIndex({ root, version, skills, sources, bundled, external =
         ? { repository: src.repository, commit: src.commit, modified: Boolean(src.modified) }
         : { repository: 'https://github.com/KataraLabs/skills', commit: null, modified: false },
       license: src ? src.license : 'MIT',
+      attribution: src ? src.attribution ?? null : null,
       version,
       digest: digestOf(files),
       files: files.length,
@@ -94,10 +115,12 @@ export function buildIndex({ root, version, skills, sources, bundled, external =
       folder: null,
       source: { repository: x.repository, commit: x.commit, path: x.path, modified: false, external: true },
       license: x.license ?? null,
+      attribution: x.attribution ?? null,
       version: x.version ?? x.commit,
       digest: x.digest,
     });
   }
+  if (classification) for (const e of entries) classify(e, classification);
   entries.sort((a, b) => byteCompare(a.id, b.id));
   const ids = new Set();
   for (const e of entries) {

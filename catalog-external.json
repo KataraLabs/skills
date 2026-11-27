@@ -8,7 +8,8 @@
       "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
       "path": "skills/composition-patterns",
       "license": null,
-      "digest": "b87f4ba02c128076935fce31ce18344d472df280a0bd3f523b0359c1b76b782e"
+      "digest": "b87f4ba02c128076935fce31ce18344d472df280a0bd3f523b0359c1b76b782e",
+      "attribution": "vercel-labs/agent-skills, no license file; offered by reference only, never served"
     },
     {
       "name": "vercel-react-best-practices",
@@ -17,7 +18,8 @@
       "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
       "path": "skills/react-best-practices",
       "license": null,
-      "digest": "f2f84bebf241f5ef0409136d45aff16f47b376c8f12160f27edca0352428d8e8"
+      "digest": "f2f84bebf241f5ef0409136d45aff16f47b376c8f12160f27edca0352428d8e8",
+      "attribution": "vercel-labs/agent-skills, no license file; offered by reference only, never served"
     },
     {
       "name": "vercel-react-native-skills",
@@ -26,7 +28,8 @@
       "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
       "path": "skills/react-native-skills",
       "license": null,
-      "digest": "f57618898ed4f525e979bac33dedfbc4c1c0342e0198aa9220b199ae94eca19d"
+      "digest": "f57618898ed4f525e979bac33dedfbc4c1c0342e0198aa9220b199ae94eca19d",
+      "attribution": "vercel-labs/agent-skills, no license file; offered by reference only, never served"
     },
     {
       "name": "vercel-react-view-transitions",
@@ -35,7 +38,8 @@
       "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
       "path": "skills/react-view-transitions",
       "license": null,
-      "digest": "902cc49b889d3e2a9f01f715ce749fabf89d4c41469e0fd08fe26530e94cff59"
+      "digest": "902cc49b889d3e2a9f01f715ce749fabf89d4c41469e0fd08fe26530e94cff59",
+      "attribution": "vercel-labs/agent-skills, no license file; offered by reference only, never served"
     },
     {
       "name": "web-design-guidelines",
@@ -44,7 +48,8 @@
       "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
       "path": "skills/web-design-guidelines",
       "license": null,
-      "digest": "ea97d3e634a04a6dec778fa7e7e5f284d51d3386a0908dbea34f3804bbac8058"
+      "digest": "ea97d3e634a04a6dec778fa7e7e5f284d51d3386a0908dbea34f3804bbac8058",
+      "attribution": "vercel-labs/agent-skills, no license file; offered by reference only, never served"
     }
   ]
 }

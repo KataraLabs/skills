@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { buildIndex, detectHints, digestOf, skillFiles } from '../scripts/lib/index.mjs';
+import { buildIndex, classify, detectHints, digestOf, skillFiles } from '../scripts/lib/index.mjs';
 import { index } from '../scripts/release.mjs';
 
 const h = (s) => createHash('sha256').update(s).digest('hex');
@@ -64,13 +64,47 @@ test('the repository index lists every skill once with a valid id and digest', (
     assert.match(s.digest, /^[0-9a-f]{64}$/);
     assert.ok(s.description, `${s.id} has no description`);
   }
-  assert.equal(idx.skills.filter((s) => s.id.startsWith('bundled:')).length, 42);
+  const bundled = idx.skills.filter((s) => s.id.startsWith('bundled:'));
+  assert.equal(bundled.length, 35);
+  assert.ok(bundled.every((s) => s.folder.startsWith('skills/addyosmani/') && s.kind === 'workflow'));
+  assert.deepEqual(idx.skills.filter((s) => s.default === 'on').map((s) => s.name).sort(),
+    ['code-review-and-quality', 'debugging-and-error-recovery', 'planning-and-task-breakdown', 'test-driven-development']);
   for (const n of ['typescript', 'react', 'python', 'go', 'swift', 'rust', 'sql']) {
-    const s = idx.skills.find((x) => x.id === `bundled:${n}`);
+    const s = idx.skills.find((x) => x.id === `catalog:${n}`);
+    assert.equal(s.kind, 'language');
     assert.ok(s.detect?.file_types?.length, `${n} has no file types`);
   }
-  assert.deepEqual(idx.skills.find((x) => x.id === 'bundled:go').detect, { file_types: ['*.go'], project_files: ['go.mod', 'go.work'] });
-  assert.ok(idx.skills.filter((s) => s.id.startsWith('catalog:vercel-')).every((s) => s.source.external && s.digest.length === 64));
+  assert.deepEqual(idx.skills.find((x) => x.id === 'catalog:go').detect, { file_types: ['*.go'], project_files: ['go.mod', 'go.work'] });
+  for (const s of idx.skills) {
+    assert.ok(['language', 'framework', 'workflow'].includes(s.kind), `${s.id} kind`);
+    assert.equal(typeof s.servable, 'boolean');
+    assert.equal(s.kind === 'workflow', 'default' in s, `${s.id}: default only on workflow skills`);
+  }
+  const vercel = idx.skills.filter((s) => s.source.external);
+  assert.equal(vercel.length, 5);
+  assert.ok(vercel.every((s) => s.servable === false && s.digest.length === 64));
+  assert.ok(idx.skills.filter((s) => s.folder?.startsWith('skills/trailofbits/')).every((s) => s.kind === 'workflow' && s.default === 'off' && s.id.startsWith('catalog:')));
+  assert.ok(idx.skills.filter((s) => s.folder?.startsWith('skills/callstack/react-')).every((s) => s.kind === 'framework'));
+  assert.equal(idx.skills.find((s) => s.name === 'pytest-skill').kind, 'framework');
+});
+
+test('classify applies own entry over folder, defaults and servable', () => {
+  const c = {
+    folders: { 'skills/a': { kind: 'workflow' } },
+    default_on: ['core'],
+    not_servable_licenses: [null],
+    skills: { fw: { kind: 'framework', detect: { project_files: ['x.config.js'] } }, bad: { kind: 'framework' } },
+  };
+  const e = (name, extra = {}) => ({ name, folder: `skills/a/${name}`, license: 'MIT', source: {}, ...extra });
+  assert.deepEqual(classify(e('core'), c), { ...e('core'), kind: 'workflow', default: 'on', servable: true });
+  assert.equal(classify(e('other'), c).default, 'off');
+  const fw = classify(e('fw'), c);
+  assert.equal(fw.kind, 'framework');
+  assert.equal('default' in fw, false);
+  assert.deepEqual(fw.detect, { project_files: ['x.config.js'] });
+  assert.throws(() => classify(e('bad'), c), /needs detect signals/);
+  assert.throws(() => classify(e('k'), { skills: { k: { kind: 'tool' } } }), /unknown kind/);
+  assert.equal(classify({ name: 'ext', folder: null, license: null, source: { external: true } }, c).servable, false);
 });
 
 test('detectHints reads space-separated lists and ignores other metadata', () => {

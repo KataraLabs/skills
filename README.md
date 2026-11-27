@@ -110,7 +110,11 @@ digest. The index and manifest are also inside the archive. The archive is repro
 same commit gives the same bytes.
 
 Skills named in `bundle.json` get ids of the form `bundled:<name>`; the rest are
-`catalog:<name>`. `catalog-external.json` lists skills offered from other repositories by
+`catalog:<name>`. `classification.json` gives each skill a `kind`: `language`, `framework` or
+`workflow`. Language and framework skills carry `detect` signals (source file types, project
+files such as `playwright.config.*` or `go.mod`, and package dependencies) so a client can offer
+them only in projects that use them. Workflow skills carry `default: on` or `off`. `servable`
+says whether the skill's license lets a hosted service send the skill's text to users. `catalog-external.json` lists skills offered from other repositories by
 repository, commit, path and digest, without copying their files. A skill's digest is the
 sha256 of its files' paths and sha256 values: sort the files by path in byte order and join
 `path`, a newline, the file's lowercase hex sha256 and a newline for each. Nested skill folders

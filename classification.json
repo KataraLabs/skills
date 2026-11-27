@@ -1,0 +1,809 @@
+{
+  "notes": "How a client treats each skill. kind is language, framework or workflow. Language and framework skills are attached from project signals; detect lists those signals (any one matching is enough). Workflow skills carry default on or off. servable says whether the skill's license lets a hosted service send its text to users; it is false for skills we do not hold the right to redistribute. Skills under skills/katara/ take their detect hints from their own front matter.",
+  "detect_keys": {
+    "file_types": "glob patterns for source files",
+    "project_files": "paths or globs relative to the project root; a trailing slash means a directory",
+    "package_dependencies": "npm package names in package.json dependencies or devDependencies",
+    "dependencies": "ecosystem:name for other package managers: pypi, gem, composer, maven (group:artifact), nuget, pub, npm"
+  },
+  "folders": {
+    "skills/katara": {
+      "kind": "language"
+    },
+    "skills/addyosmani": {
+      "kind": "workflow"
+    },
+    "skills/callstack": {
+      "kind": "workflow"
+    },
+    "skills/lambdatest": {
+      "kind": "workflow"
+    },
+    "skills/trailofbits": {
+      "kind": "workflow"
+    }
+  },
+  "default_on": [
+    "debugging-and-error-recovery",
+    "test-driven-development",
+    "planning-and-task-breakdown",
+    "code-review-and-quality"
+  ],
+  "not_servable_licenses": [
+    null,
+    "UNLICENSED"
+  ],
+  "skills": {
+    "assess-react-native-migration": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "app.json",
+          "metro.config.js",
+          "metro.config.ts",
+          "react-native.config.js"
+        ],
+        "package_dependencies": [
+          "react-native"
+        ]
+      }
+    },
+    "react-native-best-practices": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "app.json",
+          "metro.config.js",
+          "metro.config.ts",
+          "react-native.config.js"
+        ],
+        "package_dependencies": [
+          "react-native"
+        ]
+      }
+    },
+    "react-native-brownfield-migration": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "app.json",
+          "metro.config.js",
+          "metro.config.ts",
+          "react-native.config.js"
+        ],
+        "package_dependencies": [
+          "react-native"
+        ]
+      }
+    },
+    "upgrading-react-native": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "app.json",
+          "metro.config.js",
+          "metro.config.ts",
+          "react-native.config.js"
+        ],
+        "package_dependencies": [
+          "react-native"
+        ]
+      }
+    },
+    "create-react-native-library": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "react-native.config.js",
+          "app.json"
+        ],
+        "package_dependencies": [
+          "react-native",
+          "react-native-builder-bob"
+        ]
+      }
+    },
+    "react-native-tv-best-practices": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "app.json"
+        ],
+        "package_dependencies": [
+          "react-native-tvos",
+          "@react-native-tvos/config-tv"
+        ]
+      }
+    },
+    "react-navigation": {
+      "kind": "framework",
+      "detect": {
+        "package_dependencies": [
+          "@react-navigation/native",
+          "expo-router"
+        ]
+      }
+    },
+    "appium-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "wdio.conf.*",
+          "appium.config.*"
+        ],
+        "package_dependencies": [
+          "appium",
+          "webdriverio"
+        ],
+        "dependencies": [
+          "pypi:Appium-Python-Client",
+          "maven:io.appium:java-client"
+        ]
+      }
+    },
+    "behat-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "behat.yml",
+          "behat.yml.dist",
+          "features/*.feature"
+        ],
+        "dependencies": [
+          "composer:behat/behat"
+        ]
+      }
+    },
+    "behave-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "features/steps/*.py",
+          "behave.ini",
+          ".behaverc"
+        ],
+        "dependencies": [
+          "pypi:behave"
+        ]
+      }
+    },
+    "capybara-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "spec/features/*_spec.rb",
+          "features/support/env.rb"
+        ],
+        "dependencies": [
+          "gem:capybara"
+        ]
+      }
+    },
+    "codeception-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "codeception.yml",
+          "codeception.dist.yml"
+        ],
+        "dependencies": [
+          "composer:codeception/codeception"
+        ]
+      }
+    },
+    "cucumber-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "cucumber.js",
+          "cucumber.json",
+          "features/*.feature"
+        ],
+        "package_dependencies": [
+          "@cucumber/cucumber"
+        ],
+        "dependencies": [
+          "gem:cucumber",
+          "maven:io.cucumber:cucumber-java"
+        ]
+      }
+    },
+    "cypress-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "cypress.config.*",
+          "cypress.json",
+          "cypress/"
+        ],
+        "package_dependencies": [
+          "cypress"
+        ]
+      }
+    },
+    "detox-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          ".detoxrc.js",
+          ".detoxrc.json",
+          "detox.config.js",
+          "e2e/jest.config.js"
+        ],
+        "package_dependencies": [
+          "detox"
+        ]
+      }
+    },
+    "espresso-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "app/src/androidTest/"
+        ],
+        "dependencies": [
+          "maven:androidx.test.espresso:espresso-core"
+        ]
+      }
+    },
+    "flutter-testing-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "pubspec.yaml",
+          "integration_test/",
+          "test/*_test.dart"
+        ],
+        "dependencies": [
+          "pub:flutter_test",
+          "pub:integration_test"
+        ]
+      }
+    },
+    "gauge-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "manifest.json",
+          "specs/*.spec"
+        ],
+        "dependencies": [
+          "npm:gauge",
+          "pypi:getgauge",
+          "maven:com.thoughtworks.gauge:gauge-java"
+        ]
+      }
+    },
+    "geb-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "GebConfig.groovy",
+          "src/test/resources/GebConfig.groovy"
+        ],
+        "dependencies": [
+          "maven:org.gebish:geb-core"
+        ]
+      }
+    },
+    "jasmine-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "spec/support/jasmine.json",
+          "jasmine.json"
+        ],
+        "package_dependencies": [
+          "jasmine",
+          "jasmine-core"
+        ]
+      }
+    },
+    "jest-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "jest.config.*"
+        ],
+        "package_dependencies": [
+          "jest",
+          "ts-jest"
+        ]
+      }
+    },
+    "junit-5-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "pom.xml",
+          "build.gradle",
+          "build.gradle.kts"
+        ],
+        "dependencies": [
+          "maven:org.junit.jupiter:junit-jupiter"
+        ]
+      }
+    },
+    "karma-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "karma.conf.js",
+          "karma.conf.ts"
+        ],
+        "package_dependencies": [
+          "karma"
+        ]
+      }
+    },
+    "laravel-dusk-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "tests/Browser/",
+          "tests/DuskTestCase.php"
+        ],
+        "dependencies": [
+          "composer:laravel/dusk"
+        ]
+      }
+    },
+    "lettuce-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "features/*.feature",
+          "terrain.py"
+        ],
+        "dependencies": [
+          "pypi:lettuce"
+        ]
+      }
+    },
+    "mocha-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          ".mocharc.*",
+          "test/mocha.opts"
+        ],
+        "package_dependencies": [
+          "mocha"
+        ]
+      }
+    },
+    "mstest-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "*.csproj"
+        ],
+        "dependencies": [
+          "nuget:MSTest.TestFramework",
+          "nuget:MSTest"
+        ]
+      }
+    },
+    "nemojs-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "nemo.config.json",
+          "config/nemo.json"
+        ],
+        "package_dependencies": [
+          "nemo"
+        ]
+      }
+    },
+    "nightwatchjs-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "nightwatch.conf.*",
+          "nightwatch.json"
+        ],
+        "package_dependencies": [
+          "nightwatch"
+        ]
+      }
+    },
+    "nunit-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "*.csproj"
+        ],
+        "dependencies": [
+          "nuget:NUnit"
+        ]
+      }
+    },
+    "phpunit-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "phpunit.xml",
+          "phpunit.xml.dist"
+        ],
+        "dependencies": [
+          "composer:phpunit/phpunit"
+        ]
+      }
+    },
+    "playwright-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "playwright.config.*"
+        ],
+        "package_dependencies": [
+          "@playwright/test",
+          "playwright"
+        ],
+        "dependencies": [
+          "pypi:playwright",
+          "pypi:pytest-playwright",
+          "nuget:Microsoft.Playwright"
+        ]
+      }
+    },
+    "playwright-patterns-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "playwright.config.*"
+        ],
+        "package_dependencies": [
+          "@playwright/test",
+          "playwright"
+        ],
+        "dependencies": [
+          "pypi:playwright",
+          "pypi:pytest-playwright",
+          "nuget:Microsoft.Playwright"
+        ]
+      }
+    },
+    "protractor-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "protractor.conf.js",
+          "protractor.conf.ts"
+        ],
+        "package_dependencies": [
+          "protractor"
+        ]
+      }
+    },
+    "puppeteer-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          ".puppeteerrc.cjs",
+          "jest-puppeteer.config.js"
+        ],
+        "package_dependencies": [
+          "puppeteer",
+          "puppeteer-core"
+        ]
+      }
+    },
+    "pytest-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "pytest.ini",
+          "conftest.py",
+          "tests/conftest.py",
+          "pyproject.toml"
+        ],
+        "dependencies": [
+          "pypi:pytest"
+        ]
+      }
+    },
+    "reqnroll-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "reqnroll.json"
+        ],
+        "dependencies": [
+          "nuget:Reqnroll"
+        ]
+      }
+    },
+    "robot-framework-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "*.robot"
+        ],
+        "dependencies": [
+          "pypi:robotframework"
+        ]
+      }
+    },
+    "rspec-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          ".rspec",
+          "spec/spec_helper.rb"
+        ],
+        "dependencies": [
+          "gem:rspec",
+          "gem:rspec-rails"
+        ]
+      }
+    },
+    "selenide-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "pom.xml",
+          "build.gradle"
+        ],
+        "dependencies": [
+          "maven:com.codeborne:selenide"
+        ]
+      }
+    },
+    "selenium-skill": {
+      "kind": "framework",
+      "detect": {
+        "package_dependencies": [
+          "selenium-webdriver"
+        ],
+        "dependencies": [
+          "pypi:selenium",
+          "maven:org.seleniumhq.selenium:selenium-java",
+          "nuget:Selenium.WebDriver",
+          "gem:selenium-webdriver"
+        ]
+      }
+    },
+    "selenium-patterns-skill": {
+      "kind": "framework",
+      "detect": {
+        "package_dependencies": [
+          "selenium-webdriver"
+        ],
+        "dependencies": [
+          "pypi:selenium",
+          "maven:org.seleniumhq.selenium:selenium-java",
+          "nuget:Selenium.WebDriver",
+          "gem:selenium-webdriver"
+        ]
+      }
+    },
+    "serenity-bdd-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "serenity.conf",
+          "serenity.properties"
+        ],
+        "dependencies": [
+          "maven:net.serenity-bdd:serenity-core"
+        ],
+        "package_dependencies": [
+          "@serenity-js/core"
+        ]
+      }
+    },
+    "specflow-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "specflow.json"
+        ],
+        "dependencies": [
+          "nuget:SpecFlow"
+        ]
+      }
+    },
+    "testcafe-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          ".testcaferc.json",
+          ".testcaferc.js"
+        ],
+        "package_dependencies": [
+          "testcafe"
+        ]
+      }
+    },
+    "testng-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "testng.xml"
+        ],
+        "dependencies": [
+          "maven:org.testng:testng"
+        ]
+      }
+    },
+    "testunit-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "test/test_helper.rb",
+          "test/*_test.rb"
+        ],
+        "dependencies": [
+          "gem:test-unit",
+          "gem:minitest"
+        ]
+      }
+    },
+    "unittest-skill": {
+      "kind": "framework",
+      "detect": {
+        "file_types": [
+          "test_*.py",
+          "*_test.py"
+        ]
+      }
+    },
+    "vitest-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "vitest.config.*",
+          "vitest.workspace.*"
+        ],
+        "package_dependencies": [
+          "vitest"
+        ]
+      }
+    },
+    "webdriverio-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "wdio.conf.*"
+        ],
+        "package_dependencies": [
+          "webdriverio",
+          "@wdio/cli"
+        ]
+      }
+    },
+    "xcuitest-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "*UITests/",
+          "*.xcodeproj"
+        ],
+        "file_types": [
+          "*UITests.swift"
+        ]
+      }
+    },
+    "xunit-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "*.csproj"
+        ],
+        "dependencies": [
+          "nuget:xunit"
+        ]
+      }
+    },
+    "newman-cicd-integration": {
+      "kind": "framework",
+      "detect": {
+        "file_types": [
+          "*.postman_collection.json"
+        ],
+        "package_dependencies": [
+          "newman"
+        ]
+      }
+    },
+    "newman-report-analyzer": {
+      "kind": "framework",
+      "detect": {
+        "file_types": [
+          "*.postman_collection.json"
+        ],
+        "package_dependencies": [
+          "newman"
+        ]
+      }
+    },
+    "newman-script-helper": {
+      "kind": "framework",
+      "detect": {
+        "file_types": [
+          "*.postman_collection.json"
+        ],
+        "package_dependencies": [
+          "newman"
+        ]
+      }
+    },
+    "postman-newman-automation": {
+      "kind": "framework",
+      "detect": {
+        "file_types": [
+          "*.postman_collection.json"
+        ],
+        "package_dependencies": [
+          "newman"
+        ]
+      }
+    },
+    "postman-collection-generator": {
+      "kind": "framework",
+      "detect": {
+        "file_types": [
+          "*.postman_collection.json",
+          "*.postman_environment.json"
+        ]
+      }
+    },
+    "postman-openapi-converter": {
+      "kind": "framework",
+      "detect": {
+        "file_types": [
+          "*.postman_collection.json",
+          "*.postman_environment.json"
+        ]
+      }
+    },
+    "postman-test-script-generator": {
+      "kind": "framework",
+      "detect": {
+        "file_types": [
+          "*.postman_collection.json",
+          "*.postman_environment.json"
+        ]
+      }
+    },
+    "vercel-composition-patterns": {
+      "kind": "framework",
+      "detect": {
+        "package_dependencies": [
+          "react"
+        ]
+      }
+    },
+    "vercel-react-best-practices": {
+      "kind": "framework",
+      "detect": {
+        "package_dependencies": [
+          "react",
+          "next"
+        ]
+      }
+    },
+    "vercel-react-native-skills": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "app.json"
+        ],
+        "package_dependencies": [
+          "react-native",
+          "expo"
+        ]
+      }
+    },
+    "vercel-react-view-transitions": {
+      "kind": "framework",
+      "detect": {
+        "package_dependencies": [
+          "react"
+        ]
+      }
+    }
+  }
+}

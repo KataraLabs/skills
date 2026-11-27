@@ -1,5 +1,5 @@
 {
-  "notes": "Skills a client ships and turns on by default. Their ids are bundled:<name>. Every other skill here, and every entry in catalog-external.json, is catalog:<name>: listed, and off until a user or an administrator turns it on.",
+  "notes": "Skills the coding client ships. Their ids are bundled:<name>; every other skill, and every entry in catalog-external.json, is catalog:<name>. Whether a bundled skill starts on is classification.json's default field; language and framework skills are attached from project signals instead of being shipped.",
   "bundled": [
     "a11y",
     "accessibility-engineering",
@@ -35,13 +35,6 @@
     "test",
     "test-driven-development",
     "using-agent-skills",
-    "webperf",
-    "typescript",
-    "react",
-    "python",
-    "go",
-    "swift",
-    "rust",
-    "sql"
+    "webperf"
   ]
 }
