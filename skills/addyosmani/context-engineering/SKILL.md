@@ -1,29 +1,34 @@
 ---
 name: context-engineering
 description: Optimizes agent context setup. Use when starting a new session, when agent output quality degrades, when switching between tasks, or when you need to configure rules files and context for a project.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/context-engineering
+  changes: edited to name no particular agent or tool
 ---
 
 # Context Engineering
 
 ## Overview
 
-Feed agents the right information at the right time. Context is the single biggest lever for agent output quality — too little and the agent hallucinates, too much and it loses focus. Context engineering is the practice of deliberately curating what the agent sees, when it sees it, and how it's structured.
+Feed agents the right information at the right time. Context is the single biggest lever for agent output quality: too little and the agent hallucinates, too much and it loses focus. Context engineering is the practice of deliberately curating what the agent sees, when it sees it, and how it's structured.
 
 ## When to Use
 
 - Starting a new coding session
 - Agent output quality is declining (wrong patterns, hallucinated APIs, ignoring conventions)
 - Switching between different parts of a codebase
-- Setting up a new project for AI-assisted development
+- Setting up a new project for work with a coding agent
 - The agent is not following project conventions
 
 ## The Context Hierarchy
 
 Structure context from most persistent to most transient:
 
-```
+```text
 ┌─────────────────────────────────────┐
-│  1. Rules Files (CLAUDE.md, etc.)   │ ← Always loaded, project-wide
+│  1. Rules Files (AGENTS.md, etc.)   │ ← Always loaded, project-wide
 ├─────────────────────────────────────┤
 │  2. Spec / Architecture Docs        │ ← Loaded per feature/session
 ├─────────────────────────────────────┤
@@ -37,9 +42,9 @@ Structure context from most persistent to most transient:
 
 ### Level 1: Rules Files
 
-Create a rules file that persists across sessions. This is the highest-leverage context you can provide.
+Create a rules file that persists across sessions. No other context does as much per line.
 
-**CLAUDE.md** (for Claude Code):
+**AGENTS.md** (or whichever rules file your agent reads):
 ```markdown
 # Project: [Name]
 
@@ -71,11 +76,7 @@ Create a rules file that persists across sessions. This is the highest-leverage 
 [One short example of a well-written component in your style]
 ```
 
-**Equivalent files for other tools:**
-- `.cursorrules` or `.cursor/rules/*.md` (Cursor)
-- `.windsurfrules` (Windsurf)
-- `.github/copilot-instructions.md` (GitHub Copilot)
-- `AGENTS.md` (OpenAI Codex)
+Agents differ in the file name they look for (`AGENTS.md` is a common convention; some agents read their own rules file or a rules directory). Use the one your agent reads, and if the project serves several agents, keep one source file and point the others at it rather than maintaining copies.
 
 ### Level 2: Specs and Architecture
 
@@ -116,9 +117,9 @@ Long conversations accumulate stale context. Manage this:
 
 - **Start fresh sessions** when switching between major features
 - **Summarize progress** when context is getting long: "So far we've completed X, Y, Z. Now working on W."
-- **Compact deliberately** — if the tool supports it, compact/summarize before critical work
+- **Compact deliberately.** If your agent supports it, compact or condense the history before critical work
 
-For the proactive discipline that makes these last resorts unnecessary — what to cut first, what to protect, and when to start — see **Context Budget Management** below.
+For the proactive discipline that makes these last resorts unnecessary (what to cut first, what to protect, and when to start), see **Context Budget Management** below.
 
 ### Restartable Session Boundaries
 
@@ -130,9 +131,9 @@ A fresh session is safe at a completed task boundary, not at an arbitrary token 
 4. the exact verification commands and outcomes;
 5. unresolved questions, risks, and required approvals.
 
-Commit the completed task only when the user or repository workflow authorizes it. Otherwise, leave the working tree intact and record that the changes are uncommitted.
+Commit the completed task (or ask the user to commit it) only when the user or repository workflow authorizes it. Otherwise, leave the working tree intact and record that the changes are uncommitted.
 
-In the fresh session, read the rules, spec, plan, task status, and actual `git status` before acting. Re-run verification when its recorded baseline is missing, the code has moved, or the next task depends on it. Do not infer approval from a previous conversation unless the durable artifact records it.
+In the fresh session, read the rules, spec, plan, task status, and the actual working-tree state (`git status` if you have git access, or ask the user) before acting. Re-run verification when its recorded baseline is missing, the code has moved, or the next task depends on it. Do not infer approval from a previous conversation unless the durable artifact records it.
 
 An external harness may automate exit and restart between these boundaries. That loop must treat the artifacts and repository state as the source of truth, preserve human approval gates, and distinguish a completed task from a crashed process. The skill defines the handoff contract; process supervision and model selection belong to the harness.
 
@@ -142,7 +143,7 @@ An external harness may automate exit and restart between these boundaries. That
 
 At session start, provide everything the agent needs in a structured block:
 
-```
+```text
 PROJECT CONTEXT:
 - We're building [X] using [tech stack]
 - The relevant spec section is: [spec excerpt]
@@ -156,7 +157,7 @@ PROJECT CONTEXT:
 
 Only include what's relevant to the current task:
 
-```
+```text
 TASK: Add email validation to the registration endpoint
 
 RELEVANT FILES:
@@ -197,7 +198,7 @@ Load only the relevant section when working on a specific area.
 
 ## Context Budget Management
 
-The context window is not a filing cabinet — it's a working desk. As a session runs, conversation history, tool output, and exploration accumulate. Most of it becomes deadweight. Budget proactively: waiting until the window is full causes abrupt quality drops; managing regularly keeps the agent coherent through long tasks.
+The context window is not a filing cabinet; it's a working desk. As a session runs, conversation history, tool output, and exploration accumulate. Most of it becomes deadweight. Budget proactively: waiting until the window is full causes abrupt quality drops; managing regularly keeps the agent coherent through long tasks.
 
 **Compact well before the host's limit; the threshold varies by host.** By the time the window is genuinely full, the model's attention is already fragmented across too many signals. The margin gives room to compress gracefully rather than cut desperately mid-task.
 
@@ -205,10 +206,10 @@ The context window is not a filing cabinet — it's a working desk. As a session
 
 | Content | When to cut |
 |---|---|
-| Past failed attempts and their error output | Once you've moved past them — keep the conclusion, not the journey |
+| Past failed attempts and their error output | Once you've moved past them. Keep the conclusion, not the journey |
 | Verbose tool output (long `find` results, full file listings) | After you've extracted what you needed |
 | Conversational back-and-forth | As soon as the decision is reached |
-| Earlier drafts of code that were replaced | Immediately on replacement — the current file is the record |
+| Earlier drafts of code that were replaced | Immediately on replacement; the current file is the record |
 
 ### What to protect until the end
 
@@ -221,9 +222,9 @@ The context window is not a filing cabinet — it's a working desk. As a session
 
 Summarizing beats deleting. Before removing a long stretch of exploration, reduce it to one sentence capturing the conclusion:
 
-```
-Before: [8 messages debugging a failing import — various attempts, error logs, dead ends]
-After:  "Import issue traced to a circular dependency in src/lib/db.ts —
+```text
+Before: [8 messages debugging a failing import: various attempts, error logs, dead ends]
+After:  "Import issue traced to a circular dependency in src/lib/db.ts;
          resolved by moving the shared type to src/types/index.ts."
 ```
 
@@ -231,24 +232,26 @@ The detail is gone; the decision is preserved. If the detail turns out to matter
 
 ### Order for recency
 
-Put the most task-critical content **last** in context. Models recall content at the start and end of the window more reliably than the middle (the lost-in-the-middle effect — Liu et al., 2023). Keep stable rules and specs at the start; put the active task material last, closest to the generation point:
+Put the most task-critical content **last** in context. Models recall content at the start and end of the window more reliably than the middle (the lost-in-the-middle effect; Liu et al., 2023). Keep stable rules and specs at the start; put the active task material last, closest to the generation point:
 
-```
+```text
 ← session start                              generation point →
 [background: rules, specs, architecture]  [working: current file, error, task]
 ```
 
-## MCP Integrations
+## Tool Integrations
 
-For richer context, use Model Context Protocol servers:
+If your agent can connect to external tools, some sources give fresher context than anything you can paste:
 
-| MCP Server | What It Provides |
+| Source | What It Provides |
 |-----------|-----------------|
-| **Context7** | Auto-fetches relevant documentation for libraries |
-| **Chrome DevTools** | Live browser state, DOM, console, network |
-| **PostgreSQL** | Direct database schema and query results |
-| **Filesystem** | Project file access and search |
-| **GitHub** | Issue, PR, and repository context |
+| **Library documentation lookup** | Current docs for the exact library versions in use |
+| **Browser inspection** | Live browser state, DOM, console, network |
+| **Database access** | Schema and query results (read-only where possible) |
+| **Filesystem search** | Project file access and search |
+| **Code host** | Issue, PR, and repository context |
+
+Without them, ask the user for the specific output you need (a schema dump, a failing request, the linked issue) rather than guessing.
 
 ## Confusion Management
 
@@ -256,22 +259,22 @@ Even with good context, you will encounter ambiguity. How you handle it determin
 
 ### When Context Conflicts
 
-```
+```text
 Spec says:         "Use REST for all endpoints"
 Existing code has: GraphQL for the user profile query
 ```
 
 **Do NOT** silently pick one interpretation. Surface it:
 
-```
+```text
 CONFUSION:
 The spec calls for REST endpoints, but the existing codebase uses GraphQL
 for user queries (src/graphql/user.ts).
 
 Options:
-A) Follow the spec — add REST endpoint, potentially deprecate GraphQL later
-B) Follow existing patterns — use GraphQL, update the spec
-C) Ask — this seems like an intentional decision I shouldn't override
+A) Follow the spec: add REST endpoint, potentially deprecate GraphQL later
+B) Follow existing patterns: use GraphQL, update the spec
+C) Ask: this seems like an intentional decision I shouldn't override
 
 → Which approach should I take?
 ```
@@ -282,9 +285,9 @@ If the spec doesn't cover a case you need to implement:
 
 1. Check existing code for precedent
 2. If no precedent exists, **stop and ask**
-3. Don't invent requirements — that's the human's job
+3. Don't invent requirements; that's the human's job
 
-```
+```text
 MISSING REQUIREMENT:
 The spec defines task creation but doesn't specify what happens
 when a user creates a task with a duplicate title.
@@ -301,9 +304,9 @@ C) Append a number suffix like "Task (2)" (most user-friendly)
 
 For multi-step tasks, emit a lightweight plan before executing:
 
-```
+```text
 PLAN:
-1. Add Zod schema for task creation — validates title (required) and description (optional)
+1. Add Zod schema for task creation; validates title (required) and description (optional)
 2. Wire schema into POST /api/tasks route handler
 3. Add test for validation error response
 → Executing unless you redirect.
@@ -319,15 +322,15 @@ This catches wrong directions before you've built on them. It's a 30-second inve
 | Context flooding | Agent loses focus when loaded with >5,000 lines of non-task-specific context. More files does not mean better output. | Include only what is relevant to the current task. Aim for <2,000 lines of focused context per task. |
 | Stale context | Agent references outdated patterns or deleted code | Start fresh sessions when context drifts |
 | Missing examples | Agent invents a new style instead of following yours | Include one example of the pattern to follow |
-| Implicit knowledge | Agent doesn't know project-specific rules | Write it down in rules files — if it's not written, it doesn't exist |
+| Implicit knowledge | Agent doesn't know project-specific rules | Write it down in rules files. If it's not written, it doesn't exist |
 | Silent confusion | Agent guesses when it should ask | Surface ambiguity explicitly using the confusion management patterns above |
-| Context cliff | Waiting until the window is full before managing it — attention fragments and output quality drops abruptly at the limit | Compact well before the host's limit; compress rather than cut |
+| Context cliff | Waiting until the window is full before managing it; attention fragments and output quality drops abruptly at the limit | Compact well before the host's limit; compress rather than cut |
 
 ## Common Rationalizations
 
 | Rationalization | Reality |
 |---|---|
-| "The agent should figure out the conventions" | It can't read your mind. Write a rules file — 10 minutes that saves hours. |
+| "The agent should figure out the conventions" | It can't read your mind. Write a rules file: 10 minutes that saves hours. |
 | "I'll just correct it when it goes wrong" | Prevention is cheaper than correction. Upfront context prevents drift. |
 | "More context is always better" | Research shows performance degrades with too many instructions. Be selective. |
 | "The context window is huge, I'll use it all" | Context window size ≠ attention budget. Focused context outperforms large context. |
@@ -337,7 +340,7 @@ This catches wrong directions before you've built on them. It's a 30-second inve
 - Agent output doesn't match project conventions
 - Agent invents APIs or imports that don't exist
 - Agent re-implements utilities that already exist in the codebase
-- Agent quality degrades mid-task as the conversation grows — failed attempts, replaced drafts, and verbose tool output are not being trimmed
+- Agent quality degrades mid-task as the conversation grows; failed attempts, replaced drafts, and verbose tool output are not being trimmed
 - No rules file exists in the project
 - External data files or config treated as trusted instructions without verification
 

@@ -1,13 +1,18 @@
 ---
 name: documentation-and-adrs
 description: Records decisions and documentation, and detects when documentation has drifted from the code it describes. Use when you need to document an architecture decision (ADR) or the reasoning behind a design choice, when changing public APIs, shipping features, when docs may be stale or out of sync with the code they describe, when working out which module docs are still accurate, or when setting up a check so docs cannot silently go out of date again.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/documentation-and-adrs
+  changes: edited to name no particular agent or tool
 ---
 
 # Documentation and ADRs
 
 ## Overview
 
-Document decisions, not just code. The most valuable documentation captures the *why* — the context, constraints, and trade-offs that led to a decision. Code shows *what* was built; documentation explains *why it was built this way* and *what alternatives were considered*. This context is essential for future humans and agents working in the codebase.
+Document decisions, not just code. The most valuable documentation captures the *why*: the context, constraints, and trade-offs that led to a decision. Code shows *what* was built; documentation explains *why it was built this way* and *what alternatives were considered*. This context is essential for future humans and agents working in the codebase.
 
 ## When to Use
 
@@ -35,17 +40,17 @@ ADRs capture the reasoning behind significant technical decisions. They're the h
 
 ### Match the existing convention first
 
-Before creating an ADR, inspect the available repository context for an established convention — existing ADRs, project instructions, and ADR-related configuration or tooling (e.g. an `.adr-dir` file). An established convention overrides the defaults below. Match:
+Before creating an ADR, inspect the available repository context for an established convention: existing ADRs, project instructions, and ADR-related configuration or tooling (e.g. an `.adr-dir` file). An established convention overrides the defaults below. Match:
 
-- **Location and format** — e.g. `docs/adr/*.md`, `Documentation/Decisions/*.rst`, a MADR layout, or an `adr-tools` setup. Match the existing directory, file extension, and markup (Markdown vs reStructuredText).
-- **Numbering and naming** — continue the existing sequence and filename pattern (`ADR-004-Title.rst`, `0004-title.md`, …); don't restart at 001 or introduce a second scheme.
-- **Section headings** — reuse the project's heading set rather than imposing this template's.
+- **Location and format:** e.g. `docs/adr/*.md`, `Documentation/Decisions/*.rst`, a MADR layout, or an `adr-tools` setup. Match the existing directory, file extension, and markup (Markdown vs reStructuredText).
+- **Numbering and naming:** continue the existing sequence and filename pattern (`ADR-004-Title.rst`, `0004-title.md`, …); don't restart at 001 or introduce a second scheme.
+- **Section headings:** reuse the project's heading set rather than imposing this template's.
 
 If the available evidence conflicts, surface the conflict rather than silently introducing another scheme. Only when no convention can be established do you apply the default below.
 
 ### ADR Template
 
-Store ADRs in `docs/decisions/` with sequential numbering (unless the project already uses another location — see above):
+Store ADRs in `docs/decisions/` with sequential numbering (unless the project already uses another location; see above):
 
 ```markdown
 # ADR-001: Use PostgreSQL for primary database
@@ -252,10 +257,10 @@ For shipped features:
 
 Special consideration for AI agent context:
 
-- **CLAUDE.md / rules files** — Document project conventions so agents follow them
-- **Spec files** — Keep specs updated so agents build the right thing
-- **ADRs** — Help agents understand why past decisions were made (prevents re-deciding)
-- **Inline gotchas** — Prevent agents from falling into known traps
+- **AGENTS.md and other rules files:** Document project conventions so agents follow them
+- **Spec files:** Keep specs updated so agents build the right thing
+- **ADRs:** Help agents understand why past decisions were made (prevents re-deciding)
+- **Inline gotchas:** Prevent agents from falling into known traps
 
 ## Prose Review
 
@@ -267,7 +272,7 @@ After checking the technical content, review the prose for the people who will u
 
 ## Documentation Drift
 
-A document that was true when written still reads as authoritative after the code moves on. When a doc may be stale, decide from version control, not from how confident the doc sounds:
+A document that was true when written still reads as authoritative after the code moves on. When a doc may be stale, decide from version control, not from how confident the doc sounds. If your agent can run commands, run this check; otherwise ask the user to run it and share the output:
 
 ```bash
 code=$(git log -1 --format=%H -- src/rate-limiter.js)
@@ -290,7 +295,7 @@ When you correct a doc that has a change log, append a dated entry that says why
 | "We'll write docs when the API stabilizes" | APIs stabilize faster when you document them. The doc is the first test of the design. |
 | "Nobody reads docs" | Agents do. Future engineers do. Your 3-months-later self does. |
 | "ADRs are overhead" | A 10-minute ADR prevents a 2-hour debate about the same decision six months later. |
-| "Comments get outdated" | Comments on *why* are stable. Comments on *what* get outdated — that's why you only write the former. |
+| "Comments get outdated" | Comments on *why* are stable. Comments on *what* get outdated, which is why you only write the former. |
 | "I'll tidy the change log while I'm in here" | Git holds the old text; the log holds the reasons. Rewriting it destroys the only copy of the reasoning and preserves nothing. |
 
 ## Red Flags
@@ -314,7 +319,7 @@ After documenting:
 - [ ] API functions have parameter and return type documentation
 - [ ] Known gotchas are documented inline where they matter
 - [ ] No commented-out code remains
-- [ ] Rules files (CLAUDE.md etc.) are current and accurate
+- [ ] Rules files (AGENTS.md and the like) are current and accurate
 - [ ] Prose edits preserve source details, decision trade-offs, and qualifiers without adding unsupported guarantees
 - [ ] Change logs were appended to rather than rewritten
 - [ ] A doc whose staleness could not be determined is reported as "can't tell", not as current

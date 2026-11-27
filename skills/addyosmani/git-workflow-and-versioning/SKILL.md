@@ -1,6 +1,11 @@
 ---
 name: git-workflow-and-versioning
 description: Structures git workflow practices. Use when making any code change. Use when committing, branching, resolving conflicts, splitting uncommitted work in a messy working tree into clean atomic commits, opening or reviewing a pull request (PR), pushing to a remote, or when you need to organize work across multiple parallel streams. Use when cutting a release, choosing a semantic version bump, tagging, or writing a changelog. Use when asked to write a commit message or a changelog entry for a change, or to split a change into commits, even when the diff is pasted inline and the message seems easy to write from it.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/git-workflow-and-versioning
+  changes: edited to name no particular agent or tool
 ---
 
 # Git Workflow and Versioning
@@ -8,6 +13,8 @@ description: Structures git workflow practices. Use when making any code change.
 ## Overview
 
 Git is your safety net. Treat commits as save points, branches as sandboxes, and history as documentation. With AI agents generating code at high speed, disciplined version control is the mechanism that keeps changes manageable, reviewable, and reversible.
+
+This guidance is for whoever commits. If your agent has git access, it applies to you directly. If it does not, prepare the change the same way (one logical change at a time, with a proposed commit message) and ask the user to commit, branch, tag, or push. The git commands below are examples for whoever runs them.
 
 ## When to Use
 
@@ -17,7 +24,7 @@ Always. Every code change flows through git.
 
 ### Trunk-Based Development (Recommended)
 
-Keep `main` always deployable. Work in short-lived feature branches that merge back within 1-3 days. Long-lived development branches are hidden costs — they diverge, create merge conflicts, and delay integration. DORA research consistently shows trunk-based development correlates with high-performing engineering teams.
+Keep `main` always deployable. Work in short-lived feature branches that merge back within 1-3 days. Long-lived development branches are hidden costs: they diverge, create merge conflicts, and delay integration. DORA research consistently shows trunk-based development correlates with high-performing engineering teams.
 
 ```
 main ──●──●──●──●──●──●──●──●──●──  (always deployable)
@@ -25,7 +32,7 @@ main ──●──●──●──●──●──●──●──●─
          ●──●─╱    ●──╱    ← short-lived feature branches (1-3 days)
 ```
 
-This is the recommended default. Teams using gitflow or long-lived branches can adapt the principles (atomic commits, small changes, descriptive messages) to their branching model — the commit discipline matters more than the specific branching strategy.
+This is the recommended default. Teams using gitflow or long-lived branches can adapt the principles (atomic commits, small changes, descriptive messages) to their branching model. The commit discipline matters more than the specific branching strategy.
 
 - **Dev branches are costs.** Every day a branch lives, it accumulates merge risk.
 - **Release branches are acceptable.** When you need to stabilize a release while main moves forward.
@@ -86,16 +93,16 @@ update auth.ts
 ```
 
 **Types:**
-- `feat` — New feature
-- `fix` — Bug fix
-- `refactor` — Code change that neither fixes a bug nor adds a feature
-- `test` — Adding or updating tests
-- `docs` — Documentation only
-- `chore` — Tooling, dependencies, config
+- `feat`: New feature
+- `fix`: Bug fix
+- `refactor`: Code change that neither fixes a bug nor adds a feature
+- `test`: Adding or updating tests
+- `docs`: Documentation only
+- `chore`: Tooling, dependencies, config
 
 ### 4. Keep Concerns Separate
 
-Don't combine formatting changes with behavior changes. Don't combine refactors with features. Each type of change should be a separate commit — and ideally a separate PR:
+Don't combine formatting changes with behavior changes. Don't combine refactors with features. Each type of change should be a separate commit, and ideally a separate PR:
 
 ```
 # Good: Separate concerns
@@ -106,11 +113,11 @@ git commit -m "feat: add phone number validation to registration"
 git commit -m "refactor validation and add phone number field"
 ```
 
-**Separate refactoring from feature work.** A refactoring change and a feature change are two different changes — submit them separately. This makes each change easier to review, revert, and understand in history. Small cleanups (renaming a variable) can be included in a feature commit at reviewer discretion.
+**Separate refactoring from feature work.** A refactoring change and a feature change are two different changes. Submit them separately. This makes each change easier to review, revert, and understand in history. Small cleanups (renaming a variable) can be included in a feature commit at reviewer discretion.
 
 ### 5. Size Your Changes
 
-Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. See the splitting strategies in `code-review-and-quality` for how to break down large changes.
+Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. See the splitting strategies in the code-review-and-quality skill for how to break down large changes.
 
 ```
 ~100 lines  → Easy to review, easy to revert
@@ -131,7 +138,7 @@ main (always deployable)
 ```
 
 - Branch from `main` (or the team's default branch)
-- Keep branches short-lived (merge within 1-3 days) — long-lived branches are hidden costs
+- Keep branches short-lived (merge within 1-3 days); long-lived branches are hidden costs
 - Delete branches after merge
 - Prefer feature flags over long-lived branches for incomplete features
 
@@ -146,28 +153,32 @@ refactor/<short-description>  → refactor/auth-module
 
 ## Working with Worktrees
 
-For parallel AI agent work, use git worktrees to run multiple branches simultaneously:
+When several streams of work run in parallel (several agents, or an agent and a person), git worktrees let multiple branches be checked out at once. Create a worktree for each feature branch:
 
 ```bash
-# Create a worktree for a feature branch
 git worktree add ../project-feature-a feature/task-creation
 git worktree add ../project-feature-b feature/user-settings
+```
 
-# Each worktree is a separate directory with its own branch
-# Agents can work in parallel without interfering
-ls ../
+Each worktree is a separate directory with its own branch, so parallel work does not interfere:
+
+```text
+../
   project/              ← main branch
   project-feature-a/    ← task-creation branch
   project-feature-b/    ← user-settings branch
+```
 
-# When done, merge and clean up
+When done, merge and clean up:
+
+```bash
 git worktree remove ../project-feature-a
 ```
 
 Benefits:
 - Multiple agents can work on different features simultaneously
 - No branch switching needed (each directory has its own branch)
-- If one experiment fails, delete the worktree — nothing is lost
+- If one experiment fails, delete the worktree; nothing is lost
 - Changes are isolated until explicitly merged
 
 ## The Save Point Pattern
@@ -186,7 +197,7 @@ Agent starts work
     └── Feature complete → All commits form a clean history
 ```
 
-This pattern means you never lose more than one increment of work. If an agent goes off the rails, `git reset --hard HEAD` takes you back to the last successful state.
+This pattern means you never lose more than one increment of work. If an agent goes off the rails, `git reset --hard HEAD` takes you back to the last successful state. That discards uncommitted work, so whoever runs it should be sure nothing uncommitted is worth keeping. An agent without git access asks the user to revert instead.
 
 ## Change Summaries
 
@@ -202,30 +213,27 @@ THINGS I DIDN'T TOUCH (intentionally):
 - src/middleware/error.ts: Error format could be improved (separate task)
 
 POTENTIAL CONCERNS:
-- The Zod schema is strict — rejects extra fields. Confirm this is desired.
-- Added zod as a dependency (72KB gzipped) — already in package.json
+- The Zod schema is strict: it rejects extra fields. Confirm this is desired.
+- Added zod as a dependency (72KB gzipped), already in package.json
 ```
 
-This pattern catches wrong assumptions early and gives reviewers a clear map of the change. The "DIDN'T TOUCH" section is especially important — it shows you exercised scope discipline and didn't go on an unsolicited renovation.
+This pattern catches wrong assumptions early and gives reviewers a clear map of the change. The "DIDN'T TOUCH" section is especially important. It shows you exercised scope discipline and didn't go on an unsolicited renovation.
 
 ## Pre-Commit Hygiene
 
-Before every commit:
+Before every commit, whoever commits runs these in order (if your agent cannot run commands, ask the user to run them and share the output). Use the project's own test, lint, and type-check commands; the ones below are a JavaScript/TypeScript example.
+
+1. Check what you're about to commit.
+2. Check for secrets. The second command lists matching file names only; any output means review those files.
+3. Run tests.
+4. Run linting.
+5. Run type checking.
 
 ```bash
-# 1. Check what you're about to commit
 git diff --staged
-
-# 2. Ensure no secrets (lists matching file names only — any output means review them)
 git diff --staged -i -G'password|secret|api_key|token' --name-only
-
-# 3. Run tests
 npm test
-
-# 4. Run linting
 npm run lint
-
-# 5. Run type checking
 npx tsc --noEmit
 ```
 
@@ -249,43 +257,47 @@ Automate this with git hooks:
 
 ## Using Git for Debugging
 
+If you have git access, these help narrow down a bug. Find which commit introduced it with bisect; git checks out midpoints, and you run your test at each to narrow down:
+
 ```bash
-# Find which commit introduced a bug
 git bisect start
 git bisect bad HEAD
 git bisect good <known-good-commit>
-# Git checkouts midpoints; run your test at each to narrow down
+```
 
-# View what changed recently
+View what changed recently:
+
+```bash
 git log --oneline -20
 git diff HEAD~5..HEAD -- src/
+```
 
-# Find who last changed a specific line
+Find who last changed a specific line, or search commit messages for a keyword:
+
+```bash
 git blame src/services/task.ts
-
-# Search commit messages for a keyword
 git log --grep="validation" --oneline
 ```
 
 ## Release & Versioning
 
-Commits are how *you* track change; a **version** is how your *consumers* track it. The moment anything else depends on your code — another team, a published package, a deployed client — "latest on main" stops being a sufficient answer to "what am I running, and is it safe to upgrade?" A version number and a changelog are the contract that answers it.
+Commits are how *you* track change; a **version** is how your *consumers* track it. The moment anything else depends on your code (another team, a published package, a deployed client), "latest on main" stops being a sufficient answer to "what am I running, and is it safe to upgrade?" A version number and a changelog are the contract that answers it.
 
 ### Semantic Versioning
 
 For anything with consumers, version `MAJOR.MINOR.PATCH` and let the number carry meaning:
 
 ```
-  MAJOR  breaking change — consumers must change their code to upgrade
-  MINOR  new functionality, backward-compatible — safe to upgrade
-  PATCH  bug fix, backward-compatible — safe to upgrade
+  MAJOR  breaking change: consumers must change their code to upgrade
+  MINOR  new functionality, backward-compatible: safe to upgrade
+  PATCH  bug fix, backward-compatible: safe to upgrade
 ```
 
-The number is a promise, so make the code match it. A "patch" that changes behavior consumers relied on is a major change wearing a disguise (Hyrum's Law — see the `api-and-interface-design` skill). When unsure whether a change is breaking, assume it is; a surprise major is far cheaper than a broken consumer.
+The number is a promise, so make the code match it. A "patch" that changes behavior consumers relied on is a major change wearing a disguise (Hyrum's Law; see the api-and-interface-design skill). When unsure whether a change is breaking, assume it is; a surprise major is far cheaper than a broken consumer.
 
 ### Tag the release, and let the tag be the source of truth
 
-A release is an immutable point in history, not a moving branch. Tag it so it can always be reproduced:
+A release is an immutable point in history, not a moving branch. Tag it so it can always be reproduced (or ask the user to, if your agent cannot push):
 
 ```bash
 git tag -a v1.4.0 -m "Release 1.4.0"
@@ -296,7 +308,7 @@ Derive the version from the tag rather than hand-editing it in scattered files, 
 
 ### Keep a changelog written for humans
 
-A changelog is not `git log`. It's the curated, consumer-facing answer to "what changed and do I care?" — grouped by `Added / Changed / Fixed / Deprecated / Removed / Security`, newest on top, every entry phrased around user impact, not internal mechanics.
+A changelog is not `git log`. It's the curated, consumer-facing answer to "what changed and do I care?", grouped by `Added / Changed / Fixed / Deprecated / Removed / Security`, newest on top, every entry phrased around user impact, not internal mechanics.
 
 ```markdown
 ## [1.4.0] - 2025-06-12
@@ -305,10 +317,10 @@ A changelog is not `git log`. It's the curated, consumer-facing answer to "what 
 ### Fixed
 - Timezone drift in recurring task due dates
 ### Deprecated
-- `GET /v1/tasks/all` — use the paginated `GET /v1/tasks` (removal in 2.0)
+- `GET /v1/tasks/all`: use the paginated `GET /v1/tasks` (removal in 2.0)
 ```
 
-Write the entry in the same change that makes the change, while the impact is fresh — not reconstructed from commit archaeology at release time. Breaking changes get a migration note and a deprecation window (follow the `deprecation-and-migration` skill); shipping the actual release is the `shipping-and-launch` skill's job — this section is the versioning contract that feeds it.
+Write the entry in the same change that makes the change, while the impact is fresh, not reconstructed from commit archaeology at release time. Breaking changes get a migration note and a deprecation window (follow the deprecation-and-migration skill); shipping the actual release is the shipping-and-launch skill's job. This section is the versioning contract that feeds it.
 
 ## Common Rationalizations
 
@@ -317,7 +329,7 @@ Write the entry in the same change that makes the change, while the impact is fr
 | "I'll commit when the feature is done" | One giant commit is impossible to review, debug, or revert. Commit each slice. |
 | "The message doesn't matter" | Messages are documentation. Future you (and future agents) will need to understand what changed and why. |
 | "I'll squash it all later" | Squashing destroys the development narrative. Prefer clean incremental commits from the start. |
-| "Branches add overhead" | Short-lived branches are free and prevent conflicting work from colliding. Long-lived branches are the problem — merge within 1-3 days. |
+| "Branches add overhead" | Short-lived branches are free and prevent conflicting work from colliding. Long-lived branches are the problem; merge within 1-3 days. |
 | "I'll split this change later" | Large changes are harder to review, riskier to deploy, and harder to revert. Split before submitting, not after. |
 | "I don't need a .gitignore" | Until `.env` with production secrets gets committed. Set it up immediately. |
 | "It's just a small fix, bump the patch" | Check what consumers can observe. A behavior change they relied on is a major, whatever the diff size. |

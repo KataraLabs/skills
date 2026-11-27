@@ -1,15 +1,20 @@
 ---
 name: code-simplification
 description: Simplifies code for clarity. Use when refactoring code for clarity without changing behavior. Use when code works but is harder to read, maintain, or extend than it should be. Use when reviewing code that has accumulated unnecessary complexity. Use when asked to simplify, clean up, or reduce the nesting of a function or module that already works, even when the code is pasted inline and nothing else needs to change.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/code-simplification
+  changes: edited to name no particular agent or tool
 ---
 
 # Code Simplification
 
-> Inspired by the [Claude Code Simplifier plugin](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-simplifier/agents/code-simplifier.md). Adapted here as a model-agnostic, process-driven skill for any AI coding agent.
+> A model-agnostic, process-driven skill for any AI coding agent.
 
 ## Overview
 
-Simplify code by reducing complexity while preserving exact behavior. The goal is not fewer lines — it's code that is easier to read, understand, modify, and debug. Every simplification must pass a simple test: "Would a new team member understand this faster than the original?"
+Simplify code by reducing complexity while preserving exact behavior. The goal is not fewer lines. It's code that is easier to read, understand, modify, and debug. Every simplification must pass a simple test: "Would a new team member understand this faster than the original?"
 
 ## When to Use
 
@@ -22,16 +27,16 @@ Simplify code by reducing complexity while preserving exact behavior. The goal i
 
 **When NOT to use:**
 
-- Code is already clean and readable — don't simplify for the sake of it
-- You don't understand what the code does yet — comprehend before you simplify
+- Code is already clean and readable; don't simplify for the sake of it
+- You don't understand what the code does yet; comprehend before you simplify
 - The code is performance-critical and the "simpler" version would be measurably slower
-- You're about to rewrite the module entirely — simplifying throwaway code wastes effort
+- You're about to rewrite the module entirely; simplifying throwaway code wastes effort
 
 ## The Five Principles
 
 ### 1. Preserve Behavior Exactly
 
-Don't change what the code does — only how it expresses it. All inputs, outputs, side effects, error behavior, and edge cases must remain identical. If you're not sure a simplification preserves behavior, don't make it.
+Don't change what the code does, only how it expresses it. All inputs, outputs, side effects, error behavior, and edge cases must remain identical. If you're not sure a simplification preserves behavior, don't make it.
 
 ```
 ASK BEFORE EVERY CHANGE:
@@ -46,7 +51,7 @@ ASK BEFORE EVERY CHANGE:
 Simplification means making code more consistent with the codebase, not imposing external preferences. Before simplifying:
 
 ```
-1. Read CLAUDE.md / project conventions
+1. Read AGENTS.md, your agent's rules file, or other project conventions
 2. Study how neighboring code handles similar patterns
 3. Match the project's style for:
    - Import ordering and module system
@@ -56,7 +61,7 @@ Simplification means making code more consistent with the codebase, not imposing
    - Type annotation depth
 ```
 
-Simplification that breaks project consistency is not simplification — it's churn.
+Simplification that breaks project consistency is not simplification. It's churn.
 
 ### 3. Prefer Clarity Over Cleverness
 
@@ -93,10 +98,10 @@ for (const item of items) {
 
 Simplification has a failure mode: over-simplification. Watch for these traps:
 
-- **Inlining too aggressively** — removing a helper that gave a concept a name makes the call site harder to read
-- **Combining unrelated logic** — two simple functions merged into one complex function is not simpler
-- **Removing "unnecessary" abstraction** — some abstractions exist for extensibility or testability, not complexity
-- **Optimizing for line count** — fewer lines is not the goal; easier comprehension is
+- **Inlining too aggressively:** removing a helper that gave a concept a name makes the call site harder to read
+- **Combining unrelated logic:** two simple functions merged into one complex function is not simpler
+- **Removing "unnecessary" abstraction:** some abstractions exist for extensibility or testability, not complexity
+- **Optimizing for line count:** fewer lines is not the goal; easier comprehension is
 
 ### 5. Scope to What Changed
 
@@ -115,14 +120,14 @@ BEFORE SIMPLIFYING, ANSWER:
 - What are the edge cases and error paths?
 - Are there tests that define the expected behavior?
 - Why might it have been written this way? (Performance? Platform constraint? Historical reason?)
-- Check git blame: what was the original context for this code?
+- Check git blame (or ask the user to, if your agent has no git access): what was the original context for this code?
 ```
 
 If you can't answer these, you're not ready to simplify. Read more context first.
 
 ### Step 2: Identify Simplification Opportunities
 
-Scan for these patterns — each one is a concrete signal, not a vague smell:
+Scan for these patterns. Each one is a concrete signal, not a vague smell:
 
 **Structural complexity:**
 
@@ -141,8 +146,8 @@ Scan for these patterns — each one is a concrete signal, not a vague smell:
 | Generic names | `data`, `result`, `temp`, `val`, `item` | Rename to describe the content: `userProfile`, `validationErrors` |
 | Abbreviated names | `usr`, `cfg`, `btn`, `evt` | Use full words unless the abbreviation is universal (`id`, `url`, `api`) |
 | Misleading names | Function named `get` that also mutates state | Rename to reflect actual behavior |
-| Comments explaining "what" | `// increment counter` above `count++` | Delete the comment — the code is clear enough |
-| Comments explaining "why" | `// Retry because the API is flaky under load` | Keep these — they carry intent the code can't express |
+| Comments explaining "what" | `// increment counter` above `count++` | Delete the comment; the code is clear enough |
+| Comments explaining "why" | `// Retry because the API is flaky under load` | Keep these; they carry intent the code can't express |
 
 **Redundancy:**
 
@@ -156,13 +161,13 @@ Scan for these patterns — each one is a concrete signal, not a vague smell:
 
 ### Step 3: Apply Changes Incrementally
 
-Make one simplification at a time. Run tests after each change. **Submit refactoring changes separately from feature or bug fix changes.** A PR that refactors and adds a feature is two PRs — split them.
+Make one simplification at a time. Run tests after each change (if your agent can't run commands, ask the user to run them and share the output). **Submit refactoring changes separately from feature or bug fix changes.** A PR that refactors and adds a feature is two PRs; split them.
 
 ```
 FOR EACH SIMPLIFICATION:
 1. Make the change
 2. Run the test suite
-3. If tests pass → commit (or continue to next simplification)
+3. If tests pass → commit, or ask the user to (or continue to next simplification)
 4. If tests fail → revert and reconsider
 ```
 
@@ -290,8 +295,8 @@ function UserBadge({ user }: Props) {
 }
 
 // SIMPLIFY: Prop drilling through intermediate components
-// Before — consider whether context or composition solves this better.
-// This is a judgment call — flag it, don't auto-refactor.
+// Before: consider whether context or composition solves this better.
+// This is a judgment call. Flag it, don't auto-refactor.
 ```
 
 ## Common Rationalizations
@@ -303,7 +308,7 @@ function UserBadge({ user }: Props) {
 | "I'll just quickly simplify this unrelated code too" | Unscoped simplification creates noisy diffs and risks regressions in code you didn't intend to change. Stay focused. |
 | "The types make it self-documenting" | Types document structure, not intent. A well-named function explains *why* better than a type signature explains *what*. |
 | "This abstraction might be useful later" | Don't preserve speculative abstractions. If it's not used now, it's complexity without value. Remove it and re-add when needed. |
-| "The original author must have had a reason" | Maybe. Check git blame — apply Chesterton's Fence. But accumulated complexity often has no reason; it's just the residue of iteration under pressure. |
+| "The original author must have had a reason" | Maybe. Check git blame and apply Chesterton's Fence. But accumulated complexity often has no reason; it's just the residue of iteration under pressure. |
 | "I'll refactor while adding this feature" | Separate refactoring from feature work. Mixed changes are harder to review, revert, and understand in history. |
 
 ## Red Flags
@@ -324,8 +329,8 @@ After completing a simplification pass:
 - [ ] Build succeeds with no new warnings
 - [ ] Linter/formatter passes (no style regressions)
 - [ ] Each simplification is a reviewable, incremental change
-- [ ] The diff is clean — no unrelated changes mixed in
-- [ ] Simplified code follows project conventions (checked against CLAUDE.md or equivalent)
+- [ ] The diff is clean, with no unrelated changes mixed in
+- [ ] Simplified code follows project conventions (checked against AGENTS.md or equivalent)
 - [ ] No error handling was removed or weakened
 - [ ] No dead code was left behind (unused imports, unreachable branches)
 - [ ] A teammate or review agent would approve the change as a net improvement

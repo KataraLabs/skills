@@ -122,20 +122,21 @@ Quick reference for WCAG 2.2 AA conformance. Use `frontend-ui-engineering` while
 
 ## Testing Tools
 
+Automated audit (versions pinned for repeatable browser-driver behavior). If your agent can run commands, run these against the local app; otherwise ask the user to run them and share the output:
+
 ```bash
-# Automated audit (versions pinned for repeatable browser-driver behavior)
 npx --yes @axe-core/cli@4.13.0 http://localhost:3000 --exit
 npx --yes pa11y@9.1.1 http://localhost:3000
-
-# In browser
-# Chrome DevTools → Lighthouse → Accessibility
-# Chrome DevTools → Elements → Accessibility tree
-
-# Screen reader testing
-# macOS: VoiceOver (Cmd + F5)
-# Windows: NVDA (free) or JAWS
-# Linux: Orca
 ```
+
+In a browser (yours if you can inspect pages, or the user's):
+- Run the Lighthouse accessibility audit
+- Inspect the accessibility tree for the elements you changed
+
+Screen reader testing (usually done by the user):
+- macOS: VoiceOver (Cmd + F5)
+- Windows: NVDA (free) or JAWS
+- Linux: Orca
 
 ## Quick Reference: ARIA Live Regions
 

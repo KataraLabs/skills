@@ -1,13 +1,18 @@
 ---
 name: performance-optimization
 description: Optimizes application performance across frontend, backend, queries, and databases. Use when performance requirements exist, when you suspect performance regressions, when Core Web Vitals or load times need improvement, when N+1 query patterns need fixing, or when profiling reveals bottlenecks.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/performance-optimization
+  changes: edited to name no particular agent or tool
 ---
 
 # Performance Optimization
 
 ## Overview
 
-Measure before optimizing. Performance work without measurement is guessing — and guessing leads to premature optimization that adds complexity without improving what matters. Profile first, identify the actual bottleneck, fix it, measure again. Optimize only what measurements prove matters.
+Measure before optimizing. Performance work without measurement is guessing, and guessing leads to premature optimization that adds complexity without improving what matters. Profile first, identify the actual bottleneck, fix it, measure again. Optimize only what measurements prove matters.
 
 ## When to Use
 
@@ -39,16 +44,16 @@ Measure before optimizing. Performance work without measurement is guessing — 
 
 ### Step 1: Measure
 
-Two complementary approaches — use both:
+Two complementary approaches; use both:
 
-- **Synthetic (Lighthouse, DevTools Performance tab):** Controlled conditions, reproducible. Best for CI regression detection and isolating specific issues.
+- **Synthetic (Lighthouse, the browser's performance profiler):** Controlled conditions, reproducible. Best for CI regression detection and isolating specific issues.
 - **RUM (web-vitals library, CrUX):** Real user data in real conditions. Required to validate that a fix actually improved user experience.
 
 **Frontend:**
 ```javascript
-// Synthetic: Lighthouse in Chrome DevTools (or CI)
-// Chrome DevTools → Performance tab → Record
-// Chrome DevTools MCP → Performance trace
+// Synthetic: Lighthouse locally or in CI
+// If you can inspect the page in a browser: record a trace in its performance profiler
+// Otherwise: ask the user to record one and share it
 
 // RUM: Web Vitals library in code
 import { onLCP, onINP, onCLS } from 'web-vitals';
@@ -78,7 +83,7 @@ Use the symptom to decide what to measure first:
 What is slow?
 ├── First page load
 │   ├── Large bundle? --> Measure bundle size, check code splitting
-│   ├── Slow server response? --> Measure TTFB in DevTools Network waterfall
+│   ├── Slow server response? --> Measure TTFB in the network waterfall
 │   │   ├── DNS long? --> Add dns-prefetch / preconnect for known origins
 │   │   ├── TCP/TLS long? --> Enable HTTP/2, check edge deployment, keep-alive
 │   │   └── Waiting (server) long? --> Profile backend, check queries and caching
@@ -150,7 +155,7 @@ Then decide, strictly:
 
 | Result vs. baseline | Action |
 |---|---|
-| Past the threshold, tests green | **Keep.** Commit with the before/after numbers in the message. |
+| Past the threshold, tests green | **Keep.** Commit (or ask the user to commit) with the before/after numbers in the message. |
 | Within noise (no measurable change) | **Revert.** |
 | Worse | **Revert.** |
 | Improved, but a test went red | **Revert.** A regression wearing a win's clothing. |
@@ -200,12 +205,9 @@ Time to Interactive: < 3.5s on 4G
 Lighthouse Performance score: ≥ 90
 ```
 
-**Enforce in CI:**
+**Enforce in CI.** The first command checks bundle size; the second runs Lighthouse CI. The Lighthouse CLI package is `@lhci/cli`; the unscoped `lhci` on npm is not it. If your agent can run commands, try them locally; otherwise ask the user to run them and share the output.
 ```bash
-# Bundle size check
 npx bundlesize --config bundlesize.config.json
-
-# Lighthouse CI. The CLI package is @lhci/cli; unscoped `lhci` on npm is not it.
 npx --package=@lhci/cli lhci autorun
 ```
 

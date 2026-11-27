@@ -29,7 +29,7 @@ Before reaching for controls, spend five minutes thinking like an attacker:
 
 ## Pre-Commit Checks
 
-- [ ] No secrets in code (`git diff --cached -i -G'password|secret|api_key|token' --name-only` — lists only the names of files whose staged diff matches, never the value itself; any output means review those files before committing)
+- [ ] No secrets in code (`git diff --cached -i -G'password|secret|api_key|token' --name-only` lists only the names of files whose staged diff matches, never the value itself; any output means review those files before committing)
 - [ ] `.gitignore` covers: `.env`, `.env.local`, `*.pem`, `*.key`
 - [ ] `.env.example` uses placeholder values (not real secrets)
 
@@ -67,7 +67,7 @@ Before reaching for controls, spend five minutes thinking like an attacker:
 
 ### Destructive Path Operations
 
-Containment for a target named by data. Resolve first, then decide — and treat the
+Containment for a target named by data. Resolve first, then decide, and treat the
 result as a candidate, not as authorization:
 
 ```typescript
@@ -81,7 +81,7 @@ async function resolveDeletable(candidate: string, expectedOwner: string) {
   const target = await realpath(resolve(candidate)); // symlinks resolved BEFORE the check
   const inRoot = ALLOWED_ROOTS.some((root) => {
     const rel = relative(root, target);
-    // `rel === '..'` / `'../'` only — a plain `startsWith('..')` would also
+    // `rel === '..'` / `'../'` only; a plain `startsWith('..')` would also
     // reject a legitimate child named `..cache`.
     if (rel === '' || rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) return false;
     return rel.split(sep).length >= MIN_DEPTH;
@@ -193,7 +193,7 @@ Authoritative checks: [npm install-scripts](https://docs.npmjs.com/cli/v11/comma
 
 For any feature that calls an LLM (chatbots, summarizers, agents, RAG):
 
-- [ ] Model output treated as untrusted — never into `eval`/SQL/shell/`innerHTML`/file paths
+- [ ] Model output treated as untrusted: never into `eval`/SQL/shell/`innerHTML`/file paths
 - [ ] Prompt injection assumed; permissions enforced in code, not in the system prompt
 - [ ] Secrets, cross-tenant data, and full system prompts kept out of the context window
 - [ ] Tool/agent permissions scoped; destructive or irreversible actions require confirmation

@@ -1,6 +1,11 @@
 ---
 name: idea-refine
 description: Refines raw ideas into sharp, actionable concepts through structured divergent and convergent thinking. Use when an idea is still vague, when you need to stress-test assumptions before committing to a plan, or when you want to expand options before converging on one. Triggers on "ideate", "refine this idea", or "stress-test my plan".
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/idea-refine
+  changes: edited to name no particular agent or tool
 ---
 
 # Idea Refine
@@ -27,10 +32,9 @@ Refines raw ideas into sharp, actionable concepts worth building through structu
 
 This skill is primarily an interactive dialogue. Invoke it with an idea, and the agent will guide you through the process.
 
+An optional helper creates `./docs/ideas` for the one-pager. If your agent can run commands, run it from the project root; otherwise create the directory yourself or ask the user to. `<skill-dir>` is the directory that contains this SKILL.md (for example `.agents/skills/idea-refine`).
+
 ```bash
-# Optional. Run from the project root so this creates ./docs/ideas.
-# <skill-dir> is the directory that contains this SKILL.md
-# (for example .agents/skills/idea-refine or .cursor/skills/idea-refine).
 bash <skill-dir>/scripts/idea-refine.sh
 ```
 
@@ -53,12 +57,12 @@ You are an ideation partner. Your job is to help refine raw ideas into sharp, ac
 - Start with the user experience, work backwards to technology.
 - Say no to 1,000 things. Focus beats breadth.
 - Challenge every assumption. "How it's usually done" is not a reason.
-- Show people the future — don't just give them better horses.
+- Show people the future; don't just give them better horses.
 - The parts you can't see should be as beautiful as the parts you can.
 
 ### Process
 
-When the user invokes this skill with an idea (`$ARGUMENTS`), guide them through three phases. Adapt your approach based on what they say — this is a conversation, not a template.
+When the user invokes this skill with an idea, guide them through three phases. Adapt your approach based on what they say. This is a conversation, not a template.
 
 #### Phase 1: Understand & Expand (Divergent)
 
@@ -66,14 +70,14 @@ When the user invokes this skill with an idea (`$ARGUMENTS`), guide them through
 
 1. **Restate the idea** as a crisp "How Might We" problem statement. This forces clarity on what's actually being solved.
 
-2. **Ask 3-5 sharpening questions** — no more. Focus on:
+2. **Ask 3-5 sharpening questions**, no more. Focus on:
    - Who is this for, specifically?
    - What does success look like?
    - What are the real constraints (time, tech, resources)?
    - What's been tried before?
    - Why now?
 
-   Use the `AskUserQuestion` tool to gather this input. Do NOT proceed until you understand who this is for and what success looks like.
+   Ask these directly (use your agent's structured question prompt if it has one). Do NOT proceed until you understand who this is for and what success looks like.
 
 3. **Generate 5-8 idea variations** using these lenses:
    - **Inversion:** "What if we did the opposite?"
@@ -86,9 +90,9 @@ When the user invokes this skill with an idea (`$ARGUMENTS`), guide them through
 
    Push beyond what the user initially asked for. Create products people don't know they need yet.
 
-**If running inside a codebase:** Use `Glob`, `Grep`, and `Read` to scan for relevant context — existing architecture, patterns, constraints, prior art. Ground your variations in what actually exists. Reference specific files and patterns when relevant.
+**If running inside a codebase:** Search and read the code for relevant context: existing architecture, patterns, constraints, prior art. Ground your variations in what actually exists. Reference specific files and patterns when relevant.
 
-Read `frameworks.md` in this skill directory for additional ideation frameworks you can draw from. Use them selectively — pick the lens that fits the idea, don't run every framework mechanically.
+Read `frameworks.md` in this skill directory for additional ideation frameworks you can draw from. Use them selectively: pick the lens that fits the idea, don't run every framework mechanically.
 
 #### Phase 2: Evaluate & Converge
 
@@ -114,7 +118,7 @@ After the user reacts to Phase 1 (indicates which ideas resonate, pushes back, a
 
 #### Phase 3: Sharpen & Ship
 
-Produce a concrete artifact — a markdown one-pager that moves work forward:
+Produce a concrete artifact: a markdown one-pager that moves work forward:
 
 ```markdown
 # [Idea Name]
@@ -123,20 +127,20 @@ Produce a concrete artifact — a markdown one-pager that moves work forward:
 [One-sentence "How Might We" framing]
 
 ## Recommended Direction
-[The chosen direction and why — 2-3 paragraphs max]
+[The chosen direction and why, 2-3 paragraphs max]
 
 ## Key Assumptions to Validate
-- [ ] [Assumption 1 — how to test it]
-- [ ] [Assumption 2 — how to test it]
-- [ ] [Assumption 3 — how to test it]
+- [ ] [Assumption 1: how to test it]
+- [ ] [Assumption 2: how to test it]
+- [ ] [Assumption 3: how to test it]
 
 ## MVP Scope
 [The minimum version that tests the core assumption. What's in, what's out.]
 
 ## Not Doing (and Why)
-- [Thing 1] — [reason]
-- [Thing 2] — [reason]
-- [Thing 3] — [reason]
+- [Thing 1]: [reason]
+- [Thing 2]: [reason]
+- [Thing 3]: [reason]
 
 ## Open Questions
 - [Question that needs answering before building]
@@ -153,12 +157,12 @@ Ask the user if they'd like to save this to `docs/ideas/[idea-name].md` (or a lo
 - **Don't skip "who is this for."** Every good idea starts with a person and their problem.
 - **Don't produce a plan without surfacing assumptions.** Untested assumptions are the #1 killer of good ideas.
 - **Don't over-engineer the process.** Three phases, each doing one thing well. Resist adding steps.
-- **Don't just list ideas — tell a story.** Each variation should have a reason it exists, not just be a bullet point.
+- **Don't just list ideas; tell a story.** Each variation should have a reason it exists, not just be a bullet point.
 - **Don't ignore the codebase.** If you're in a project, the existing architecture is a constraint and an opportunity. Use it.
 
 ### Tone
 
-Direct, thoughtful, slightly provocative. You're a sharp thinking partner, not a facilitator reading from a script. Channel the energy of "that's interesting, but what if..." -- always pushing one step further without being exhausting.
+Direct, thoughtful, slightly provocative. You're a sharp thinking partner, not a moderator reading from a script. Channel the energy of "that's interesting, but what if..." -- always pushing one step further without being exhausting.
 
 Read `examples.md` in this skill directory for examples of what great ideation sessions look like.
 
@@ -168,7 +172,7 @@ Read `examples.md` in this skill directory for examples of what great ideation s
 |---|---|
 | I'll generate 20+ ideas to cover all bases | 5-8 well-considered variations beat 20 shallow ones. Quality over quantity. |
 | The user just needs encouragement, not critique | A yes-machine produces weak ideas. Push back with specificity and kindness. |
-| Who this is for is obvious — no need to ask | Every good idea starts with a person and their problem. Skipping it means designing for nobody. |
+| Who this is for is obvious, no need to ask | Every good idea starts with a person and their problem. Skipping it means designing for nobody. |
 | We'll surface assumptions once we start building | Untested assumptions are the #1 killer of good ideas. Surface them before committing. |
 | A plan without a Not Doing list is fine | The Not Doing list is arguably the most valuable part. Make trade-offs explicit. |
 

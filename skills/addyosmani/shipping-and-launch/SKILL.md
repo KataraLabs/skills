@@ -1,13 +1,18 @@
 ---
 name: shipping-and-launch
 description: Prepares production launches. Use when preparing to deploy to production, or when asking what needs to be in place before shipping. Use when you need a pre-launch checklist, when setting up monitoring, when planning a staged rollout, or when you need a rollback strategy.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/shipping-and-launch
+  changes: edited to name no particular agent or tool
 ---
 
 # Shipping and Launch
 
 ## Overview
 
-Ship with confidence. The goal is not just to deploy — it's to deploy safely, with monitoring in place, a rollback plan ready, and a clear understanding of what success looks like. Every launch should be reversible, observable, and incremental.
+Ship with confidence. The goal is not just to deploy. It's to deploy safely, with monitoring in place, a rollback plan ready, and a clear understanding of what success looks like. Every launch should be reversible, observable, and incremental.
 
 ## When to Use
 
@@ -172,7 +177,7 @@ Application metrics:
 └── Key business metrics (conversion, engagement)
 
 Infrastructure metrics:
-├── CPU and memory utilization
+├── CPU and memory usage
 ├── Database connection pool usage
 ├── Disk space
 ├── Network latency
@@ -243,7 +248,7 @@ In the first hour after launch:
 
 ## Error Budget Release Gate
 
-Your service's error budget — the fraction of requests or time your SLO allows to fail — determines whether it's safe to ship. Use it as an objective gate — not a negotiation:
+Your service's error budget (the fraction of requests or time your SLO allows to fail) determines whether it's safe to ship. Use it as an objective gate, not a negotiation:
 
 ```
 Budget remaining > 20%  →  Ship normally; monitor closely
@@ -252,7 +257,7 @@ Budget exhausted        →  Freeze feature work; focus entirely on reliability
 Budget resets           →  Resume normal pace; bake in the fix that recovered it
 ```
 
-A high burn rate during a canary (consuming budget faster than the baseline pace) is a **hold** signal in the rollout thresholds table above — treat it the same as an elevated error rate.
+A high burn rate during a canary (consuming budget faster than the baseline pace) is a **hold** signal in the rollout thresholds table above; treat it the same as a raised error rate.
 
 ## Rollback Strategy
 

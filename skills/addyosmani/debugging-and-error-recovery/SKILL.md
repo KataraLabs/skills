@@ -1,6 +1,11 @@
 ---
 name: debugging-and-error-recovery
-description: Guides systematic root-cause debugging. Use when tests fail, builds break, something that worked yesterday broke, behavior doesn't match expectations, or you encounter any unexpected error. Use when you need to figure out what broke and why — a systematic approach to finding and fixing the root cause rather than guessing. Use when asked what broke, why a test started failing, or why code throws, even when the diff, the function, or the stack trace is pasted inline and the cause looks obvious from reading it, so that the cause is named, the fix is minimal, and the reply says how to confirm it.
+description: Guides systematic root-cause debugging. Use when tests fail, builds break, something that worked yesterday broke, behavior doesn't match expectations, or you encounter any unexpected error. Use when you need to figure out what broke and why: a systematic approach to finding and fixing the root cause rather than guessing. Use when asked what broke, why a test started failing, or why code throws, even when the diff, the function, or the stack trace is pasted inline and the cause looks obvious from reading it, so that the cause is named, the fix is minimal, and the reply says how to confirm it.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/debugging-and-error-recovery
+  changes: edited to name no particular agent or tool
 ---
 
 # Debugging and Error Recovery
@@ -72,15 +77,10 @@ Cannot reproduce on demand:
     └── Document the conditions observed and revisit when it recurs
 ```
 
-For test failures (npm shown — substitute the repository's own test command, per the test-driven-development skill's Discover the Stack First section):
+For test failures, run the specific failing test, then run it with verbose output, then run it in isolation (which rules out test pollution). The commands below use npm; substitute the repository's own test command, per the test-driven-development skill's Discover the Stack First section. If your agent can't run commands, ask the user to run them and share the output.
 ```bash
-# Run the specific failing test
 npm test -- --grep "test name"
-
-# Run with verbose output
 npm test -- --verbose
-
-# Run in isolation (rules out test pollution)
 npm test -- specific-file --runInBand
 ```
 
@@ -90,7 +90,7 @@ Narrow down WHERE the failure happens:
 
 ```
 Which layer is failing?
-├── UI/Frontend     → Check console, DOM, network tab
+├── UI/Frontend     → Check console, DOM, network requests
 ├── API/Backend     → Check server logs, request/response
 ├── Database        → Check queries, schema, data integrity
 ├── Build tooling   → Check config, dependencies, environment
@@ -98,14 +98,12 @@ Which layer is failing?
 └── Test itself     → Check if the test is correct (false negative)
 ```
 
-**Use bisection for regression bugs:**
+**Use bisection for regression bugs.** If you have git access, mark the current commit as broken and a known-good commit as working; git then checks out midpoint commits and runs your test at each. Substitute the repository's focused-test command for the npm one. Without git access, ask the user to run the bisection.
 ```bash
-# Find which commit introduced the bug
 git bisect start
-git bisect bad                    # Current commit is broken
-git bisect good <known-good-sha> # This commit worked
-# Git will checkout midpoint commits; run your test at each
-git bisect run npm test -- --grep "failing test"  # substitute the repository's focused-test command
+git bisect bad
+git bisect good <known-good-sha>
+git bisect run npm test -- --grep "failing test"
 ```
 
 ### Step 3: Reduce
@@ -153,21 +151,15 @@ This test will prevent the same bug from recurring. It should fail without the f
 
 ### Step 6: Verify End-to-End
 
-After fixing, verify the complete scenario with the repository's own commands (npm shown):
+After fixing, verify the complete scenario with the repository's own commands (npm shown; if your agent can't run commands, ask the user to). Run the specific test, then the full suite to check for regressions, then the build to check for type and compilation errors:
 
 ```bash
-# Run the specific test
 npm test -- --grep "specific test"
-
-# Run the full test suite (check for regressions)
 npm test
-
-# Build the project (check for type/compilation errors)
 npm run build
-
-# Manual spot check if applicable
-npm run dev  # Verify in browser
 ```
+
+If applicable, start the dev server (`npm run dev`) and spot-check the scenario in a browser, or ask the user to.
 
 ## Error-Specific Patterns
 

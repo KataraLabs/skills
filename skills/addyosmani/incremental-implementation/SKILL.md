@@ -1,13 +1,18 @@
 ---
 name: incremental-implementation
 description: Delivers changes incrementally in thin, verifiable slices. Use when implementing any feature or change that touches more than one file, or when picking up the next task from a plan. Use when rolling a change out behind a feature flag, when you're about to write a large amount of code at once, or when a task feels too big to land in one step.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/incremental-implementation
+  changes: edited to name no particular agent or tool
 ---
 
 # Incremental Implementation
 
 ## Overview
 
-Build in thin vertical slices — implement one piece, test it, verify it, then expand. Avoid implementing an entire feature in one pass. Each increment should leave the system in a working, testable state. This is the execution discipline that makes large features manageable.
+Build in thin vertical slices: implement one piece, test it, verify it, then expand. Avoid implementing an entire feature in one pass. Each increment should leave the system in a working, testable state. This is the execution discipline that makes large features manageable.
 
 ## When to Use
 
@@ -36,10 +41,10 @@ Build in thin vertical slices — implement one piece, test it, verify it, then 
 For each slice:
 
 1. **Implement** the smallest complete piece of functionality
-2. **Test** — run the test suite (or write a test if none exists)
-3. **Verify** — confirm the slice works as expected (tests pass, build succeeds, manual check)
-4. **Commit** -- save your progress with a descriptive message (see `git-workflow-and-versioning` for atomic commit guidance)
-5. **Move to the next slice** — carry forward, don't restart
+2. **Test:** run the test suite (or write a test if none exists). If your agent can run commands, run it yourself; otherwise ask the user to run it and share the output
+3. **Verify:** confirm the slice works as expected (tests pass, build succeeds, manual check)
+4. **Commit:** save your progress with a descriptive message, or ask the user to commit if your agent cannot (see `git-workflow-and-versioning` for atomic commit guidance)
+5. **Move to the next slice:** carry forward, don't restart
 
 ## Slicing Strategies
 
@@ -100,14 +105,14 @@ After writing code, review it against these checks:
 
 ```
 SIMPLICITY CHECK:
-✗ Generic EventBus with middleware pipeline for one notification
-✓ Simple function call
+No:  Generic EventBus with middleware pipeline for one notification
+Yes: Plain function call
 
-✗ Abstract factory pattern for two similar components
-✓ Two straightforward components with shared utilities
+No:  Abstract factory pattern for two similar components
+Yes: Two straightforward components with shared utilities
 
-✗ Config-driven form builder for three forms
-✓ Three form components
+No:  Config-driven form builder for three forms
+Yes: Three form components
 ```
 
 Three similar lines of code is better than a premature abstraction. Implement the naive, obviously-correct version first. Optimize only after correctness is proven with tests.
@@ -123,7 +128,7 @@ Do NOT:
 - Add features not in the spec because they "seem useful"
 - Modernize syntax in files you're only reading
 
-If you notice something worth improving outside your task scope, note it — don't fix it:
+If you notice something worth improving outside your task scope, note it; don't fix it:
 
 ```
 NOTICED BUT NOT TOUCHING:
@@ -138,7 +143,7 @@ Each increment changes one logical thing. Don't mix concerns:
 
 **Bad:** One commit that adds a new component, refactors an existing one, and updates the build config.
 
-**Good:** Three separate commits — one for each change.
+**Good:** Three separate commits, one for each change.
 
 ### Rule 2: Keep It Compilable
 
@@ -178,7 +183,7 @@ Each increment should be independently revertable:
 - Additive changes (new files, new functions) are easy to revert
 - Modifications to existing code should be minimal and focused
 - Database migrations should have corresponding rollback migrations
-- Avoid deleting something in one commit and replacing it in the same commit — separate them
+- Avoid deleting something in one commit and replacing it in the same commit; separate them
 
 ## Working with Agents
 
@@ -188,7 +193,7 @@ When directing an agent to implement incrementally:
 "Let's implement Task 3 from the plan.
 
 Start with just the database schema change and the API endpoint.
-Don't touch the UI yet — we'll do that in the next increment.
+Don't touch the UI yet; we'll do that in the next increment.
 
 After implementing, run the repository's test and build commands to
 verify nothing is broken."
@@ -206,9 +211,9 @@ After each increment, verify with the repository's own commands (see the test-dr
 - [ ] Type checking passes, where the stack has one (`npx tsc --noEmit`, `mypy`, ...)
 - [ ] Linting passes (the repository's lint command)
 - [ ] The new functionality works as expected
-- [ ] The change is committed with a descriptive message
+- [ ] The change is committed with a descriptive message (by you, or by the user if your agent cannot commit)
 
-**Note:** Run each verification command after a change that could affect it. After a successful run, don't repeat the same command unless the code has changed since — re-running on unchanged code adds no information.
+**Note:** Run each verification command after a change that could affect it. After a successful run, don't repeat the same command unless the code has changed since. Re-running on unchanged code adds no information.
 
 ## Common Rationalizations
 

@@ -1,6 +1,6 @@
 # Hardening Patterns
 
-Code patterns and decision aids for the `security-and-hardening` skill. The skill states each rule; this file shows one concrete implementation of it. Open the section you need when you reach that code — it is not meant to be read top to bottom.
+Code patterns and decision aids for the `security-and-hardening` skill. The skill states each rule; this file shows one concrete implementation of it. Open the section you need when you reach that code; it is not meant to be read top to bottom.
 
 Shared checklists (threat modeling, pre-commit checks, security headers, CORS, the package-manager matrix, install-script gate, and the OWASP quick-reference tables) live in `../references/shared/security-checklist.md`.
 
@@ -104,7 +104,7 @@ app.use(helmet.contentSecurityPolicy({
   },
 }));
 
-// CORS — restrict to known origins
+// CORS: restrict to known origins
 app.use(cors({
   origin: process.env.ALLOWED_ORIGINS?.split(',') || 'http://localhost:3000',
   credentials: true,
@@ -127,9 +127,9 @@ if (!API_KEY) throw new Error('STRIPE_API_KEY not configured');
 
 ### Server-Side Request Forgery (SSRF)
 
-Any time the server fetches a URL the user influenced — webhooks, "import from URL", image proxies, link previews — an attacker can aim it at internal services (cloud metadata, `localhost`, private IPs).
+Any time the server fetches a URL the user influenced (webhooks, "import from URL", image proxies, link previews), an attacker can aim it at internal services (cloud metadata, `localhost`, private IPs).
 
-**Incomplete example — URL pre-validation only.** The checks below reject disallowed URLs and addresses at validation time, but do not bind the later connection to those addresses. Do not copy this as a complete SSRF defense.
+**Incomplete example: URL pre-validation only.** The checks below reject disallowed URLs and addresses at validation time, but do not bind the later connection to those addresses. Do not copy this as a complete SSRF defense.
 
 ```typescript
 // BAD: fetch whatever the user gives you
@@ -207,17 +207,17 @@ function validateUpload(file: UploadedFile) {
   if (file.size > MAX_SIZE) {
     throw new ValidationError('File too large (max 5MB)');
   }
-  // Don't trust the file extension — check magic bytes if critical
+  // Don't trust the file extension; check magic bytes if critical
 }
 ```
 
 ### Destructive Operations on Derived Paths
 
-A delete, move, or overwrite is only as safe as the value that names its target. Reading that value from the kernel, a job payload, or a sibling service proves where it *arrived from*, not who *wrote* it — another process's command line is as attacker-controlled as a form field. A shape check ("absolute path, at least one directory deep") proves well-formedness and gets mistaken for authorization; that is how a cleanup routine deletes the root instead of the leaf.
+A delete, move, or overwrite is only as safe as the value that names its target. Reading that value from the kernel, a job payload, or a sibling service proves where it *arrived from*, not who *wrote* it. Another process's command line is as attacker-controlled as a form field. A shape check ("absolute path, at least one directory deep") proves well-formedness and gets mistaken for authorization; that is how a cleanup routine deletes the root instead of the leaf.
 
-Before a destructive call, require all three: the resolved target sits under an **allowlisted root** (compare after resolving symlinks, never on the raw string); it is at least one level **below** that root, so a root is never itself the target; and it carries **evidence that it is yours**, read *before* the operation and before any teardown that removes it — otherwise "absent" and "not mine" are indistinguishable. On refusal, log the rejected target and stop: a cleanup that falls back to a broader default path is the failure this guards against. Worked example in `../references/shared/security-checklist.md#destructive-path-operations`.
+Before a destructive call, require all three: the resolved target sits under an **allowlisted root** (compare after resolving symlinks, never on the raw string); it is at least one level **below** that root, so a root is never itself the target; and it carries **evidence that it is yours**, read *before* the operation and before any teardown that removes it. Otherwise "absent" and "not mine" are indistinguishable. On refusal, log the rejected target and stop: a cleanup that falls back to a broader default path is the failure this guards against. Worked example in `../references/shared/security-checklist.md#destructive-path-operations`.
 
-Two limits, because the check reads stronger than it is. A marker inside the tree is self-attestation — anything that can write there can write the marker — so the expected owner has to come from authenticated state, and the marker needs integrity protection (restrictive ownership, or a MAC) before it counts as authorization. And resolving a path and then operating on the *name* is a check/use race wherever an untrusted process can swap an ancestor: on a shared volume, hold the target by descriptor and use no-follow, beneath-the-root operations, or make sure the hierarchy cannot change for the duration.
+Two limits, because the check reads stronger than it is. A marker inside the tree is self-attestation (anything that can write there can write the marker), so the expected owner has to come from authenticated state, and the marker needs integrity protection (restrictive ownership, or a MAC) before it counts as authorization. And resolving a path and then operating on the *name* is a check/use race wherever an untrusted process can swap an ancestor: on a shared volume, hold the target by descriptor and use no-follow, beneath-the-root operations, or make sure the hierarchy cannot change for the duration.
 
 ## Dependency Audit Triage
 
@@ -296,15 +296,12 @@ if (!success) return res.status(429).end();
   *.key
 ```
 
-**Always check before committing:**
+**Always check before committing.** If you have git access, run the command below (otherwise ask the user to run it before they commit). It prints only the names of files whose staged diff matches, so the raw value never lands in terminal output or agent tool logs. Any output means review those files before committing.
 ```bash
-# Check for accidentally staged secrets — prints only the names of files whose
-# staged diff matches, so the raw value never lands in terminal output or agent
-# tool logs. Any output means review those files before committing.
 git diff --cached -i -G'password|secret|api_key|token' --name-only
 ```
 
-**If a secret is ever committed, rotate it.** Deleting the line or rewriting history is not enough — assume it's compromised the moment it reaches a remote. Revoke and reissue the key first, then purge it from history.
+**If a secret is ever committed, rotate it.** Deleting the line or rewriting history is not enough. Assume it's compromised the moment it reaches a remote. Revoke and reissue the key first, then purge it from history.
 
 ## Data Classification
 
@@ -324,7 +321,7 @@ const sql = await llm.generate(`Write SQL for: ${userQuestion}`);
 await db.query(sql);                                   // arbitrary query execution
 container.innerHTML = await llm.reply(userMessage);   // stored XSS, via the model
 
-// GOOD: model output is data — parse defensively, then validate, then encode
+// GOOD: model output is data; parse defensively, then validate, then encode
 let intent;
 try {
   intent = CommandSchema.parse(JSON.parse(await llm.replyJson(userMessage)));

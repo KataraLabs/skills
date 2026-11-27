@@ -1,6 +1,11 @@
 ---
 name: using-agent-skills
 description: Discovers and invokes agent skills. Use when starting a session, or when you need to decide which skill or workflow applies to the piece of work at hand. This is the meta-skill that governs how all other skills are discovered and invoked.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/using-agent-skills
+  changes: edited to name no particular agent or tool
 ---
 
 # Using Agent Skills
@@ -13,7 +18,7 @@ Agent Skills is a collection of engineering workflow skills organized by develop
 
 When a task arrives, identify the development phase and apply the corresponding skill:
 
-```
+```text
 Task arrives
     │
     ├── Don't know what you want yet? ──────→ interview-me
@@ -51,7 +56,7 @@ These behaviors apply at all times, across all skills. They are non-negotiable.
 
 Before implementing anything non-trivial, explicitly state your assumptions:
 
-```
+```text
 ASSUMPTIONS I'M MAKING:
 1. [assumption about requirements]
 2. [assumption about architecture]
@@ -59,7 +64,7 @@ ASSUMPTIONS I'M MAKING:
 → Correct me now or I'll proceed with these.
 ```
 
-Don't silently fill in ambiguous requirements. The most common failure mode is making wrong assumptions and running with them unchecked. Surface uncertainty early — it's cheaper than rework.
+Don't silently fill in ambiguous requirements. The most common failure mode is making wrong assumptions and running with them unchecked. Surface uncertainty early; it's cheaper than rework.
 
 ### 2. Manage Confusion Actively
 
@@ -78,7 +83,7 @@ When you encounter inconsistencies, conflicting requirements, or unclear specifi
 You are not a yes-machine. When an approach has clear problems:
 
 - Point out the issue directly
-- Explain the concrete downside (quantify when possible — "this adds ~200ms latency" not "this might be slower")
+- Explain the concrete downside (quantify when possible: "this adds ~200ms latency", not "this might be slower")
 - Propose an alternative
 - Accept the human's decision if they override with full information
 
@@ -110,7 +115,7 @@ Your job is surgical precision, not unsolicited renovation.
 
 ### 6. Verify, Don't Assume
 
-Every skill includes a verification step. A task is not complete until verification passes. "Seems right" is never sufficient — there must be evidence (passing tests, build output, runtime data).
+Every skill includes a verification step. A task is not complete until verification passes. "Seems right" is never sufficient; there must be evidence (passing tests, build output, runtime data). If your agent cannot run the checks itself, ask the user to run them and share the output, and do not call the task done until you have seen it.
 
 Per-skill verification is the local check. The project-wide bar that applies to *every* change, regardless of which skill is active, is the Definition of Done: tests pass, no regressions, behavior verified at runtime, docs updated. See `references/shared/definition-of-done.md`. It complements each task's acceptance criteria rather than replacing them.
 
@@ -119,7 +124,7 @@ Per-skill verification is the local check. The project-wide bar that applies to 
 These are the subtle errors that look like productivity but create problems:
 
 1. Making wrong assumptions without checking
-2. Not managing your own confusion — plowing ahead when lost
+2. Not managing your own confusion: plowing ahead when lost
 3. Not surfacing inconsistencies you notice
 4. Not presenting tradeoffs on non-obvious decisions
 5. Being sycophantic ("Of course!") to approaches with clear problems
@@ -143,7 +148,7 @@ These are the subtle errors that look like productivity but create problems:
 
 For a complete feature, the typical skill sequence is:
 
-```
+```text
 1.  interview-me                → Extract what the user actually wants
 2.  idea-refine                 → Refine vague ideas
 3.  spec-driven-development     → Define what we're building
@@ -179,7 +184,7 @@ Not every task needs every skill. A bug fix might only need: `debugging-and-erro
 | Build | frontend-ui-engineering | Production-quality UI with accessibility |
 | Build | api-and-interface-design | Stable interfaces with clear contracts |
 | Verify | test-driven-development | Failing test first, then make it pass |
-| Verify | browser-testing-with-devtools | Chrome DevTools MCP for runtime verification |
+| Verify | browser-testing-with-devtools | Inspect the running page in a browser for runtime verification |
 | Verify | debugging-and-error-recovery | Reproduce → localize → fix → guard |
 | Review | code-review-and-quality | Five-axis review with quality gates |
 | Review | code-simplification | Preserve behavior while reducing unnecessary complexity |

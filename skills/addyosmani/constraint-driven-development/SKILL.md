@@ -1,13 +1,18 @@
 ---
 name: constraint-driven-development
-description: Establishes a project's quality bar as a written contract and stops agents quietly lowering it. Interviews the user on which dimensions matter, supplies sane default thresholds when they have no number in mind, records everything in CONSTRAINTS.md, and watches the diff for a weakened bar — new @ts-ignore or eslint-disable suppressions, skipped or deleted tests, assertions stripped out, unimplemented stubs, thresholds edited down. Use when no quality bar is written down, when the user says "set up constraints" or "define our standards", when the user wants dimensions they care about — accessibility, web performance, coverage — set up as enforced constraints, when an agent keeps silencing checks or skipping tests to get to green, when you need a coverage or performance threshold and don't know what number to pick, or when an agent writes more code than anyone will read.
+description: Establishes a project's quality bar as a written contract and stops agents quietly lowering it. Interviews the user on which dimensions matter, supplies sane default thresholds when they have no number in mind, records everything in CONSTRAINTS.md, and watches the diff for a weakened bar: new @ts-ignore or eslint-disable suppressions, skipped or deleted tests, assertions stripped out, unimplemented stubs, thresholds edited down. Use when no quality bar is written down, when the user says "set up constraints" or "define our standards", when the user wants dimensions they care about (accessibility, web performance, coverage) set up as enforced constraints, when an agent keeps silencing checks or skipping tests to get to green, when you need a coverage or performance threshold and don't know what number to pick, or when an agent writes more code than anyone will read.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/constraint-driven-development
+  changes: edited to name no particular agent or tool
 ---
 
 # Constraint-Driven Development
 
 ## Overview
 
-Other skills in this pack describe what good looks like. `code-review-and-quality` gives you five axes. `test-driven-development` gives you a cycle. `security-and-hardening` gives you a threat list. All of that lives in prose the agent reads and may or may not follow, and none of it survives the end of the session.
+Other skills in this pack describe what good looks like. The code-review-and-quality skill gives you five axes. The test-driven-development skill gives you a cycle. The security-and-hardening skill gives you a threat list. All of that lives in prose the agent reads and may or may not follow, and none of it survives the end of the session.
 
 This skill produces something different: a written record of **this project's** bar, with numbers, that outlives the conversation and can be checked mechanically.
 
@@ -24,18 +29,18 @@ Apply this skill when:
 - An agent is producing volume nobody is reading line by line
 - CI has checks but nobody can say which ones block a merge and which ones are decoration
 - Coverage, performance, or accessibility numbers get argued about per-PR instead of decided once
-- You're about to run `/build auto` or any autonomous loop, and the only thing standing between it and main is a test suite the agent also wrote
+- You're about to run the build skill unattended or any autonomous loop, and the only thing standing between it and main is a test suite the agent also wrote
 
 **When NOT to use:**
 
-- The project already has a `CONSTRAINTS.md` and the user isn't changing it — read it and follow it instead
+- The project already has a `CONSTRAINTS.md` and the user isn't changing it. Read it and follow it instead
 - One-off scripts, spikes, throwaway prototypes
-- The user wants a code review right now (`code-review-and-quality`) or a CI pipeline built (`ci-cd-and-automation`)
-- Pre-product-market-fit code with a two-week expected lifetime — the floor below is still worth it, the rest isn't
+- The user wants a code review right now (the code-review-and-quality skill) or a CI pipeline built (the ci-cd-and-automation skill)
+- Pre-product-market-fit code with a two-week expected lifetime. The floor below is still worth it, the rest isn't
 
 ## Loading Constraints
 
-The interview needs a live user. **Don't run it in non-interactive contexts** (CI, `/loop`, autonomous runs). If constraints are missing and you're in one of those, apply the Floor below, note that you did, and flag the rest for a human.
+The interview needs a live user. **Don't run it in non-interactive contexts** (CI, scheduled loops, autonomous runs). If constraints are missing and you're in one of those, apply the Floor below, note that you did, and flag the rest for a human.
 
 ## The Process
 
@@ -48,15 +53,15 @@ Never ask what you can read. Before the first question, gather:
 | Language and stack | `package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml` |
 | Test runner | dev dependencies, `test` script, existing test files |
 | Existing linters | `eslint.config.*`, `biome.json`, `.ruff.toml` |
-| Coverage today | `coverage/` output, or run the suite once |
+| Coverage today | `coverage/` output, or run the suite once (ask the user to, if your agent can't run commands) |
 | CI | `.github/workflows/`, `.gitlab-ci.yml` |
-| Agent harness | `.claude/`, `.codex/`, `AGENTS.md` |
+| Agent instructions | `AGENTS.md` or whatever rules file your agent reads |
 
 Report what you found in two lines, then ask only what's left.
 
 ### Step 2: Four questions, each with a default
 
-Follow the one-question-at-a-time discipline from `interview-me`, with one change: every question here has a default, so "I don't know" is a complete answer that still produces a working config.
+Follow the one-question-at-a-time discipline from the interview-me skill, with one change: every question here has a default, so "I don't know" is a complete answer that still produces a working config.
 
 ```
 Q1: Beyond the floor, which of these do you want enforced?
@@ -65,7 +70,7 @@ Q1: Beyond the floor, which of these do you want enforced?
     (c) Performance budgets
     (d) Accessibility
     (e) Architecture boundaries
-GUESS: (a) and (b) — you have a test runner already and you're handling user input.
+GUESS: (a) and (b). You have a test runner already and you're handling user input.
 DEFAULT if unsure: (a) and (b).
 Say what each pick costs: (c) and (d) need a running URL, (e) needs a rules file written.
 ```
@@ -137,11 +142,11 @@ number and no command in this column is an aspiration, not a constraint.
 | W1 | `no-explicit-any` | `src/legacy/**` | Rewrite tracked in ENG-441 | @addy | 2026-11-01 |
 ```
 
-Then add one line to `AGENTS.md` and `CLAUDE.md`: `Read CONSTRAINTS.md before writing code. Do not weaken it to make a change pass.`
+Then add one line to `AGENTS.md` and to any other instruction file your agent reads: `Read CONSTRAINTS.md before writing code. Do not weaken it to make a change pass.`
 
 ### Step 4: Install what each dimension needs
 
-Picking a dimension means installing something. Don't leave the user with a number and no mechanism, and don't invent your own checker when a de facto one exists — these tools are listed because their rule formats and thresholds are what everything else in the ecosystem targets, so the team's existing config keeps working.
+Picking a dimension means installing something. If your agent can run commands, install it; otherwise give the user the install commands to run. Don't leave the user with a number and no mechanism, and don't invent your own checker when a de facto one exists. These tools are listed because their rule formats and thresholds are what everything else in the ecosystem targets, so the team's existing config keeps working.
 
 | Dimension | Tool | Install | Run | Gate on |
 |-----------|------|---------|-----|---------|
@@ -162,15 +167,15 @@ Picking a dimension means installing something. Don't leave the user with a numb
 Five things that will bite you if you skip them:
 
 1. **`--redact` on gitleaks is not optional.** Without it the matched secret lands in the agent's transcript, which is how a leaked key ends up in a log, a summary, or a commit message. Report the rule and the location, never the value.
-2. **Lighthouse and axe need a URL.** They only work against a running app, so they belong in the runtime stage against a preview deploy or a local server you start first. If the project has no URL to hit — a CLI, a library, a desktop app — say so and drop the dimension rather than inventing a check that can't run.
+2. **Lighthouse and axe need a URL.** They only work against a running app, so they belong in the runtime stage against a preview deploy or a local server you start first. If the project has no URL to hit (a CLI, a library, a desktop app), say so and drop the dimension rather than inventing a check that can't run.
 3. **Scope the expensive ones to the diff.** `stryker run --mutate` on the whole repo takes hours and gets turned off; on the files a change touched it takes under a minute. Same for Semgrep, which takes a path list.
 4. **Coverage needs no second test run.** Read the lcov your suite already writes and intersect it with `git diff`. Running the suite twice to get a number is the fastest way to make people hate this.
 5. **Semgrep's registry rules are free to run; check the licence before redistributing them.** `opengrep` is a drop-in fork with the same rule format and JSON output if that matters to your legal team.
 
-`semgrep scan` and `axe` can exit 0 on findings; copy [scripts/quality-gate.mjs](scripts/quality-gate.mjs) into the project's `scripts/` directory to enforce these thresholds.
+`semgrep scan` and `axe` can exit 0 on findings. This skill ships an optional helper, [scripts/quality-gate.mjs](scripts/quality-gate.mjs), that reads their JSON and fails on the thresholds; copy it into the project's `scripts/` directory (or ask the user to) to enforce them.
 Keep the scanner before `&&` so a failed scan stops the command.
 
-Add each one to the project's own script so it's reproducible without an agent:
+Add each one to the project's own scripts so it's reproducible without an agent:
 
 ```json
 {
@@ -186,20 +191,20 @@ Add each one to the project's own script so it's reproducible without an agent:
 
 That mapping matters more than the tools. `check:fast` is what runs after an edit, `check:task` when the agent thinks it's done, `check:full` in CI. Run `check:a11y` after the preview is reachable, with `PREVIEW_URL` set (the example uses POSIX shell syntax).
 
-Before calling any row enforced, run its actual CI command against a known violation and a clean control. Confirm that the violation fails, the control passes, and scanner errors fail too. For a severity threshold, also confirm a below-threshold finding passes. Apply this to every dimension, including coverage and Lighthouse: generating a report alone does not enforce the number in `CONSTRAINTS.md`.
+Before calling any row enforced, run its actual CI command (or ask the user to run it and share the output) against a known violation and a clean control. Confirm that the violation fails, the control passes, and scanner errors fail too. For a severity threshold, also confirm a below-threshold finding passes. Apply this to every dimension, including coverage and Lighthouse: generating a report alone does not enforce the number in `CONSTRAINTS.md`.
 
-The commands now live in two places — the `Checked by` column in `CONSTRAINTS.md` and these scripts. `CONSTRAINTS.md` is the canonical source: it carries the reason alongside each command and it shows up in review. The scripts are convenience wrappers that must mirror it, not a second source of truth; if they drift, the file wins.
+The commands now live in two places: the `Checked by` column in `CONSTRAINTS.md` and these scripts. `CONSTRAINTS.md` is the canonical source: it carries the reason alongside each command and it shows up in review. The scripts are convenience wrappers that must mirror it, not a second source of truth; if they drift, the file wins.
 
 ### Step 5: Wire it to the lifecycle
 
 The single biggest mistake is running everything everywhere. A check that stalls the agent gets switched off, and a gate people switched off is worse than no gate, because the bar still looks like it exists.
 
-| Phase | Command | What runs | Budget |
-|-------|---------|-----------|--------|
-| BUILD | `/build` | Types, lint, secrets, the floor | under 5s, changed file only |
-| VERIFY | `/test` | Related tests, coverage on changed lines | under 90s |
-| REVIEW | `/review` | Everything, plus the guards below | minutes |
-| SHIP | `/ship` | Direction checks, no regressions | CI |
+| Phase | Skill | What runs | Budget |
+|-------|-------|-----------|--------|
+| BUILD | build | Types, lint, secrets, the floor | under 5s, changed file only |
+| VERIFY | test | Related tests, coverage on changed lines | under 90s |
+| REVIEW | review | Everything, plus the guards below | minutes |
+| SHIP | ship | Direction checks, no regressions | CI |
 
 Two rules that keep this tolerable:
 
@@ -220,13 +225,13 @@ Agents don't craft clever loopholes. They hit a red check and take the cheapest 
 
 None of this needs tooling beyond `git diff`. Tightening the bar should be silent; loosening it should be loud.
 
-Unlike the numbered dimensions, the floor has no de facto tool of its own, so an agent asked to enforce it tends to write a checker from scratch, and two agents write two different ones. A reference implementation of these five checks ships with this skill in [references/floor-guard.md](references/floor-guard.md) (diff-scoped, exit `0`/`1`/`2`, patterns adaptable per ecosystem). Adapt that rather than reinventing it, for the same reason every dimension names a de facto tool: so the mechanism is the same across runs and stacks.
+Unlike the numbered dimensions, the floor has no de facto tool of its own, so an agent asked to enforce it tends to write a checker from scratch, and two agents write two different ones. A reference implementation of these five checks ships with this skill in [references/floor-guard.md](references/floor-guard.md) as an optional helper, if your agent can run commands (diff-scoped, exit `0`/`1`/`2`, patterns adaptable per ecosystem). Adapt that rather than reinventing it, for the same reason every dimension names a de facto tool: so the mechanism is the same across runs and stacks.
 
 **Not all checks are equally circular.** Rank them by one question: can the agent make this pass by writing code that doesn't work?
 
-- **External** — axe-core encodes WCAG, `osv-scanner` reads a vulnerability database, Lighthouse measures a real browser. The agent can't argue with these.
-- **Project** — your lint rules, your layer boundaries. A human owns the file.
-- **Suite** — your own tests. Most useful, and the only genuinely circular one.
+- **External:** axe-core encodes WCAG, `osv-scanner` reads a vulnerability database, Lighthouse measures a real browser. The agent can't argue with these.
+- **Project:** your lint rules, your layer boundaries. A human owns the file.
+- **Suite:** your own tests. Most useful, and the only genuinely circular one.
 
 A bar made entirely of the third kind is worth less than one with an outside opinion in it. Check that at least one external constraint is present.
 
@@ -261,7 +266,7 @@ State the number and the reason together. A threshold without a rationale gets d
 Constraints work at three levels of teeth. Start at the first.
 
 1. **Written only.** `CONSTRAINTS.md` exists and agents read it. Costs nothing, catches the honest mistakes, relies on the agent complying.
-2. **Scripted.** An `npm run check` (or `make check`) that runs the fast checks, wired into your agent's post-edit hook and your CI. Deterministic, no new dependency.
+2. **Scripted.** An `npm run check` (or `make check`) that runs the fast checks, run after each edit (automatically, if your agent supports a post-edit step) and in your CI. Deterministic, no new dependency.
 3. **Tool-backed.** A dedicated runner that handles diff scoping, budgets, ratchets, and the guard checks. Use when the config outgrows a shell script. The floor-guard reference in [references/floor-guard.md](references/floor-guard.md) is the starting point for the guard-checks half of this.
 
 Most projects should stop at 2. Move to 3 when you're maintaining more than about thirty lines of check-running shell.
@@ -305,15 +310,15 @@ The skill was applied correctly when:
 - [ ] At least one constraint is external (not judged by this project's own tests)
 - [ ] Measured-only metrics record today's value and a direction
 - [ ] Exceptions have an owner and an expiry date
-- [ ] `AGENTS.md` or `CLAUDE.md` points at the file
+- [ ] `AGENTS.md` or your agent's instruction file points at the file
 - [ ] A trial run on the current branch produces no failures the user disagrees with
 - [ ] Each enforced command fails on a deliberate violation and scanner error, passes a clean control, and preserves the agreed severity threshold
 
 ## See Also
 
-- `interview-me` — the one-question-at-a-time discipline this skill's intake borrows
-- `code-review-and-quality` — how to review; this skill decides what the review enforces
-- `ci-cd-and-automation` — building the pipeline these constraints run in
-- `test-driven-development` — the suite that coverage and mutation constraints measure
-- `security-and-hardening` — what the security dimension should contain
-- `performance-optimization` — where the performance numbers come from
+- interview-me: the one-question-at-a-time discipline this skill's intake borrows
+- code-review-and-quality: how to review; this skill decides what the review enforces
+- ci-cd-and-automation: building the pipeline these constraints run in
+- test-driven-development: the suite that coverage and mutation constraints measure
+- security-and-hardening: what the security dimension should contain
+- performance-optimization: where the performance numbers come from

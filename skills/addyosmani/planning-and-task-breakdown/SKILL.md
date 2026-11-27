@@ -1,6 +1,11 @@
 ---
 name: planning-and-task-breakdown
 description: Breaks work into ordered tasks. Use when you have a spec or clear requirements and need to break work into implementable tasks. Use when a task feels too large to start, when you need to estimate scope, or when parallel work is possible.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/planning-and-task-breakdown
+  changes: edited to name no particular agent or tool
 ---
 
 # Planning and Task Breakdown
@@ -21,9 +26,9 @@ Decompose work into small, verifiable tasks with explicit acceptance criteria. G
 
 ## The Planning Process
 
-### Step 1: Enter Plan Mode
+### Step 1: Plan Read-Only First
 
-Before writing any code, operate in read-only mode:
+Before writing any code, work read-only (if your agent has a planning or read-only mode, use it):
 
 - Read the spec and relevant codebase sections
 - Identify existing patterns and conventions
@@ -56,7 +61,7 @@ Implementation order follows the dependency graph bottom-up: build foundations f
 
 ### Step 3: Slice Vertically
 
-Instead of building all the database, then all the API, then all the UI — build one complete feature path at a time:
+Instead of building all the database, then all the API, then all the UI, build one complete feature path at a time:
 
 **Bad (horizontal slicing):**
 ```
@@ -130,7 +135,7 @@ Add explicit checkpoints to the task list target:
 | **S** | 1-2 | One component or endpoint | Add a new API endpoint |
 | **M** | 3-5 | One feature slice | User registration flow |
 | **L** | 5-8 | Multi-component feature | Search with filtering and pagination |
-| **XL** | 8+ | **Too large — break it down further** | — |
+| **XL** | 8+ | **Too large: break it down further** | (none) |
 
 If a task is L or larger, it should be broken into smaller tasks. An agent performs best on S and M tasks.
 
@@ -142,7 +147,7 @@ If a task is L or larger, it should be broken into smaller tasks. An agent perfo
 
 ## Output Files
 
-- **Plan document:** Save the implementation plan to `tasks/plan.md`. This is always a markdown file — design decisions, risks, and open questions don't map cleanly onto individual tracker issues.
+- **Plan document:** Save the implementation plan to `tasks/plan.md`. This is always a markdown file: design decisions, risks, and open questions don't map cleanly onto individual tracker issues.
 - **Task list:** Record each task in the **task list target** (defined below).
 
 Create the `tasks/` directory if it does not exist.
@@ -158,8 +163,8 @@ The same rule applies to an external task list target: never bulk-close or delet
 
 The task list target is where tasks and checkpoints are recorded. It is defined once, here; every other reference in this skill defers to it.
 
-- **Default: a checklist-style markdown file at `tasks/todo.md`.** This is the convention the `/build` command and other downstream tooling expect. Use it unless the project says otherwise.
-- **External tracker:** if the project's agent rules (`CLAUDE.md`, `AGENTS.md`, etc.) or the user designate an issue tracker (e.g. GitHub Issues, Jira, Linear, `bd`/beads), create one tracker item per task instead of writing `tasks/todo.md`. Map the Step 4 structure onto the tracker's fields: acceptance criteria and verification steps in the item body, dependencies via the tracker's linking mechanism (`bd dep add`, "blocked by", etc.). Record Step 5 checkpoints as tracker items too, or as a checklist in the plan document if the tracker has no natural equivalent.
+- **Default: a checklist-style markdown file at `tasks/todo.md`.** This is the convention the build skill and other downstream tooling expect. Use it unless the project says otherwise.
+- **External tracker:** if the project's agent rules (`AGENTS.md` or a similar instruction file) or the user designate an issue tracker (e.g. GitHub Issues, Jira, Linear, `bd`/beads), create one tracker item per task instead of writing `tasks/todo.md`. Map the Step 4 structure onto the tracker's fields: acceptance criteria and verification steps in the item body, dependencies via the tracker's linking mechanism (`bd dep add`, "blocked by", etc.). Record Step 5 checkpoints as tracker items too, or as a checklist in the plan document if the tracker has no natural equivalent.
 
 When using an external tracker, note it in `tasks/plan.md` (e.g. "Tasks tracked in Linear project FOO") so downstream steps and future sessions know where to look, and keep the plan document's Task List section as an ordered index of tracker item IDs or links rather than a duplicate checklist.
 

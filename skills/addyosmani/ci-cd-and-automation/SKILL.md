@@ -1,15 +1,20 @@
 ---
 name: ci-cd-and-automation
 description: Automates CI/CD pipeline setup. Use when setting up or modifying build and deployment pipelines. Use when you need to automate quality gates, configure test runners in CI, or establish deployment strategies.
+license: MIT
+metadata:
+  source: https://github.com/addyosmani/agent-skills
+  upstream-path: skills/ci-cd-and-automation
+  changes: edited to name no particular agent or tool
 ---
 
 # CI/CD and Automation
 
 ## Overview
 
-Automate quality gates so that no change reaches production without passing tests, lint, type checking, and build. CI/CD is the enforcement mechanism for every other skill — it catches what humans and agents miss, and it does so consistently on every single change.
+Automate quality gates so that no change reaches production without passing tests, lint, type checking, and build. CI/CD is the enforcement mechanism for every other skill. It catches what humans and agents miss, and it does so consistently on every single change.
 
-**Shift Left:** Catch problems as early in the pipeline as possible. A bug caught in linting costs minutes; the same bug caught in production costs hours. Move checks upstream — static analysis before tests, tests before staging, staging before production.
+**Shift Left:** Catch problems as early in the pipeline as possible. A bug caught in linting costs minutes; the same bug caught in production costs hours. Move checks upstream: static analysis before tests, tests before staging, staging before production.
 
 **Faster is Safer:** Smaller batches and more frequent releases reduce risk, not increase it. A deployment with 3 changes is easier to debug than one with 30. Frequent releases build confidence in the release process itself.
 
@@ -51,7 +56,7 @@ Pull Request Opened
   Ready for review
 ```
 
-**No gate can be skipped.** If lint fails, fix lint — don't disable the rule. If a test fails, fix the code — don't skip the test.
+**No gate can be skipped.** If lint fails, fix lint; don't disable the rule. If a test fails, fix the code; don't skip the test.
 
 ## GitHub Actions Configuration
 
@@ -163,30 +168,30 @@ jobs:
 
 ## Feeding CI Failures Back to Agents
 
-The power of CI with AI agents is the feedback loop. When CI fails:
+The value of CI with AI agents is the feedback loop. When CI fails, the failure output goes back to the agent: it reads the CI logs itself if it has access, or the user pastes them in. Pushing is done by whoever has push access (the agent if it can, otherwise the user):
 
 ```
 CI fails
     │
     ▼
-Copy the failure output
+Get the failure output
     │
     ▼
 Feed it to the agent:
 "The CI pipeline failed with this error:
 [paste specific error]
-Fix the issue and verify locally before pushing again."
+Fix the issue and verify locally before the next push."
     │
     ▼
-Agent fixes → pushes → CI runs again
+Agent fixes → change is pushed → CI runs again
 ```
 
 **Key patterns:**
 
 ```
-Lint failure → Agent runs `npm run lint -- --fix` and commits
+Lint failure → Agent runs `npm run lint -- --fix` (or asks the user to) and the fix is committed
 Type error  → Agent reads the error location and fixes the type
-Test failure → Agent follows debugging-and-error-recovery skill
+Test failure → Agent follows the debugging-and-error-recovery skill
 Build error → Agent checks config and dependencies
 ```
 
@@ -224,7 +229,7 @@ if (featureFlags.isEnabled('new-checkout-flow', { userId })) {
 return renderLegacyCheckout();
 ```
 
-**Flag lifecycle:** Create → Enable for testing → Canary → Full rollout → Remove the flag and dead code. Flags that live forever become technical debt — set a cleanup date when you create them.
+**Flag lifecycle:** Create → Enable for testing → Canary → Full rollout → Remove the flag and dead code. Flags that live forever become technical debt. Set a cleanup date when you create them.
 
 ### Staged Rollouts
 
@@ -302,7 +307,7 @@ updates:
 
 ### Build Cop Role
 
-Designate someone responsible for keeping CI green. When the build breaks, the Build Cop's job is to fix or revert — not the person whose change caused the break. This prevents broken builds from accumulating while everyone assumes someone else will fix it.
+Designate someone responsible for keeping CI green. When the build breaks, the Build Cop's job is to fix or revert, not the person whose change caused the break. This prevents broken builds from accumulating while everyone assumes someone else will fix it.
 
 ### PR Checks
 
@@ -379,7 +384,7 @@ jobs:
 - Tests disabled in CI to make the pipeline pass
 - Production deploys without staging verification
 - No rollback mechanism
-- Secrets stored in code or CI config files (not secrets manager)
+- Secrets stored in code or CI config files (not a secret store)
 - Long CI times with no optimization effort
 
 ## Verification
@@ -390,6 +395,6 @@ After setting up or modifying CI:
 - [ ] Pipeline runs on every PR and push to main
 - [ ] Failures block merge (branch protection configured)
 - [ ] CI results feed back into the development loop
-- [ ] Secrets are stored in the secrets manager, not in code
+- [ ] Secrets are stored in a secret store, not in code
 - [ ] Deployment has a rollback mechanism
 - [ ] Pipeline runs in under 10 minutes for the test suite

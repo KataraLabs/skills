@@ -2,7 +2,7 @@
 
 Every numbered dimension in `CONSTRAINTS.md` maps to a de facto tool (Step 4). The **floor** does not: it is a diff-scoped check for the five moves in Step 6, and without a shipped reference every agent invents its own, so two runs (or a Python repo and a Go one) produce two different guards. That is the exact non-determinism this skill exists to remove.
 
-This is the reference. Adapt the patterns to your stack; keep the contract identical.
+This is the reference. Adapt the patterns to your stack; keep the contract identical. It is an optional helper: if your agent can run commands, run it yourself; otherwise ask the user to run it and share the output.
 
 ## Contract
 
@@ -16,7 +16,7 @@ This is the reference. Adapt the patterns to your stack; keep the contract ident
 
 ```js
 #!/usr/bin/env node
-// floor-guard.mjs — diff-scoped enforcement of the CONSTRAINTS.md floor.
+// floor-guard.mjs: diff-scoped enforcement of the CONSTRAINTS.md floor.
 // Usage: node floor-guard.mjs [--base <ref>]   (default base: origin/main)
 import { execFileSync } from 'node:child_process';
 
@@ -93,7 +93,7 @@ const atBase = (l) => `${l.oldPath}:${l.line} (removed)`; // removed line, named
 const isTest = (f) => /\.(test|spec)\.|_test\.|test_/.test(f);
 const isConstraints = (f) => /CONSTRAINTS\.md$/.test(f);
 
-// 1. Silenced checker — extend this list for your ecosystem.
+// 1. Silenced checker. Extend this list for your ecosystem.
 const SUPPRESSIONS = /@ts-ignore|@ts-nocheck|eslint-disable|biome-ignore|# *noqa|# *type: *ignore|istanbul ignore|nosemgrep|gitleaks:allow|Stryker disable/;
 // 4. Unfinished work.
 const STUBS = /throw new (Error|NotImplemented).*[Nn]ot implemented|catch\s*\(\w*\)\s*\{\s*\}|catch\s*\{\s*\}|\bTODO\b|\bpass\s*# *stub/;
