@@ -90,6 +90,11 @@ test('the repository index lists every skill once with a valid id and digest', (
   assert.ok(idx.skills.filter((s) => s.folder?.startsWith('skills/trailofbits/')).every((s) => s.kind === 'workflow' && s.default === 'off' && s.id.startsWith('catalog:')));
   assert.ok(idx.skills.filter((s) => s.folder?.startsWith('skills/callstack/react-')).every((s) => s.kind === 'framework'));
   assert.equal(idx.skills.find((s) => s.name === 'pytest-skill').kind, 'framework');
+  for (const n of ['github-actions', 'test-framework-migration-skill', 'flaky-test-fixes-skill', 'api-graphql-grpc', 'openapi-spec-generator', 'api-mock-helper', 'api-to-testcase-generator']) {
+    assert.equal(idx.skills.find((s) => s.name === n).kind, 'framework', n);
+  }
+  assert.deepEqual(idx.skills.find((s) => s.name === 'github-actions').detect.requires, { package_dependencies: ['react-native'] });
+  assert.equal(idx.skills.find((s) => s.name === 'accessibility-skill').kind, 'workflow');
 });
 
 test('classify applies own entry over folder, defaults and servable', () => {
@@ -107,6 +112,8 @@ test('classify applies own entry over folder, defaults and servable', () => {
   assert.equal(fw.default, 'on');
   assert.deepEqual(fw.detect, { project_files: ['x.config.js'] });
   assert.throws(() => classify(e('bad'), c), /needs detect signals/);
+  const g = { ...c, generic_project_files: ['package.json'], skills: { pj: { kind: 'framework', detect: { project_files: ['package.json'] } } } };
+  assert.throws(() => classify(e('pj'), g), /names an ecosystem/);
   assert.throws(() => classify(e('k'), { skills: { k: { kind: 'tool' } } }), /unknown kind/);
   const ext = classify({ name: 'ext', folder: null, license: null, digest: 'd', source: { external: true } }, c);
   assert.equal(ext.servable, false);

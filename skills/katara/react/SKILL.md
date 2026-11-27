@@ -4,7 +4,6 @@ description: Use when building, changing, reviewing or testing React components 
 license: MIT
 metadata:
   file-types: "*.jsx *.tsx"
-  project-files: "package.json"
   package-dependencies: "react react-dom react-native"
 ---
 

@@ -72,6 +72,11 @@ export function classify(entry, c) {
   else if (!entry.detect || !Object.values(entry.detect).some((v) => v.length)) {
     throw new Error(`${entry.name}: a ${kind} skill needs detect signals`);
   } else entry.default = 'on';
+  if (kind === 'framework') {
+    const generic = new Set(c.generic_project_files ?? []);
+    const used = [...(entry.detect.project_files ?? []), ...(entry.detect.requires?.project_files ?? [])].filter((f) => generic.has(f));
+    if (used.length) throw new Error(`${entry.name}: ${used.join(', ')} names an ecosystem, not a framework`);
+  }
   const blocked = (c.not_servable_licenses ?? []).includes(entry.license);
   entry.servable = !entry.source?.external && !blocked;
   // sha256 is the digest of what a server may hand out; null when it may not hand it out.

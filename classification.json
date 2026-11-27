@@ -1,10 +1,11 @@
 {
-  "notes": "How a client treats each skill. kind is language, framework or workflow. Language and framework skills are attached from project signals; detect lists those signals (any one matching is enough). Workflow skills carry default on or off. servable says whether the skill's license lets a hosted service send its text to users; it is false for skills we do not hold the right to redistribute. Skills under skills/katara/ take their detect hints from their own front matter.",
+  "notes": "How a client treats each skill. kind is language, framework or workflow. Language and framework skills are attached from project signals; detect lists those signals (any one matching is enough). Workflow skills carry default on or off. servable says whether the skill's license lets a hosted service send its text to users; it is false for skills we do not hold the right to redistribute. Skills under skills/katara/ take their detect hints from their own front matter. A skill is attached when any one of its detect signals matches and, if it has requires, every list in requires also has a match. Framework skills never rely on a generic manifest (generic_project_files) as a signal: those name the ecosystem, not the framework.",
   "detect_keys": {
     "file_types": "glob patterns for source files",
     "project_files": "paths or globs relative to the project root; a trailing slash means a directory",
     "package_dependencies": "npm package names in package.json dependencies or devDependencies",
-    "dependencies": "ecosystem:name for other package managers: pypi, gem, composer, maven (group:artifact), nuget, pub, npm"
+    "dependencies": "ecosystem:name for other package managers: pypi, gem, composer, maven (group:artifact), nuget, pub, npm",
+    "requires": "an object with the same keys; each list in it must also have a match"
   },
   "folders": {
     "skills/katara": {
@@ -37,12 +38,6 @@
     "assess-react-native-migration": {
       "kind": "framework",
       "detect": {
-        "project_files": [
-          "app.json",
-          "metro.config.js",
-          "metro.config.ts",
-          "react-native.config.js"
-        ],
         "package_dependencies": [
           "react-native"
         ]
@@ -51,12 +46,6 @@
     "react-native-best-practices": {
       "kind": "framework",
       "detect": {
-        "project_files": [
-          "app.json",
-          "metro.config.js",
-          "metro.config.ts",
-          "react-native.config.js"
-        ],
         "package_dependencies": [
           "react-native"
         ]
@@ -65,12 +54,6 @@
     "react-native-brownfield-migration": {
       "kind": "framework",
       "detect": {
-        "project_files": [
-          "app.json",
-          "metro.config.js",
-          "metro.config.ts",
-          "react-native.config.js"
-        ],
         "package_dependencies": [
           "react-native"
         ]
@@ -79,12 +62,6 @@
     "upgrading-react-native": {
       "kind": "framework",
       "detect": {
-        "project_files": [
-          "app.json",
-          "metro.config.js",
-          "metro.config.ts",
-          "react-native.config.js"
-        ],
         "package_dependencies": [
           "react-native"
         ]
@@ -94,21 +71,17 @@
       "kind": "framework",
       "detect": {
         "project_files": [
-          "react-native.config.js",
-          "app.json"
+          "react-native.config.js"
         ],
         "package_dependencies": [
-          "react-native",
-          "react-native-builder-bob"
+          "react-native-builder-bob",
+          "react-native"
         ]
       }
     },
     "react-native-tv-best-practices": {
       "kind": "framework",
       "detect": {
-        "project_files": [
-          "app.json"
-        ],
         "package_dependencies": [
           "react-native-tvos",
           "@react-native-tvos/config-tv"
@@ -146,8 +119,7 @@
       "detect": {
         "project_files": [
           "behat.yml",
-          "behat.yml.dist",
-          "features/*.feature"
+          "behat.yml.dist"
         ],
         "dependencies": [
           "composer:behat/behat"
@@ -250,7 +222,6 @@
       "kind": "framework",
       "detect": {
         "project_files": [
-          "pubspec.yaml",
           "integration_test/",
           "test/*_test.dart"
         ],
@@ -264,7 +235,6 @@
       "kind": "framework",
       "detect": {
         "project_files": [
-          "manifest.json",
           "specs/*.spec"
         ],
         "dependencies": [
@@ -314,11 +284,6 @@
     "junit-5-skill": {
       "kind": "framework",
       "detect": {
-        "project_files": [
-          "pom.xml",
-          "build.gradle",
-          "build.gradle.kts"
-        ],
         "dependencies": [
           "maven:org.junit.jupiter:junit-jupiter"
         ]
@@ -352,7 +317,6 @@
       "kind": "framework",
       "detect": {
         "project_files": [
-          "features/*.feature",
           "terrain.py"
         ],
         "dependencies": [
@@ -375,9 +339,6 @@
     "mstest-skill": {
       "kind": "framework",
       "detect": {
-        "project_files": [
-          "*.csproj"
-        ],
         "dependencies": [
           "nuget:MSTest.TestFramework",
           "nuget:MSTest"
@@ -411,9 +372,6 @@
     "nunit-skill": {
       "kind": "framework",
       "detect": {
-        "project_files": [
-          "*.csproj"
-        ],
         "dependencies": [
           "nuget:NUnit"
         ]
@@ -496,8 +454,7 @@
         "project_files": [
           "pytest.ini",
           "conftest.py",
-          "tests/conftest.py",
-          "pyproject.toml"
+          "tests/conftest.py"
         ],
         "dependencies": [
           "pypi:pytest"
@@ -542,10 +499,6 @@
     "selenide-skill": {
       "kind": "framework",
       "detect": {
-        "project_files": [
-          "pom.xml",
-          "build.gradle"
-        ],
         "dependencies": [
           "maven:com.codeborne:selenide"
         ]
@@ -678,8 +631,7 @@
       "kind": "framework",
       "detect": {
         "project_files": [
-          "*UITests/",
-          "*.xcodeproj"
+          "*UITests/"
         ],
         "file_types": [
           "*UITests.swift"
@@ -689,9 +641,6 @@
     "xunit-skill": {
       "kind": "framework",
       "detect": {
-        "project_files": [
-          "*.csproj"
-        ],
         "dependencies": [
           "nuget:xunit"
         ]
@@ -788,9 +737,6 @@
     "vercel-react-native-skills": {
       "kind": "framework",
       "detect": {
-        "project_files": [
-          "app.json"
-        ],
         "package_dependencies": [
           "react-native",
           "expo"
@@ -804,6 +750,152 @@
           "react"
         ]
       }
+    },
+    "github-actions": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          ".github/workflows/"
+        ],
+        "package_dependencies": [
+          "react-native"
+        ],
+        "requires": {
+          "package_dependencies": [
+            "react-native"
+          ]
+        }
+      }
+    },
+    "test-framework-migration-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "protractor.conf.js",
+          "cypress.config.*",
+          "playwright.config.*",
+          ".puppeteerrc.cjs"
+        ],
+        "package_dependencies": [
+          "selenium-webdriver",
+          "puppeteer",
+          "cypress",
+          "@playwright/test",
+          "protractor"
+        ],
+        "dependencies": [
+          "pypi:selenium",
+          "maven:org.seleniumhq.selenium:selenium-java"
+        ]
+      }
+    },
+    "flaky-test-fixes-skill": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "playwright.config.*",
+          "cypress.config.*",
+          "wdio.conf.*",
+          "jest.config.*",
+          "pytest.ini",
+          "conftest.py"
+        ],
+        "package_dependencies": [
+          "@playwright/test",
+          "cypress",
+          "webdriverio",
+          "jest",
+          "selenium-webdriver"
+        ],
+        "dependencies": [
+          "pypi:pytest",
+          "pypi:selenium"
+        ]
+      }
+    },
+    "api-graphql-grpc": {
+      "kind": "framework",
+      "detect": {
+        "file_types": [
+          "*.graphql",
+          "*.gql",
+          "*.proto"
+        ],
+        "package_dependencies": [
+          "graphql",
+          "@apollo/server",
+          "@grpc/grpc-js"
+        ],
+        "dependencies": [
+          "pypi:graphene",
+          "pypi:strawberry-graphql",
+          "pypi:grpcio"
+        ]
+      }
+    },
+    "openapi-spec-generator": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "openapi.yaml",
+          "openapi.yml",
+          "openapi.json",
+          "swagger.yaml",
+          "swagger.json"
+        ]
+      }
+    },
+    "api-mock-helper": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "mocks/handlers.*",
+          "wiremock/"
+        ],
+        "package_dependencies": [
+          "msw",
+          "@stoplight/prism-cli",
+          "json-server",
+          "nock"
+        ],
+        "dependencies": [
+          "maven:org.wiremock:wiremock"
+        ]
+      }
+    },
+    "api-to-testcase-generator": {
+      "kind": "framework",
+      "detect": {
+        "project_files": [
+          "openapi.yaml",
+          "openapi.yml",
+          "openapi.json",
+          "swagger.yaml",
+          "swagger.json"
+        ],
+        "file_types": [
+          "*.postman_collection.json"
+        ]
+      }
     }
-  }
+  },
+  "generic_project_files": [
+    "package.json",
+    "pyproject.toml",
+    "setup.py",
+    "setup.cfg",
+    "requirements.txt",
+    "Pipfile",
+    "pom.xml",
+    "build.gradle",
+    "build.gradle.kts",
+    "*.csproj",
+    "*.sln",
+    "pubspec.yaml",
+    "Gemfile",
+    "composer.json",
+    "app.json",
+    "*.xcodeproj",
+    "manifest.json"
+  ]
 }

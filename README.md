@@ -113,7 +113,9 @@ Skills named in `bundle.json` get ids of the form `bundled:<name>`; the rest are
 `catalog:<name>`. `classification.json` gives each skill a `kind`: `language`, `framework` or
 `workflow`. Language and framework skills carry `detect` signals (source file types, project
 files such as `playwright.config.*` or `go.mod`, and package dependencies) so a client can offer
-them only in projects that use them. Workflow skills carry `default: on` or `off`; language and framework skills are always `on`,
+them only in projects that use them. Any one signal is enough, unless the skill also lists
+`requires`, whose lists must each match too. A generic manifest such as `package.json` or
+`pyproject.toml` is never a framework signal on its own. Workflow skills carry `default: on` or `off`; language and framework skills are always `on`,
 since they apply wherever their signals match. `servable` says whether the skill's license lets
 a hosted service send the skill's text to users, and `sha256` is the skill's digest when it is
 servable and null when it is not. `catalog-external.json` lists skills offered from other repositories by
