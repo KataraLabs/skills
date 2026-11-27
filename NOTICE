@@ -1,0 +1,42 @@
+Katara Skills
+Copyright (c) 2026 Katara Labs. MIT License, see LICENSE.
+
+This repository includes work from the following projects. Each is kept in
+its own folder with its license text. sources.json records the repository,
+commit and sha256 of every copied file.
+
+skills/addyosmani/
+  Agent Skills by Addy Osmani
+  https://github.com/addyosmani/agent-skills
+  Commit e997ac5b9a74eab332d5e9793bb38a38c8cfdd74
+  MIT License, Copyright (c) 2025 Addy Osmani (skills/addyosmani/LICENSE)
+  Modified: edited so the skills name no particular agent product or tool
+  and do not assume a shell, commits by the agent, separate agents or
+  browser developer tools. The project's command prompts are rewritten as
+  the skills spec, plan, build, test, review, ship, simplify, a11y and
+  webperf.
+
+skills/callstack/
+  Callstack Agent Skills
+  https://github.com/callstackincubator/agent-skills
+  Commit 59e9d17446a248b21d86f078fcd0bd2d36db1ca4
+  MIT License, Copyright (c) 2026 Callstack Incubator (skills/callstack/LICENSE)
+  Unmodified.
+
+skills/lambdatest/
+  Agent Skills by TestMu AI / LambdaTest
+  https://github.com/LambdaTest/agent-skills
+  Commit 298d8688a015e34f77f4db3a8f5a0f1d0e53ccd7
+  MIT License, Copyright (c) 2025 TestMu AI / LambdaTest (skills/lambdatest/LICENSE)
+  Unmodified. A selection: the test framework skills.
+
+skills/trailofbits/
+  Trail of Bits Skills
+  https://github.com/trailofbits/skills
+  Commit 149d7b21f4067765b82e67029730b42d228ef4b4
+  Creative Commons Attribution-ShareAlike 4.0 International
+  (skills/trailofbits/LICENSE, https://creativecommons.org/licenses/by-sa/4.0/)
+  Made by Trail of Bits. Unmodified. A selection: language and testing skills.
+  These files remain under CC BY-SA 4.0, not under this repository's MIT
+  license. If you adapt them, your adaptation must be shared under the same
+  license.
