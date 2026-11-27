@@ -2,6 +2,9 @@
 name: rust
 description: Use when writing, changing, reviewing or testing Rust code (.rs files, or a project with Cargo.toml). Covers finding the crate's conventions, ownership-aware idiomatic style, error handling, crate and workspace layout, running cargo test and clippy, and common Rust mistakes.
 license: MIT
+metadata:
+  file-types: "*.rs"
+  project-files: "Cargo.toml Cargo.lock rust-toolchain.toml"
 ---
 
 # Rust

@@ -2,6 +2,10 @@
 name: react
 description: Use when building, changing, reviewing or testing React components and hooks (.jsx/.tsx files, or a project depending on react). Covers finding the project's conventions, component and hook style, state and effects, layout, running component tests, and common React mistakes. For React Native, use the React Native skills alongside this one.
 license: MIT
+metadata:
+  file-types: "*.jsx *.tsx"
+  project-files: "package.json"
+  package-dependencies: "react react-dom react-native"
 ---
 
 # React

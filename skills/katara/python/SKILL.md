@@ -2,6 +2,9 @@
 name: python
 description: Use when writing, changing, reviewing or testing Python code (.py files, or a project with pyproject.toml, setup.py or requirements.txt). Covers finding the project's tools and conventions, idiomatic style and typing, layout, running pytest, and the mistakes that most often break Python changes.
 license: MIT
+metadata:
+  file-types: "*.py *.pyi"
+  project-files: "pyproject.toml setup.py setup.cfg requirements.txt Pipfile uv.lock poetry.lock"
 ---
 
 # Python

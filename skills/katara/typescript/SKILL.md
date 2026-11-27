@@ -2,6 +2,9 @@
 name: typescript
 description: Use when writing, changing, reviewing or testing TypeScript code (.ts, .tsx, .mts, .cts files, or a project with a tsconfig.json). Covers finding the project's own conventions, type-safe style, layout, running the type checker and tests, and the mistakes that most often break TypeScript builds.
 license: MIT
+metadata:
+  file-types: "*.ts *.tsx *.mts *.cts"
+  project-files: "tsconfig.json tsconfig.*.json"
 ---
 
 # TypeScript

@@ -2,6 +2,9 @@
 name: swift
 description: Use when writing, changing, reviewing or testing Swift code (.swift files, an Xcode project, or a Package.swift). Covers finding the project's conventions, Swift style, optionals, concurrency, SwiftUI basics, package and app layout, running tests with swift test or xcodebuild, and common Swift mistakes.
 license: MIT
+metadata:
+  file-types: "*.swift"
+  project-files: "Package.swift *.xcodeproj *.xcworkspace project.yml"
 ---
 
 # Swift

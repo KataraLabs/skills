@@ -2,6 +2,9 @@
 name: go
 description: Use when writing, changing, reviewing or testing Go code (.go files, or a project with go.mod). Covers finding the module's conventions, idiomatic Go style and error handling, package layout, running go test with the race detector, and common Go mistakes.
 license: MIT
+metadata:
+  file-types: "*.go"
+  project-files: "go.mod go.work"
 ---
 
 # Go
