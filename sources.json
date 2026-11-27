@@ -1214,7 +1214,7 @@
       "license": "MIT",
       "modified": false,
       "folder": "skills/lambdatest",
-      "selection": "Test framework skills only. Skills for moving between hosted device or browser clouds and for the publisher's own hosted products are left out.",
+      "selection": "Test framework skills only. Skills for moving between hosted device or browser clouds, for the publisher's own hosted products, and skills built around them (cloud accessibility scans, CI templates wired to the hosted grid, agent testing through the publisher's tool) are left out.",
       "mappings": [
         {
           "upstream": "LICENSE",
@@ -1223,14 +1223,6 @@
         {
           "upstream": "shared/",
           "local": "skills/lambdatest/shared/"
-        },
-        {
-          "upstream": "accessibility-skill/",
-          "local": "skills/lambdatest/accessibility-skill/"
-        },
-        {
-          "upstream": "agent-testing-checks-skill/",
-          "local": "skills/lambdatest/agent-testing-checks-skill/"
         },
         {
           "upstream": "api-skill/",
@@ -1251,10 +1243,6 @@
         {
           "upstream": "capybara-skill/",
           "local": "skills/lambdatest/capybara-skill/"
-        },
-        {
-          "upstream": "cicd-pipeline-skill/",
-          "local": "skills/lambdatest/cicd-pipeline-skill/"
         },
         {
           "upstream": "codeception-skill/",
@@ -1453,30 +1441,6 @@
           "sha256": "77dc46a16868702369b873ddf7876e8459aa2473cc655c910d8b29b552a99544",
           "local": "skills/lambdatest/shared/testmu-cloud-reference.md",
           "local_sha256": "77dc46a16868702369b873ddf7876e8459aa2473cc655c910d8b29b552a99544"
-        },
-        {
-          "upstream": "accessibility-skill/SKILL.md",
-          "sha256": "8124548537fcf9faaf086e1c6d367ddd85e7787df7018d18e4c653afb093f366",
-          "local": "skills/lambdatest/accessibility-skill/SKILL.md",
-          "local_sha256": "8124548537fcf9faaf086e1c6d367ddd85e7787df7018d18e4c653afb093f366"
-        },
-        {
-          "upstream": "accessibility-skill/reference/playbook.md",
-          "sha256": "92e92a67b3fbbf159f6925d17a219c53c41149e193568a2639e3c458440feee0",
-          "local": "skills/lambdatest/accessibility-skill/reference/playbook.md",
-          "local_sha256": "92e92a67b3fbbf159f6925d17a219c53c41149e193568a2639e3c458440feee0"
-        },
-        {
-          "upstream": "agent-testing-checks-skill/SKILL.md",
-          "sha256": "7eade3e2281ee3998b08dec9f6ae7d4af78cf2f8afc02ef3ee19d1cd92e7c8d0",
-          "local": "skills/lambdatest/agent-testing-checks-skill/SKILL.md",
-          "local_sha256": "7eade3e2281ee3998b08dec9f6ae7d4af78cf2f8afc02ef3ee19d1cd92e7c8d0"
-        },
-        {
-          "upstream": "agent-testing-checks-skill/reference/playbook.md",
-          "sha256": "b4cce2ebcc96bb1fdc3af75852362c15a6b00afe9c9baa7f9f51eeb235a1cf50",
-          "local": "skills/lambdatest/agent-testing-checks-skill/reference/playbook.md",
-          "local_sha256": "b4cce2ebcc96bb1fdc3af75852362c15a6b00afe9c9baa7f9f51eeb235a1cf50"
         },
         {
           "upstream": "api-skill/README.md",
@@ -1765,18 +1729,6 @@
           "sha256": "480ef09c0b6a247d62fc8b33d83a3a7c2145ff8766e31cd029b1147316894e75",
           "local": "skills/lambdatest/capybara-skill/reference/playbook.md",
           "local_sha256": "480ef09c0b6a247d62fc8b33d83a3a7c2145ff8766e31cd029b1147316894e75"
-        },
-        {
-          "upstream": "cicd-pipeline-skill/SKILL.md",
-          "sha256": "d23bd09f4dd50ad33ab87b4c19e86a0d211b0895a748645b0df0480a396d6c83",
-          "local": "skills/lambdatest/cicd-pipeline-skill/SKILL.md",
-          "local_sha256": "d23bd09f4dd50ad33ab87b4c19e86a0d211b0895a748645b0df0480a396d6c83"
-        },
-        {
-          "upstream": "cicd-pipeline-skill/reference/playbook.md",
-          "sha256": "35b8215adfc2462312f21050fd60578c7e04b4aa4bf665b757af84baf844a9ee",
-          "local": "skills/lambdatest/cicd-pipeline-skill/reference/playbook.md",
-          "local_sha256": "35b8215adfc2462312f21050fd60578c7e04b4aa4bf665b757af84baf844a9ee"
         },
         {
           "upstream": "codeception-skill/SKILL.md",
