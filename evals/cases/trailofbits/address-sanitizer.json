@@ -1,0 +1,56 @@
+{
+  "skill": "address-sanitizer",
+  "path": "skills/trailofbits/address-sanitizer",
+  "cases": [
+    {
+      "id": "asan-fuzzer-memory-limit",
+      "prompt": "Build our libFuzzer harness (fuzz_parse.cc) with AddressSanitizer. Last time we tried, the fuzzer died right away complaining about the RSS limit.",
+      "checks": {
+        "all": [
+          {
+            "regex": "-fsanitize=(fuzzer,)?address|-fsanitize=address",
+            "flags": "i",
+            "why": "enables AddressSanitizer"
+          },
+          {
+            "regex": "rss_limit_mb=0",
+            "flags": "i",
+            "why": "lifts the libFuzzer memory limit"
+          }
+        ]
+      },
+      "expectations": [
+        "Explains that ASan reserves a very large amount of virtual memory, so the fuzzer memory limit must be disabled with `-rss_limit_mb=0`.",
+        "Compiles with `-g` for readable stack traces.",
+        "Sets ASAN_OPTIONS, for example disabling leak detection during fuzzing (`detect_leaks=0`) and reviewing leaks separately at the end."
+      ]
+    },
+    {
+      "id": "asan-not-for-production",
+      "prompt": "Should we ship our production server built with -fsanitize=address so it catches memory bugs from real traffic?",
+      "checks": {
+        "any": [
+          {
+            "regex": "less secure|attack surface|security (risk|hole)|exploit",
+            "flags": "i",
+            "why": "says ASan weakens production security"
+          },
+          {
+            "regex": "GWP-ASan",
+            "flags": "i",
+            "why": "points to sampling detection for production"
+          },
+          {
+            "regex": "only (for|in|during) (testing|tests|fuzzing|CI)|(testing|fuzzing|CI)[- ]only",
+            "flags": "i",
+            "why": "keeps ASan to testing, fuzzing or CI"
+          }
+        ]
+      },
+      "expectations": [
+        "Advises against running ASan builds in production, noting it can make the application less secure as well as slower and much larger in memory.",
+        "Recommends using ASan in tests, fuzzing and CI instead."
+      ]
+    }
+  ]
+}

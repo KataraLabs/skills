@@ -1,0 +1,62 @@
+{
+  "skill": "context-engineering",
+  "path": "skills/addyosmani/context-engineering",
+  "cases": [
+    {
+      "id": "degraded-session",
+      "prompt": "An agent session has degraded: responses are generic and it keeps forgetting project conventions. Fix the context setup. The audit is attached.",
+      "files": {
+        "context-audit.md": "# Session context audit\n\nThe repository is a TypeScript service. The current agent session loads the\nentire `docs/archive/` directory (1,800 files), generated API output, six old\nincident transcripts, and every ADR on startup. It does not load the active\n`CONTRIBUTING.md` or `docs/current-architecture.md`.\n\nObserved failures:\n\n- Responses recommend JavaScript even though new source must be TypeScript.\n- Tests are proposed with Jest, but this project uses Vitest.\n- The agent repeatedly forgets that database access belongs in repositories.\n- Answers become generic after long tool traces.\n\nCurrent task: add validation to one existing HTTP handler.\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "CONTRIBUTING\\.md|current-architecture",
+            "why": "loads the active convention docs",
+            "flags": "i"
+          }
+        ],
+        "all": [
+          {
+            "regex": "vitest",
+            "why": "carries the Vitest convention forward",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Diagnoses context causes (the 1,800-file archive, generated output and old transcripts crowding out the docs that state the conventions) rather than blaming the model.",
+        "Gives a specific loading plan: what to load at startup, what to load on demand, and why.",
+        "Scopes the context to the current task (validation in one HTTP handler) instead of loading everything."
+      ]
+    },
+    {
+      "id": "budget-before-next-task",
+      "prompt": "Read the attached context-budget notes and write a short context-management plan (the contents of context-plan.md) before the next task. Do not touch application files.",
+      "files": {
+        "budget-notes.md": "# Context budget before the next task\n\nThis host automatically compacts at 60% occupancy and currently reports 55%.\nThe next task needs a large source file and its focused test output.\nAn earlier note says to wait until 75% before managing context.\n\nApplication work is limited to a read-only diagnosis; edits and publication are not authorized.\nPreserve the reported live evidence: `node --test test/retry.test.js` failed `stops at maxAttempts=3`, with 4 calls observed instead of 3.\nOld import-error logs and replaced code drafts are now irrelevant.\nThe current task is complete; the next task and unresolved caller-guard question must survive a handoff.\nWrite a short context plan before continuing; do not edit application files or start another session.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "node --test test/retry\\.test\\.js",
+            "why": "preserves the exact failing command",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "caller.guard",
+            "why": "keeps the open caller-guard question",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses the reported 55% occupancy and 60% compaction point to free room before the next large read, instead of waiting for the old 75% note.",
+        "Drops or summarizes the old import-error logs and replaced drafts while keeping the read-only scope, the failing retry test result (4 calls instead of 3) and the exact command.",
+        "Keeps the completed task status, the next task and the unresolved caller-guard question in the handoff, and does not treat cleanup as permission to edit or publish."
+      ]
+    }
+  ]
+}

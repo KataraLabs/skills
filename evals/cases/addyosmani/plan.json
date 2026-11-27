@@ -1,0 +1,57 @@
+{
+  "skill": "plan",
+  "path": "skills/addyosmani/plan",
+  "cases": [
+    {
+      "id": "plan-from-spec",
+      "prompt": "Make a plan for this spec.",
+      "files": {
+        "SPEC.md": "# Bookmarks SPEC\n\nUsers save a URL with a title, list their bookmarks newest first, and delete one.\nStack: Node 22, Express, SQLite. Tests: node --test.\nAcceptance: a saved bookmark appears at the top of the list; deleting removes it; invalid URLs are rejected with 400.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "acceptance",
+            "why": "gives acceptance criteria",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "tasks/plan\\.md|tasks/todo\\.md",
+            "why": "names the plan files",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Makes no code changes and writes no implementation code.",
+        "Slices the work vertically (for example save-and-list end to end, then delete) rather than \"database layer, then API, then UI\".",
+        "Each task has acceptance criteria and a verification step, with a checkpoint between phases and dependency order respected.",
+        "Presents the plan for review and says where it goes (tasks/plan.md and tasks/todo.md)."
+      ]
+    },
+    {
+      "id": "existing-incomplete-plan",
+      "prompt": "Make a plan for this spec and save it.",
+      "files": {
+        "SPEC.md": "# Bookmarks SPEC\n\nUsers save a URL with a title, list their bookmarks newest first, and delete one.\nStack: Node 22, Express, SQLite. Tests: node --test.\nAcceptance: a saved bookmark appears at the top of the list; deleting removes it; invalid URLs are rejected with 400.\n",
+        "tasks/todo.md": "# Todo: CSV import\n\n- [x] Parse CSV rows\n- [ ] Validate column headers\n- [ ] Import rows in a transaction\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "overwrit|replace|archive|unchecked|incomplete|unfinished",
+            "why": "notices the incomplete plan",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Notices that tasks/todo.md holds unchecked tasks for different work (CSV import).",
+        "Stops and asks how to proceed before writing, rather than overwriting the existing plan.",
+        "May present the bookmarks plan in the reply for review, but does not claim to have replaced the existing file."
+      ]
+    }
+  ]
+}

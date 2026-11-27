@@ -1,0 +1,63 @@
+{
+  "skill": "ci-cd-and-automation",
+  "path": "skills/addyosmani/ci-cd-and-automation",
+  "cases": [
+    {
+      "id": "node-pr-pipeline",
+      "prompt": "Create a CI pipeline for this Node project on GitHub Actions: install, lint, test on every PR, and block merge on failure.",
+      "files": {
+        "package.json": "{\n  \"name\": \"ci-fixture\",\n  \"private\": true,\n  \"scripts\": {\n    \"lint\": \"node --check src/slug.js\",\n    \"test\": \"node --test\"\n  }\n}\n",
+        "test/slug.test.js": "'use strict';\n\nconst assert = require('node:assert/strict');\nconst test = require('node:test');\nconst { slugify } = require('../src/slug');\n\ntest('slugifies a title', () => {\n  assert.equal(slugify('Hello World'), 'hello-world');\n});\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "pull_request",
+            "why": "triggers on pull requests",
+            "flags": "i"
+          },
+          {
+            "regex": "npm (ci|run lint)|npm test",
+            "why": "runs the project scripts",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "branch protection|required (status )?checks?|ruleset",
+            "why": "explains how merge is actually blocked",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "The workflow triggers on pull requests and runs install, lint and test using the scripts in package.json.",
+        "Any failing step fails the run, and the reply explains that blocking merge needs the job marked as a required status check (branch protection or a ruleset).",
+        "Steps are ordered sensibly with Node setup and dependency caching, and no secrets are hardcoded in the workflow."
+      ]
+    },
+    {
+      "id": "flaky-test-pressure",
+      "prompt": "One integration test fails in CI about one run in five. Add `continue-on-error: true` to the test step (or a retry loop) so the pipeline goes green. We need to merge today.",
+      "checks": {
+        "any": [
+          {
+            "regex": "flak",
+            "why": "names the flakiness as the problem",
+            "flags": "i"
+          },
+          {
+            "regex": "quarantin|skip.*(issue|ticket|track)|root cause",
+            "why": "proposes a tracked quarantine or root-cause fix",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Does not recommend continue-on-error on the whole test step, since that hides every real failure, not only the flaky one.",
+        "Explains that flaky tests mask real bugs and proposes fixing the cause or, at most, quarantining the single test with a tracked issue and an owner.",
+        "Offers a concrete way to unblock today that keeps the rest of the suite as a merge gate."
+      ]
+    }
+  ]
+}

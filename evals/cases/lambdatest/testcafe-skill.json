@@ -1,0 +1,56 @@
+{
+  "skill": "testcafe-skill",
+  "path": "skills/lambdatest/testcafe-skill",
+  "cases": [
+    {
+      "id": "testcafe-login",
+      "prompt": "Write a TestCafe test for logging in.",
+      "checks": {
+        "all": [
+          {
+            "regex": "Selector\\(",
+            "flags": "",
+            "why": "uses Selector"
+          }
+        ],
+        "any": [
+          {
+            "regex": "fixture\\s*[`(]",
+            "flags": "",
+            "why": "declares a fixture"
+          }
+        ]
+      },
+      "expectations": [
+        "Declares a fixture with .page.",
+        "Uses t.typeText and t.click.",
+        "Asserts with t.expect(...).ok() or .eql(), which retries automatically."
+      ]
+    },
+    {
+      "id": "testcafe-role",
+      "prompt": "How do I reuse a login across TestCafe tests?",
+      "checks": {
+        "all": [
+          {
+            "regex": "Role\\(",
+            "flags": "",
+            "why": "defines a Role"
+          }
+        ],
+        "any": [
+          {
+            "regex": "useRole",
+            "flags": "",
+            "why": "uses useRole"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines a Role with the login steps.",
+        "Calls t.useRole in beforeEach or the test.",
+        "Explains that the role caches cookies and storage."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "skill": "interview-me",
+  "path": "skills/addyosmani/interview-me",
+  "cases": [
+    {
+      "id": "better-admin-page",
+      "prompt": "I want 'a better admin page'. Interview me before proposing anything.",
+      "checks": {
+        "none": [
+          {
+            "regex": "(\\?[^?]*){3,}",
+            "why": "does not ask a batch of questions",
+            "flags": "s"
+          }
+        ]
+      },
+      "expectations": [
+        "Asks a single question in this reply, not a batch.",
+        "Attaches its own best guess to the question.",
+        "Does not propose a solution or design yet.",
+        "The question aims at the underlying goal (who uses the admin page and what is hard today) rather than surface details like colors."
+      ]
+    },
+    {
+      "id": "continue-after-answer",
+      "prompt": "Earlier you asked who uses the admin page. Answer: our two support agents, mostly to refund orders and reset customer passwords. Keep interviewing; do not propose anything yet.",
+      "checks": {
+        "none": [
+          {
+            "regex": "(\\?[^?]*){3,}",
+            "why": "still one question at a time",
+            "flags": "s"
+          }
+        ]
+      },
+      "expectations": [
+        "Asks the next single question, building on the answer (for example what makes refunds or resets slow or error-prone today).",
+        "Offers a guess with the question.",
+        "Does not jump to proposing screens or features."
+      ]
+    }
+  ]
+}

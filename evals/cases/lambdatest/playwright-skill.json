@@ -1,0 +1,62 @@
+{
+  "skill": "playwright-skill",
+  "path": "skills/lambdatest/playwright-skill",
+  "cases": [
+    {
+      "id": "ts-login-pom",
+      "prompt": "Scaffold a Playwright TypeScript test for logging in, with a page object.",
+      "checks": {
+        "all": [
+          {
+            "regex": "getBy(Role|Label|TestId|Text)",
+            "flags": "",
+            "why": "uses user-facing locators"
+          }
+        ],
+        "any": [
+          {
+            "regex": "class\\s+\\w*Page",
+            "flags": "",
+            "why": "defines a page class"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines a LoginPage class with locators and a login method.",
+        "Uses web-first assertions (toHaveURL, toBeVisible) and no fixed waits.",
+        "Shows playwright.config.ts with baseURL.",
+        "Runs against a local browser, emulator or app; it does not require a hosted cloud grid or vendor account."
+      ]
+    },
+    {
+      "id": "python-search",
+      "prompt": "Write a Playwright test in Python with pytest for searching our site.",
+      "checks": {
+        "all": [
+          {
+            "regex": "expect\\(",
+            "flags": "",
+            "why": "uses expect"
+          }
+        ],
+        "any": [
+          {
+            "regex": "def test_\\w+\\(\\s*page",
+            "flags": "",
+            "why": "uses the pytest-playwright page fixture"
+          },
+          {
+            "regex": "sync_playwright",
+            "flags": "",
+            "why": "uses the sync API"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses the pytest-playwright page fixture.",
+        "Uses get_by_role or get_by_placeholder locators.",
+        "Asserts with expect(...).to_have_... web-first assertions."
+      ]
+    }
+  ]
+}

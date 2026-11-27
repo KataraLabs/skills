@@ -1,0 +1,49 @@
+{
+  "skill": "unittest-skill",
+  "path": "skills/lambdatest/unittest-skill",
+  "cases": [
+    {
+      "id": "bank-account",
+      "prompt": "Write unittest tests for a BankAccount class with deposit and withdraw (withdraw raises on insufficient funds).",
+      "checks": {
+        "all": [
+          {
+            "regex": "unittest\\.TestCase",
+            "flags": "",
+            "why": "subclasses TestCase"
+          }
+        ],
+        "any": [
+          {
+            "regex": "assertRaises",
+            "flags": "",
+            "why": "asserts the exception"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses setUp to create the account.",
+        "Uses assertRaises as a context manager for the insufficient funds case.",
+        "Uses subTest for multiple amounts, or shows separate focused tests."
+      ]
+    },
+    {
+      "id": "patch-http",
+      "prompt": "How do I mock an HTTP call made with requests.get inside weather.get_temp in a unittest test?",
+      "checks": {
+        "any": [
+          {
+            "regex": "@patch|patch\\(|mock\\.patch",
+            "flags": "",
+            "why": "patches the call"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses unittest.mock.patch on weather.requests.get (where it is looked up).",
+        "Configures return_value.json.return_value.",
+        "Asserts the call with assert_called_once_with."
+      ]
+    }
+  ]
+}

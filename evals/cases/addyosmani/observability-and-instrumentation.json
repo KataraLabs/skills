@@ -1,0 +1,61 @@
+{
+  "skill": "observability-and-instrumentation",
+  "path": "skills/addyosmani/observability-and-instrumentation",
+  "cases": [
+    {
+      "id": "payment-retry-instrumentation",
+      "prompt": "Instrument this payment-retry feature so on-call can operate it.",
+      "files": {
+        "payment-retry.js": "'use strict';\n\nasync function retryPayment(payment, gateway) {\n  for (let attempt = 1; attempt <= 3; attempt++) {\n    try {\n      return await gateway.charge(payment);\n    } catch (error) {\n      console.log(`retry ${attempt} failed: ${error.message}`);\n    }\n  }\n  throw new Error('payment failed');\n}\n\nmodule.exports = { retryPayment };\n",
+        "operations.md": "# Payment retry operations\n\nOn-call must be able to answer:\n\n- Are retries recovering transient gateway failures?\n- Which gateway and failure class is driving exhaustion?\n- Is one payment being charged more than once?\n- Which customer-visible payments need intervention now?\n\nPayment and attempt IDs are safe correlation identifiers. Card numbers,\ncustomer email addresses, and raw gateway responses must never be logged.\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "payment_?id|paymentId",
+            "why": "uses the payment id for correlation",
+            "flags": "i"
+          }
+        ],
+        "all": [
+          {
+            "regex": "attempt",
+            "why": "records the attempt number",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Starts from the on-call questions in operations.md and maps each to a signal.",
+        "Replaces the prose console.log with structured events carrying payment and attempt ids, without card numbers, emails or raw gateway responses.",
+        "Metric labels are bounded (gateway, failure class, outcome), with no payment or customer ids as labels.",
+        "Alerts are symptom-based and actionable, for example retry exhaustion rate or a duplicate charge, rather than every logged error."
+      ]
+    },
+    {
+      "id": "cause-alerts-and-user-label",
+      "prompt": "Add a Prometheus histogram for checkout latency labeled by user_id so we can see slow users, and page on-call when CPU goes over 80% or any error is logged.",
+      "checks": {
+        "all": [
+          {
+            "regex": "cardinality",
+            "why": "names the cardinality problem",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "symptom|SLO|error rate|latency",
+            "why": "proposes symptom-based alerting",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Refuses user_id as a metric label because of unbounded cardinality, and moves per-user detail to logs or traces.",
+        "Explains that CPU over 80% and any logged error are cause signals that page when users are fine, and proposes symptom alerts such as checkout error rate or p95 latency against a target.",
+        "Keeps the latency histogram with bounded labels such as route and status class."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "skill": "api-ai-augmented",
+  "path": "skills/lambdatest/api-skill/ai-based-api",
+  "cases": [
+    {
+      "id": "order-status-tool",
+      "prompt": "Write an LLM tool definition (function calling schema) for our endpoint GET /orders/{id}, which returns the order status.",
+      "checks": {
+        "all": [
+          {
+            "regex": "input_schema|inputSchema|parameters",
+            "flags": "i",
+            "why": "defines a parameter schema"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\"required\"|required:",
+            "flags": "i",
+            "why": "marks the id as required"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines one tool with a clear name and a description that says when the model should use it.",
+        "The parameter schema is a JSON Schema object with an order id property, typed and listed as required.",
+        "Describes or shows what the tool returns or how the API response maps to the tool result."
+      ]
+    },
+    {
+      "id": "invoice-mcp-tools",
+      "prompt": "Expose our createInvoice, getInvoice and deleteInvoice endpoints as MCP tools. Any design advice?",
+      "checks": {
+        "all": [
+          {
+            "regex": "inputSchema|input_schema|schema",
+            "flags": "i",
+            "why": "gives each tool a schema"
+          }
+        ]
+      },
+      "expectations": [
+        "Gives each of the three operations its own tool with a descriptive name and input schema.",
+        "Treats deleteInvoice as destructive: asks for confirmation, a guard, or clear labelling of the side effect.",
+        "Advises returning clear, model-readable errors rather than raw stack traces or bare status codes."
+      ]
+    }
+  ]
+}

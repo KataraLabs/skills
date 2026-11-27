@@ -1,0 +1,54 @@
+{
+  "skill": "github-actions",
+  "path": "skills/callstack/github-actions",
+  "cases": [
+    {
+      "id": "pr-simulator-emulator-builds",
+      "prompt": "Set up a GitHub Actions workflow that builds our React Native app for the iOS simulator and an Android emulator on every pull request, so testers can download the builds.",
+      "checks": {
+        "all": [
+          {
+            "regex": "upload-artifact@v4",
+            "flags": "i",
+            "why": "uploads with actions/upload-artifact@v4"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\\.app\\.tar\\.gz|tar\\s+-c",
+            "flags": "i",
+            "why": "packs the iOS .app as a tarball"
+          }
+        ]
+      },
+      "expectations": [
+        "Builds an iOS simulator .app (for example with xcodebuild and `-sdk iphonesimulator`) and packs it as a .tar.gz before upload.",
+        "Builds an Android debug .apk that runs on an emulator.",
+        "Triggers on pull_request (and optionally workflow_dispatch), and captures the upload step's `artifact-id` output or uses stable artifact names for scripted download."
+      ]
+    },
+    {
+      "id": "download-artifact-by-script",
+      "prompt": "How can a script download the iOS simulator build from the latest successful run of our mobile-build workflow?",
+      "checks": {
+        "any": [
+          {
+            "regex": "gh run download",
+            "flags": "i",
+            "why": "downloads with gh run download"
+          },
+          {
+            "regex": "/actions/artifacts/",
+            "flags": "i",
+            "why": "uses the REST artifacts endpoint"
+          }
+        ]
+      },
+      "expectations": [
+        "Finds the run (for example with `gh run list --workflow mobile-build.yml --status success`) and downloads the artifact by name with `gh run download`.",
+        "Mentions the REST alternative `GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/zip`.",
+        "Notes that the downloaded iOS artifact needs unpacking (the .tar.gz) before installing it on a simulator."
+      ]
+    }
+  ]
+}

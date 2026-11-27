@@ -1,0 +1,47 @@
+{
+  "skill": "testunit-skill",
+  "path": "skills/lambdatest/testunit-skill",
+  "cases": [
+    {
+      "id": "calculator-testunit",
+      "prompt": "Write test-unit tests in Ruby for a Calculator class.",
+      "checks": {
+        "all": [
+          {
+            "regex": "Test::Unit::TestCase",
+            "flags": "",
+            "why": "subclasses TestCase"
+          },
+          {
+            "regex": "assert_equal",
+            "flags": "",
+            "why": "uses assert_equal"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses setup to create the calculator.",
+        "Names test methods with the test_ prefix.",
+        "Uses assert_raise for error cases."
+      ]
+    },
+    {
+      "id": "testunit-data",
+      "prompt": "How do I write a data-driven test with the test-unit gem?",
+      "checks": {
+        "any": [
+          {
+            "regex": "\\bdata\\s*\\(|\\bdata\\s+do|data\\(\\s*[\"']",
+            "flags": "",
+            "why": "uses data declarations"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses the data declaration (label and value, or a block returning a hash).",
+        "The test method takes the data argument.",
+        "Shows how each data set reports separately."
+      ]
+    }
+  ]
+}

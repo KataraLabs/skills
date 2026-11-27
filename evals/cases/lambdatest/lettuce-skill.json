@@ -1,0 +1,49 @@
+{
+  "skill": "lettuce-skill",
+  "path": "skills/lambdatest/lettuce-skill",
+  "cases": [
+    {
+      "id": "lettuce-login",
+      "prompt": "Write a Lettuce feature and steps for logging in with Selenium.",
+      "checks": {
+        "all": [
+          {
+            "regex": "@step",
+            "flags": "",
+            "why": "uses @step"
+          }
+        ],
+        "any": [
+          {
+            "regex": "world\\.",
+            "flags": "",
+            "why": "shares state on world"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses regex step patterns with capture groups.",
+        "Creates and quits the browser in terrain.py hooks.",
+        "Stores the driver on world."
+      ]
+    },
+    {
+      "id": "keep-lettuce",
+      "prompt": "Should we keep using Lettuce? We are moving to Python 3.11.",
+      "checks": {
+        "all": [
+          {
+            "regex": "behave",
+            "flags": "i",
+            "why": "suggests behave"
+          }
+        ]
+      },
+      "expectations": [
+        "Says Lettuce is unmaintained and has Python 3 problems.",
+        "Recommends migrating to behave.",
+        "Maps the main concepts (steps, world to context, terrain to environment.py)."
+      ]
+    }
+  ]
+}

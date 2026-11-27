@@ -1,0 +1,58 @@
+{
+  "skill": "playwright-patterns-skill",
+  "path": "skills/lambdatest/playwright-patterns-skill",
+  "cases": [
+    {
+      "id": "review-spec",
+      "prompt": "Review my Playwright test.",
+      "files": {
+        "checkout.spec.ts": "test('checkout', async ({ page }) => {\n  await page.goto('http://localhost:3000/cart');\n  await page.locator('div > .btn:nth-child(3)').click();\n  await page.waitForTimeout(3000);\n  const el = page.locator('#confirmation');\n  expect(await el.isVisible()).toBe(true);\n});\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "getByRole|getByText|getByTestId|getByLabel",
+            "flags": "",
+            "why": "recommends user-facing locators"
+          }
+        ],
+        "any": [
+          {
+            "regex": "toBeVisible|web-first",
+            "flags": "i",
+            "why": "recommends web-first assertions"
+          }
+        ]
+      },
+      "expectations": [
+        "Replaces the CSS nth-child locator with getByRole or getByTestId.",
+        "Removes waitForTimeout.",
+        "Replaces expect(await isVisible()).toBe(true) with await expect(locator).toBeVisible().",
+        "Suggests baseURL in config instead of a hard-coded URL."
+      ]
+    },
+    {
+      "id": "strict-mode",
+      "prompt": "I get: strict mode violation: locator('button', { hasText: 'Save' }) resolved to 2 elements. How do I fix it?",
+      "checks": {
+        "any": [
+          {
+            "regex": "getByRole",
+            "flags": "",
+            "why": "uses getByRole"
+          },
+          {
+            "regex": "filter|within|scope|exact",
+            "flags": "i",
+            "why": "narrows the locator"
+          }
+        ]
+      },
+      "expectations": [
+        "Explains strict mode requires a locator to match exactly one element for actions.",
+        "Narrows the locator by scoping to a container, filter, or getByRole with exact name.",
+        "Advises against first() or nth() as the default fix."
+      ]
+    }
+  ]
+}

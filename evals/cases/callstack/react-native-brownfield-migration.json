@@ -1,0 +1,52 @@
+{
+  "skill": "react-native-brownfield-migration",
+  "path": "skills/callstack/react-native-brownfield-migration",
+  "cases": [
+    {
+      "id": "expo-path-packaging",
+      "prompt": "We have decided to move our checkout flow to React Native inside our existing native iOS app, incrementally. This is the React Native app that will hold the flow. Set up the packaging for iOS.",
+      "files": {
+        "package.json": "{\n  \"name\": \"checkout-rn\",\n  \"main\": \"index.ts\",\n  \"dependencies\": {\n    \"expo\": \"~52.0.11\",\n    \"react\": \"18.3.1\",\n    \"react-native\": \"0.76.3\"\n  }\n}\n",
+        "app.json": "{ \"expo\": { \"name\": \"checkout-rn\", \"slug\": \"checkout-rn\", \"ios\": { \"bundleIdentifier\": \"com.example.checkout\" } } }\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "react-native-brownfield",
+            "flags": "i",
+            "why": "uses @callstack/react-native-brownfield"
+          }
+        ],
+        "any": [
+          {
+            "regex": "XCFramework",
+            "flags": "i",
+            "why": "packages an XCFramework for the host"
+          }
+        ]
+      },
+      "expectations": [
+        "Picks the Expo track because expo is in package.json, and does not mix in bare React Native steps.",
+        "Says to check `npx brownfield <command> --help` before relying on specific flags, and to keep stable settings in a brownfield.config file.",
+        "Validates the XCFramework packaging before integrating it into the host app, then integrates one surface (the checkout flow) first."
+      ]
+    },
+    {
+      "id": "decision-not-made-yet",
+      "prompt": "We have native iOS and Android apps. Should we move to React Native gradually or rewrite from scratch?",
+      "checks": {
+        "any": [
+          {
+            "regex": "assess|assessment",
+            "flags": "i",
+            "why": "routes to the migration assessment first"
+          }
+        ]
+      },
+      "expectations": [
+        "Recognizes that the brownfield decision has not been made and points to assessing the migration first.",
+        "Does not give setup, packaging or host integration steps for @callstack/react-native-brownfield."
+      ]
+    }
+  ]
+}

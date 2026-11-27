@@ -1,0 +1,49 @@
+{
+  "skill": "protractor-skill",
+  "path": "skills/lambdatest/protractor-skill",
+  "cases": [
+    {
+      "id": "angular-login",
+      "prompt": "Write a Protractor test for an Angular login page.",
+      "checks": {
+        "all": [
+          {
+            "regex": "browser\\.get",
+            "flags": "",
+            "why": "opens the page"
+          }
+        ],
+        "any": [
+          {
+            "regex": "element\\(by\\.(model|css|id|binding|buttonText)",
+            "flags": "",
+            "why": "uses Protractor locators"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses async/await with SELENIUM_PROMISE_MANAGER false.",
+        "Uses Protractor locators and Jasmine expectations.",
+        "Notes Protractor is deprecated and suggests a migration path."
+      ]
+    },
+    {
+      "id": "protractor-future",
+      "prompt": "Our Angular e2e suite is on Protractor. What should we do?",
+      "checks": {
+        "any": [
+          {
+            "regex": "Playwright|Cypress|WebdriverIO",
+            "flags": "i",
+            "why": "names a replacement"
+          }
+        ]
+      },
+      "expectations": [
+        "States Protractor reached end of life and is no longer maintained.",
+        "Recommends a replacement and outlines how locators and waits map across.",
+        "Suggests migrating incrementally."
+      ]
+    }
+  ]
+}

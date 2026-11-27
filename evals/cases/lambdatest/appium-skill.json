@@ -1,0 +1,57 @@
+{
+  "skill": "appium-skill",
+  "path": "skills/lambdatest/appium-skill",
+  "cases": [
+    {
+      "id": "android-login-java",
+      "prompt": "Write an Appium Java test that logs into our Android app on a local emulator. Element ids: username, password, login_button; after login a view with id home_title appears.",
+      "checks": {
+        "all": [
+          {
+            "regex": "WebDriverWait|ExpectedConditions|wait",
+            "flags": "i",
+            "why": "waits explicitly"
+          }
+        ],
+        "any": [
+          {
+            "regex": "UiAutomator2Options|uiautomator2",
+            "flags": "i",
+            "why": "uses the UiAutomator2 driver"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses AppiumBy.id or accessibility ids to find elements.",
+        "Waits for home_title with an explicit wait instead of Thread.sleep.",
+        "Connects to a local Appium server and quits the driver in teardown.",
+        "Runs against a local browser, emulator or app; it does not require a hosted cloud grid or vendor account."
+      ]
+    },
+    {
+      "id": "ios-login-python",
+      "prompt": "Write the same Appium login test for our iOS app in Python with pytest, using accessibility ids.",
+      "checks": {
+        "all": [
+          {
+            "regex": "XCUITest",
+            "flags": "i",
+            "why": "uses the XCUITest driver"
+          }
+        ],
+        "any": [
+          {
+            "regex": "ACCESSIBILITY_ID|accessibility.?id",
+            "flags": "i",
+            "why": "locates by accessibility id"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses XCUITestOptions or XCUITest automationName.",
+        "Creates and quits the driver in a pytest fixture with yield.",
+        "Uses explicit waits for the post-login screen."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "skill": "mutation-testing",
+  "path": "skills/trailofbits/mutation-testing",
+  "cases": [
+    {
+      "id": "set-up-mewt",
+      "prompt": "Set up mutation testing with mewt on our Rust crate and show me where the tests are weakest.",
+      "checks": {
+        "all": [
+          {
+            "regex": "mewt init",
+            "flags": "i",
+            "why": "initializes with mewt init"
+          },
+          {
+            "regex": "mewt (run|results)",
+            "flags": "i",
+            "why": "runs the campaign and reads results"
+          }
+        ]
+      },
+      "expectations": [
+        "Starts with `mewt init`, then `mewt run`, then `mewt results` or `mewt status` to read uncaught mutants.",
+        "Narrows results, for example with `--severity high` or `--target`, to find the weakest areas first.",
+        "Suggests `mewt --help` or subcommand help to confirm flags."
+      ]
+    },
+    {
+      "id": "interpret-timeouts-and-uncaught",
+      "prompt": "Our mewt run shows 40 Uncaught and 12 Timeout mutants. Do the timeouts count as covered? Which uncaught ones should we look at first?",
+      "checks": {
+        "any": [
+          {
+            "regex": "inconclusive|not evidence|does not (show|mean)",
+            "flags": "i",
+            "why": "treats timeouts as inconclusive"
+          }
+        ]
+      },
+      "expectations": [
+        "Says Timeout results are inconclusive and not evidence that the tests cover that code.",
+        "Prioritizes uncaught mutants by severity (error replacement first) but also by what the mutated code does, so a low-severity survivor in money logic outranks one in a log line.",
+        "Says to check each survivor for an equivalent mutation before treating it as a testing gap, for example with `mewt print mutant --id`."
+      ]
+    }
+  ]
+}

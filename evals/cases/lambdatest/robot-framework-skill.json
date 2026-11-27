@@ -1,0 +1,47 @@
+{
+  "skill": "robot-framework-skill",
+  "path": "skills/lambdatest/robot-framework-skill",
+  "cases": [
+    {
+      "id": "robot-login",
+      "prompt": "Write a Robot Framework test for logging in with SeleniumLibrary.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\*\\*\\*\\s*(Test Cases|Settings)\\s*\\*\\*\\*",
+            "flags": "",
+            "why": "uses Robot sections"
+          },
+          {
+            "regex": "Library\\s+SeleniumLibrary",
+            "flags": "",
+            "why": "imports SeleniumLibrary"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines user keywords for the login steps.",
+        "Uses Wait Until Element Is Visible or similar waits instead of Sleep.",
+        "Closes browsers in a teardown."
+      ]
+    },
+    {
+      "id": "robot-data-driven",
+      "prompt": "Make data-driven login tests in Robot Framework for valid and invalid users.",
+      "checks": {
+        "any": [
+          {
+            "regex": "Test Template|\\[Template\\]",
+            "flags": "",
+            "why": "uses a template"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses Test Template with a keyword taking username, password and expected result.",
+        "Lists each data row as a test case.",
+        "Keeps the keyword reusable."
+      ]
+    }
+  ]
+}

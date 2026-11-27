@@ -1,0 +1,47 @@
+{
+  "skill": "codeception-skill",
+  "path": "skills/lambdatest/codeception-skill",
+  "cases": [
+    {
+      "id": "acceptance-login",
+      "prompt": "Write a Codeception acceptance test for logging in.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\$I->",
+            "flags": "",
+            "why": "uses the actor"
+          },
+          {
+            "regex": "amOnPage",
+            "flags": "",
+            "why": "opens the page"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses a Cest class with an AcceptanceTester parameter.",
+        "Uses fillField, click and see or seeInCurrentUrl.",
+        "Shows acceptance.suite.yml with WebDriver against a local browser and url."
+      ]
+    },
+    {
+      "id": "cest-data-provider",
+      "prompt": "How do I run one Codeception Cest test with several data sets?",
+      "checks": {
+        "any": [
+          {
+            "regex": "@dataProvider|#\\[DataProvider|@example|#\\[Examples|Example \\$",
+            "flags": "i",
+            "why": "uses data providers or examples"
+          }
+        ]
+      },
+      "expectations": [
+        "Shows a data provider or @example annotations attached to the test method.",
+        "Reads values through the Example object.",
+        "Shows a short, runnable example."
+      ]
+    }
+  ]
+}

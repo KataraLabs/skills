@@ -1,0 +1,50 @@
+{
+  "skill": "idea-refine",
+  "path": "skills/addyosmani/idea-refine",
+  "cases": [
+    {
+      "id": "vague-knowledge-sharing-tool",
+      "prompt": "Refine this vague idea: 'some kind of tool that helps teams share knowledge better'.",
+      "checks": {
+        "all": [
+          {
+            "regex": "not doing",
+            "why": "includes a Not Doing list",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "assum",
+            "why": "surfaces assumptions",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Asks sharpening questions (who the team is, what knowledge is lost today, how it is shared now) before converging.",
+        "States hidden assumptions explicitly.",
+        "Includes an explicit Not Doing list.",
+        "Pushes back on weak parts of the idea instead of only agreeing."
+      ]
+    },
+    {
+      "id": "recipe-extension-pricing",
+      "prompt": "Idea: a browser extension that turns any recipe page into a shopping list, at $15/month. Help me sharpen it.",
+      "checks": {
+        "all": [
+          {
+            "regex": "not doing",
+            "why": "includes a Not Doing list",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Generates more than one variation or direction for the idea rather than polishing the first version only.",
+        "Challenges the $15 monthly price as an untested assumption and suggests how to test willingness to pay.",
+        "Proposes a small first version and an explicit Not Doing list."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "skill": "review",
+  "path": "skills/addyosmani/review",
+  "cases": [
+    {
+      "id": "orders-diff-five-axes",
+      "prompt": "Review this diff.",
+      "files": {
+        "orders.diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -10,3 +10,14 @@\n+async function listOrdersWithItems(db, customerId) {\n+  const orders = await db.all('SELECT * FROM orders WHERE customer_id = ?', customerId);\n+  for (const o of orders) {\n+    o.items = await db.all('SELECT * FROM items WHERE order_id = ?', o.id);\n+  }\n+  return orders;\n+}\n+\n+router.get('/orders', async (req, res) => {\n+  res.json(await listOrdersWithItems(db, req.query.customerId));\n+});\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "N\\s*\\+\\s*1",
+            "why": "catches the N+1 query",
+            "flags": "i"
+          }
+        ],
+        "all": [
+          {
+            "regex": "orders\\.js:\\d+|:\\d+",
+            "why": "gives file:line references",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Covers the five axes: correctness, readability, architecture, security and performance.",
+        "Reports that any caller can list another customer's orders by passing customerId in the query with no auth check, labeled Critical.",
+        "Reports the per-order items query as an N+1 and the unbounded result set, each with a recommended fix.",
+        "Findings are sorted into Critical, Required, Optional and Nit."
+      ]
+    },
+    {
+      "id": "small-rename-diff",
+      "prompt": "Quick review please.",
+      "files": {
+        "rename.diff": "--- a/src/cart.js\n+++ b/src/cart.js\n@@ -1,5 +1,5 @@\n-function calc(c) {\n-  return c.reduce((a, b) => a + b.qty * b.price, 0);\n+function cartSubtotal(lines) {\n+  return lines.reduce((sum, line) => sum + line.qty * line.price, 0);\n }\n-module.exports = { calc };\n+module.exports = { cartSubtotal };\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "caller|import|calc\\b",
+            "why": "checks callers of the renamed export",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Notes that renaming the exported calc to cartSubtotal breaks any caller that still imports calc, and asks for or recommends checking them.",
+        "Does not invent Critical findings for a behavior-preserving rename; the improved names are acknowledged.",
+        "Findings that are given carry a severity label (Critical, Required, Optional or Nit) and a file:line reference."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "skill": "postman-newman-automation",
+  "path": "skills/lambdatest/api-skill/postman/postman-to-newman",
+  "cases": [
+    {
+      "id": "nightly-shell-script",
+      "prompt": "Write a shell script to run all our Postman collections in ./collections nightly with Newman, failing if any of them fail.",
+      "checks": {
+        "all": [
+          {
+            "regex": "newman run",
+            "flags": "",
+            "why": "runs newman"
+          }
+        ],
+        "any": [
+          {
+            "regex": "exit|set -e|status",
+            "flags": "i",
+            "why": "propagates failure"
+          }
+        ]
+      },
+      "expectations": [
+        "Loops over each collection and runs newman with the environment file.",
+        "Tracks failures and exits non-zero if any run failed.",
+        "Writes a report per collection."
+      ]
+    },
+    {
+      "id": "jenkins-stage",
+      "prompt": "Add a Jenkins pipeline stage that runs our collection with Newman and publishes JUnit results.",
+      "checks": {
+        "all": [
+          {
+            "regex": "stage\\s*\\(",
+            "flags": "",
+            "why": "defines a stage"
+          },
+          {
+            "regex": "junit",
+            "flags": "i",
+            "why": "publishes JUnit"
+          }
+        ]
+      },
+      "expectations": [
+        "Provides a declarative Jenkinsfile stage running newman with the junit reporter.",
+        "Publishes results with the junit step in post always.",
+        "Uses Jenkins credentials for secrets."
+      ]
+    }
+  ]
+}

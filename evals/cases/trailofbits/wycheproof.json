@@ -1,0 +1,57 @@
+{
+  "skill": "wycheproof",
+  "path": "skills/trailofbits/wycheproof",
+  "cases": [
+    {
+      "id": "ecdsa-vectors",
+      "prompt": "Add Wycheproof tests for our ECDSA P-256 signature verification in Python.",
+      "checks": {
+        "all": [
+          {
+            "regex": "invalid",
+            "flags": "i",
+            "why": "tests invalid vectors"
+          },
+          {
+            "regex": "acceptable",
+            "flags": "i",
+            "why": "handles acceptable vectors"
+          }
+        ],
+        "any": [
+          {
+            "regex": "tcId",
+            "flags": "i",
+            "why": "identifies cases by tcId"
+          }
+        ]
+      },
+      "expectations": [
+        "Loads the ecdsa secp256r1 test vector file and parametrizes over its test groups and tests, using tcId as the test id.",
+        "Asserts that valid signatures verify, invalid ones are rejected, and treats acceptable ones explicitly rather than ignoring them.",
+        "Keeps the vectors current, for example as a git submodule or scheduled fetch."
+      ]
+    },
+    {
+      "id": "only-valid-cases-tested",
+      "prompt": "Review this Wycheproof test loop.",
+      "files": {
+        "test_ed25519.py": "for group in vectors[\"testGroups\"]:\n    pk = load_key(group[\"publicKey\"][\"pk\"])\n    for tv in group[\"tests\"]:\n        if tv[\"result\"] == \"valid\":\n            assert verify(pk, bytes.fromhex(tv[\"msg\"]), bytes.fromhex(tv[\"sig\"]))\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "invalid",
+            "flags": "i",
+            "why": "adds the invalid cases"
+          }
+        ]
+      },
+      "expectations": [
+        "Points out that only valid cases are checked, so the test cannot catch an implementation that accepts bad signatures.",
+        "Adds assertions that invalid vectors fail verification (treating exceptions as rejection) and handles acceptable vectors.",
+        "Mentions signature malleability (such as extra or missing bytes) as the kind of bug the invalid vectors catch."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "skill": "jasmine-skill",
+  "path": "skills/lambdatest/jasmine-skill",
+  "cases": [
+    {
+      "id": "calculator-specs",
+      "prompt": "Write Jasmine specs for a Calculator class with add, subtract and divide (throws on divide by zero).",
+      "checks": {
+        "all": [
+          {
+            "regex": "describe\\(",
+            "flags": "",
+            "why": "uses describe"
+          },
+          {
+            "regex": "beforeEach",
+            "flags": "",
+            "why": "sets up in beforeEach"
+          }
+        ],
+        "any": [
+          {
+            "regex": "toThrow",
+            "flags": "",
+            "why": "asserts the throw"
+          }
+        ]
+      },
+      "expectations": [
+        "Creates a new Calculator in beforeEach.",
+        "Uses toBe or toEqual matchers.",
+        "Tests divide by zero with toThrow or toThrowError."
+      ]
+    },
+    {
+      "id": "spy-async",
+      "prompt": "In Jasmine, how do I spy on api.fetchUser and test an async function that uses it?",
+      "checks": {
+        "all": [
+          {
+            "regex": "spyOn",
+            "flags": "",
+            "why": "uses spyOn"
+          }
+        ],
+        "any": [
+          {
+            "regex": "and\\.(returnValue|resolveTo|callFake|rejectWith)",
+            "flags": "",
+            "why": "configures the spy"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses spyOn with and.resolveTo or and.returnValue(Promise.resolve(...)).",
+        "Writes the spec as async/await.",
+        "Asserts toHaveBeenCalledWith."
+      ]
+    }
+  ]
+}

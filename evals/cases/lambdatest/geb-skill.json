@@ -1,0 +1,49 @@
+{
+  "skill": "geb-skill",
+  "path": "skills/lambdatest/geb-skill",
+  "cases": [
+    {
+      "id": "login-page-spec",
+      "prompt": "Write a Geb page object and Spock spec for logging in.",
+      "checks": {
+        "all": [
+          {
+            "regex": "extends Page",
+            "flags": "",
+            "why": "defines a Page"
+          }
+        ],
+        "any": [
+          {
+            "regex": "GebSpec|GebReportingSpec",
+            "flags": "",
+            "why": "uses a Geb spec base class"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines url, at check and content block in the page object.",
+        "Uses to(LoginPage) and at(HomePage) in a given/when/then spec.",
+        "Uses waitFor for dynamic content."
+      ]
+    },
+    {
+      "id": "geb-async",
+      "prompt": "How do I wait for search results that load asynchronously in Geb?",
+      "checks": {
+        "all": [
+          {
+            "regex": "waitFor",
+            "flags": "",
+            "why": "uses waitFor"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses waitFor blocks or content with wait: true.",
+        "Configures waiting presets in GebConfig.groovy, or mentions it.",
+        "Avoids Thread.sleep."
+      ]
+    }
+  ]
+}

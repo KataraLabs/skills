@@ -1,0 +1,52 @@
+{
+  "skill": "deprecation-and-migration",
+  "path": "skills/addyosmani/deprecation-and-migration",
+  "cases": [
+    {
+      "id": "public-v1-api",
+      "prompt": "Plan the deprecation of our public v1 REST API with 200 external consumers, replaced by v2. Inventory attached.",
+      "files": {
+        "api-inventory.md": "# v1 API inventory\n\n- Public consumers: 200 organizations.\n- Replacement: `/v2/orders`, available in production but not yet announced.\n- Current v1 traffic: 48,000 requests/day from 173 active API keys.\n- Largest consumer contract requires 90 days' notice for breaking changes.\n- Existing telemetry records API key, route, status, and response latency.\n- Support can contact 188 consumers directly; 12 use reseller-managed accounts.\n- v1 currently has no response deprecation headers or migration guide.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "90",
+            "why": "honors the 90-day notice term",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "Deprecation|Sunset",
+            "why": "adds deprecation or sunset response headers",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Consumers are notified with a timeline of at least 90 days before any breaking change, including a route to the 12 reseller-managed accounts.",
+        "A migration window with a guide and deprecation headers exists, and remaining v1 usage is monitored per API key using the existing telemetry.",
+        "Removal is gated on measured usage (active keys or requests falling to an agreed level), not on a calendar date alone."
+      ]
+    },
+    {
+      "id": "delete-old-helper",
+      "prompt": "We replaced `formatDate(d)` with `formatDateTime(d, opts)` in our shared utils package, which six internal services import. Just delete formatDate in this release.",
+      "checks": {
+        "any": [
+          {
+            "regex": "caller|usage|import|consumer",
+            "why": "finds the remaining users first",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Does not delete formatDate before establishing who still calls it across the six services.",
+        "Proposes a sequence: mark it deprecated (for example a JSDoc @deprecated tag or a warning), migrate callers (possibly with a codemod or shim delegating to formatDateTime), then remove it once usage is zero.",
+        "Takes ownership of migrating the callers rather than announcing the removal and leaving the services to cope."
+      ]
+    }
+  ]
+}

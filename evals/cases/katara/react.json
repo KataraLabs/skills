@@ -1,0 +1,104 @@
+{
+  "skill": "react",
+  "path": "skills/katara/react",
+  "cases": [
+    {
+      "id": "derive-instead-of-effect",
+      "prompt": "This list shows stale results for a render after the query changes, and the hooks lint rule flags it. Clean it up.",
+      "files": {
+        "src/components/ProductList.tsx": "import { useEffect, useState } from \"react\";\n\ntype Product = { id: string; name: string };\ntype ProductListProps = { products: Product[]; query: string };\n\nexport function ProductList({ products, query }: ProductListProps) {\n  const [visible, setVisible] = useState<Product[]>([]);\n\n  useEffect(() => {\n    setVisible(products.filter((p) => p.name.toLowerCase().includes(query.toLowerCase())));\n  }, [query]);\n\n  return (\n    <ul>\n      {visible.map((p, i) => (\n        <li key={i}>{p.name}</li>\n      ))}\n    </ul>\n  );\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "key=\\{\\s*\\w+\\.id\\s*\\}",
+            "flags": "i",
+            "why": "uses the item id as the key"
+          }
+        ],
+        "none": [
+          {
+            "regex": "eslint-disable",
+            "flags": "i",
+            "why": "does not disable the lint rule"
+          }
+        ]
+      },
+      "expectations": [
+        "Removes the useState/useEffect pair and computes the filtered list during render (optionally with useMemo).",
+        "Points out that the effect also missed `products` in its dependency array.",
+        "Replaces the array index key with the product id."
+      ]
+    },
+    {
+      "id": "stale-closure-interval",
+      "prompt": "My timer goes from 0 to 1 and then stays at 1. What is wrong?",
+      "files": {
+        "src/Timer.tsx": "import { useEffect, useState } from \"react\";\n\nexport function Timer() {\n  const [seconds, setSeconds] = useState(0);\n\n  useEffect(() => {\n    setInterval(() => {\n      setSeconds(seconds + 1);\n    }, 1000);\n  }, []);\n\n  return <p>{seconds}s elapsed</p>;\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "setSeconds\\(\\s*\\(?\\s*\\w+\\s*\\)?\\s*=>",
+            "flags": "i",
+            "why": "uses the updater form of setState"
+          },
+          {
+            "regex": "clearInterval",
+            "flags": "i",
+            "why": "clears the interval in a cleanup"
+          }
+        ]
+      },
+      "expectations": [
+        "Explains that the interval callback closes over the initial `seconds` value of 0.",
+        "Fixes it with the updater form `setSeconds((s) => s + 1)` rather than disabling the exhaustive-deps rule.",
+        "The effect returns a cleanup that clears the interval when the component unmounts."
+      ]
+    },
+    {
+      "id": "user-centric-component-test",
+      "prompt": "Write a test for this form: typing an email and clicking Subscribe should call onSubscribe with the email, then show \"Thanks!\". Tell me how to run it.",
+      "files": {
+        "src/SubscribeForm.tsx": "import { useState } from \"react\";\n\ntype SubscribeFormProps = { onSubscribe: (email: string) => Promise<void> };\n\nexport function SubscribeForm({ onSubscribe }: SubscribeFormProps) {\n  const [email, setEmail] = useState(\"\");\n  const [done, setDone] = useState(false);\n\n  async function handleSubmit(e: React.FormEvent) {\n    e.preventDefault();\n    await onSubscribe(email);\n    setDone(true);\n  }\n\n  if (done) return <p>Thanks!</p>;\n  return (\n    <form onSubmit={handleSubmit}>\n      <label htmlFor=\"email\">Email</label>\n      <input id=\"email\" value={email} onChange={(e) => setEmail(e.target.value)} />\n      <button type=\"submit\">Subscribe</button>\n    </form>\n  );\n}\n",
+        "package.json": "{\n  \"name\": \"newsletter-web\",\n  \"scripts\": { \"test\": \"vitest\" },\n  \"dependencies\": { \"react\": \"^18.3.1\", \"react-dom\": \"^18.3.1\" },\n  \"devDependencies\": {\n    \"vitest\": \"^2.1.0\",\n    \"jsdom\": \"^25.0.0\",\n    \"@testing-library/react\": \"^16.0.1\",\n    \"@testing-library/user-event\": \"^14.5.2\"\n  }\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "getByRole\\(\\s*[\"']button[\"']",
+            "flags": "i",
+            "why": "finds the button by role"
+          },
+          {
+            "regex": "userEvent|user-event",
+            "flags": "i",
+            "why": "drives interaction with user-event"
+          },
+          {
+            "regex": "findBy\\w+|waitFor",
+            "flags": "i",
+            "why": "waits for the async result with findBy or waitFor"
+          }
+        ],
+        "none": [
+          {
+            "regex": "getByTestId\\(\\s*[\"'\\x60]",
+            "flags": "i",
+            "why": "does not query by test id"
+          },
+          {
+            "regex": "setTimeout\\(",
+            "flags": "i",
+            "why": "does not wait with a fixed timeout"
+          }
+        ]
+      },
+      "expectations": [
+        "The test finds the input by its label (getByLabelText(\"Email\")) or role, not by test id or class name.",
+        "It asserts that onSubscribe was called with the typed email and that \"Thanks!\" appears.",
+        "The run command uses Vitest for a single run, such as `npx vitest run src/SubscribeForm.test.tsx`."
+      ]
+    }
+  ]
+}

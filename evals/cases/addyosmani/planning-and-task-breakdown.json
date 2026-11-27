@@ -1,0 +1,53 @@
+{
+  "skill": "planning-and-task-breakdown",
+  "path": "skills/addyosmani/planning-and-task-breakdown",
+  "cases": [
+    {
+      "id": "notifications-plan",
+      "prompt": "Break the attached notifications spec into an executable plan.",
+      "files": {
+        "notifications-spec.md": "# Notifications specification\n\nUsers can opt into email notifications when a task is assigned or becomes\noverdue. Preferences are stored per user and default to disabled. Assignment\nevents already exist; overdue detection runs every fifteen minutes.\n\nRequirements:\n\n- Add preference read/update endpoints with boundary validation.\n- Publish notification jobs from assignment and overdue flows.\n- Deduplicate jobs by user, task, event type, and event version.\n- Send email through the existing provider adapter.\n- Record delivery status without storing message bodies.\n- Feature flag the sending path; disabled remains the safe default.\n\nVerification must include preference API tests, job deduplication tests,\nprovider-adapter integration tests, and one end-to-end assignment scenario.\nNo SMS, push notifications, or notification history UI is in scope.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "acceptance",
+            "why": "gives acceptance criteria",
+            "flags": "i"
+          }
+        ],
+        "none": [
+          {
+            "regex": "```(js|javascript|ts|typescript|python|go|java)\\b",
+            "why": "writes no implementation code",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Every task has acceptance criteria and a verification step.",
+        "Tasks are ordered by dependency, for example preferences before publishing jobs, and the flag before enabling sends.",
+        "Tasks are vertical slices (for example assignment notification end to end) rather than horizontal layers such as \"all database work\".",
+        "Includes checkpoints between groups of tasks and keeps SMS, push and history UI out of scope."
+      ]
+    },
+    {
+      "id": "oversized-single-task",
+      "prompt": "Here's my plan for adding team workspaces: Task 1: build workspaces (models, API, permissions, UI, billing, migration of existing users). Task 2: test it. Is this good enough to start?",
+      "checks": {
+        "any": [
+          {
+            "regex": "too (large|big)|break (it )?down|split|smaller",
+            "why": "says the task is too large",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Says the plan is not ready: Task 1 is far too large and testing should not be a separate trailing task.",
+        "Proposes smaller vertical tasks, each with its own acceptance criteria and verification, ordered by dependency.",
+        "Flags the existing-user migration and billing as higher-risk pieces that need their own tasks and checkpoints."
+      ]
+    }
+  ]
+}

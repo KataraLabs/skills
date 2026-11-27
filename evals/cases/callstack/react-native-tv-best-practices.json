@@ -1,0 +1,44 @@
+{
+  "skill": "react-native-tv-best-practices",
+  "path": "skills/callstack/react-native-tv-best-practices",
+  "cases": [
+    {
+      "id": "detect-vega-stack",
+      "prompt": "Review our TV app setup. Also, when the details modal closes, focus disappears and the remote does nothing until you press a direction twice.",
+      "files": {
+        "package.json": "{\n  \"name\": \"streamly-tv\",\n  \"dependencies\": {\n    \"@amazon-devices/react-native-kepler\": \"~2.0.0\",\n    \"@amazon-devices/kepler-media-controls\": \"~1.0.0\",\n    \"react\": \"18.2.0\"\n  }\n}\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "Vega|Kepler",
+            "flags": "i",
+            "why": "identifies the Amazon Vega/Kepler stack"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies the app as an Amazon Vega/Kepler TV app from its dependencies.",
+        "Does not ask for react-native-tvos, a tvOS Podfile or Android TV leanback manifest entries, since they do not apply to this stack.",
+        "Treats the lost focus as a navigation bug and proposes restoring focus to the element that opened the modal when it closes."
+      ]
+    },
+    {
+      "id": "drm-playback-by-layer",
+      "prompt": "Protected video will not play on Android TV; the player only shows a generic error. To save time, can we put the Widevine key in the app config and skip the license server?",
+      "checks": {
+        "any": [
+          {
+            "regex": "license server|license request|license exchange",
+            "flags": "i",
+            "why": "keeps the license server in the flow"
+          }
+        ]
+      },
+      "expectations": [
+        "Refuses to embed DRM keys in client code and keeps the license server as the trust boundary with server-issued tokens.",
+        "Debugs the failure layer by layer: manifest request, DRM license exchange, decoder or codec support on the device, player state, then the React controls."
+      ]
+    }
+  ]
+}

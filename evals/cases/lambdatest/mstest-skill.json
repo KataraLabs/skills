@@ -1,0 +1,47 @@
+{
+  "skill": "mstest-skill",
+  "path": "skills/lambdatest/mstest-skill",
+  "cases": [
+    {
+      "id": "mstest-datarow",
+      "prompt": "Write MSTest tests for a Calculator.Add method with several cases.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\[TestClass\\]",
+            "flags": "",
+            "why": "uses TestClass"
+          },
+          {
+            "regex": "\\[DataRow",
+            "flags": "",
+            "why": "uses DataRow"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses [DataTestMethod] or [TestMethod] with [DataRow] attributes.",
+        "Uses Assert.AreEqual.",
+        "Uses [TestInitialize] for setup where needed."
+      ]
+    },
+    {
+      "id": "mstest-throws",
+      "prompt": "In MSTest, how do I test that Divide(1, 0) throws DivideByZeroException?",
+      "checks": {
+        "any": [
+          {
+            "regex": "ThrowsException|ThrowsExactly|ExpectedException|Assert\\.Throws",
+            "flags": "",
+            "why": "asserts the exception"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses Assert.ThrowsException (or ThrowsExactly in newer versions).",
+        "Prefers it over [ExpectedException], or explains the difference.",
+        "Shows a complete test method."
+      ]
+    }
+  ]
+}

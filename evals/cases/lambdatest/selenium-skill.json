@@ -1,0 +1,62 @@
+{
+  "skill": "selenium-skill",
+  "path": "skills/lambdatest/selenium-skill",
+  "cases": [
+    {
+      "id": "java-login-pom",
+      "prompt": "Write a Selenium Java test with JUnit 5 for logging in, using a page object and local Chrome.",
+      "checks": {
+        "all": [
+          {
+            "regex": "WebDriverWait",
+            "flags": "",
+            "why": "uses explicit waits"
+          }
+        ],
+        "any": [
+          {
+            "regex": "@(BeforeEach|AfterEach)",
+            "flags": "",
+            "why": "manages the driver lifecycle"
+          }
+        ]
+      },
+      "expectations": [
+        "Creates the driver in @BeforeEach and quits it in @AfterEach.",
+        "Defines a LoginPage page object with By locators.",
+        "Uses explicit waits and no Thread.sleep.",
+        "Runs against a local browser, emulator or app; it does not require a hosted cloud grid or vendor account."
+      ]
+    },
+    {
+      "id": "python-pytest",
+      "prompt": "Write a Selenium Python test with pytest for our search page.",
+      "checks": {
+        "all": [
+          {
+            "regex": "webdriver\\.Chrome",
+            "flags": "",
+            "why": "uses Chrome locally"
+          },
+          {
+            "regex": "WebDriverWait",
+            "flags": "",
+            "why": "waits explicitly"
+          }
+        ],
+        "any": [
+          {
+            "regex": "yield",
+            "flags": "",
+            "why": "yields the driver from a fixture"
+          }
+        ]
+      },
+      "expectations": [
+        "Provides the driver from a pytest fixture with yield and quit.",
+        "Uses By locators and expected_conditions.",
+        "Runs against a local browser, emulator or app; it does not require a hosted cloud grid or vendor account."
+      ]
+    }
+  ]
+}

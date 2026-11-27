@@ -1,0 +1,56 @@
+{
+  "skill": "testng-skill",
+  "path": "skills/lambdatest/testng-skill",
+  "cases": [
+    {
+      "id": "testng-dataprovider",
+      "prompt": "Write TestNG tests for a LoginValidator using a data provider.",
+      "checks": {
+        "all": [
+          {
+            "regex": "@DataProvider",
+            "flags": "",
+            "why": "defines a data provider"
+          }
+        ],
+        "any": [
+          {
+            "regex": "dataProvider\\s*=",
+            "flags": "",
+            "why": "binds the provider"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses @DataProvider returning Object[][].",
+        "Binds it with @Test(dataProvider = ...).",
+        "Uses TestNG Assert and @BeforeMethod for setup."
+      ]
+    },
+    {
+      "id": "testng-parallel-groups",
+      "prompt": "Run TestNG tests in parallel and split them into smoke and regression groups.",
+      "checks": {
+        "all": [
+          {
+            "regex": "testng\\.xml|<suite",
+            "flags": "",
+            "why": "configures testng.xml"
+          }
+        ],
+        "any": [
+          {
+            "regex": "parallel\\s*=",
+            "flags": "",
+            "why": "enables parallel"
+          }
+        ]
+      },
+      "expectations": [
+        "Sets parallel and thread-count in testng.xml.",
+        "Assigns groups in @Test and includes them in the suite file.",
+        "Uses ThreadLocal for WebDriver or other per-thread state."
+      ]
+    }
+  ]
+}

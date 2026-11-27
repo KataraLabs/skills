@@ -1,0 +1,57 @@
+{
+  "skill": "api-graphql-grpc",
+  "path": "skills/lambdatest/api-skill/graphql-grpc-helper",
+  "cases": [
+    {
+      "id": "graphql-n-plus-one",
+      "prompt": "Why is this GraphQL query slow when listing 100 posts, and how do I fix it?",
+      "files": {
+        "resolvers.js": "const resolvers = {\n  Query: { posts: () => db.posts.findAll() },\n  Post: {\n    author: (post) => db.users.findById(post.authorId),\n  },\n};\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "DataLoader|batch",
+            "flags": "i",
+            "why": "batches with DataLoader"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies the N+1 query problem in the author resolver.",
+        "Uses DataLoader (or equivalent batching) to load authors in one query.",
+        "Creates the loader per request so the cache does not leak between users."
+      ]
+    },
+    {
+      "id": "user-service-proto",
+      "prompt": "Write a gRPC proto for a user service with GetUser, ListUsers (paginated) and CreateUser.",
+      "checks": {
+        "all": [
+          {
+            "regex": "syntax\\s*=\\s*\"proto3\"",
+            "flags": "",
+            "why": "uses proto3"
+          },
+          {
+            "regex": "rpc\\s+\\w+",
+            "flags": "",
+            "why": "defines rpcs"
+          }
+        ],
+        "any": [
+          {
+            "regex": "page_token|next_page_token|page_size",
+            "flags": "",
+            "why": "paginates with tokens"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines request and response messages for each RPC.",
+        "ListUsers uses page_size and page_token with next_page_token in the response.",
+        "Declares a package and uses stable field numbers."
+      ]
+    }
+  ]
+}

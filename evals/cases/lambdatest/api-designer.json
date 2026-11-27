@@ -1,0 +1,49 @@
+{
+  "skill": "api-designer",
+  "path": "skills/lambdatest/api-skill/api-designer",
+  "cases": [
+    {
+      "id": "library-api",
+      "prompt": "Design a REST API for a library app with books, members and loans.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\/books",
+            "flags": "i",
+            "why": "has a books resource"
+          }
+        ],
+        "any": [
+          {
+            "regex": "pagination|cursor|page=|limit=|\"next\"|offset",
+            "flags": "i",
+            "why": "paginates list endpoints"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses plural noun resources (books, members, loans) with HTTP methods expressing actions.",
+        "Gives status codes such as 201 for create and 404 for missing resources.",
+        "List endpoints use a pagination envelope or parameters."
+      ]
+    },
+    {
+      "id": "review-rpc-endpoints",
+      "prompt": "Review my endpoints:\nPOST /getUsers\nGET /deleteUser?id=5\nPOST /user/update",
+      "checks": {
+        "all": [
+          {
+            "regex": "DELETE\\s+\\/users\\/(\\{id\\}|:id|5|\\{userId\\})",
+            "flags": "i",
+            "why": "proposes DELETE /users/{id}"
+          }
+        ]
+      },
+      "expectations": [
+        "Explains that verbs belong in the HTTP method, not the path.",
+        "Points out GET must not delete, since GET is safe and may be cached or prefetched.",
+        "Proposes GET /users, DELETE /users/{id}, and PATCH or PUT /users/{id}."
+      ]
+    }
+  ]
+}

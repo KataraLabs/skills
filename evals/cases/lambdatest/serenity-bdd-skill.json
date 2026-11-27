@@ -1,0 +1,49 @@
+{
+  "skill": "serenity-bdd-skill",
+  "path": "skills/lambdatest/serenity-bdd-skill",
+  "cases": [
+    {
+      "id": "screenplay-login",
+      "prompt": "Write a Serenity BDD Screenplay test for logging in.",
+      "checks": {
+        "all": [
+          {
+            "regex": "attemptsTo",
+            "flags": "",
+            "why": "actors attempt tasks"
+          }
+        ],
+        "any": [
+          {
+            "regex": "Actor|actor",
+            "flags": "",
+            "why": "uses actors"
+          }
+        ]
+      },
+      "expectations": [
+        "Gives the actor the BrowseTheWeb ability.",
+        "Defines a Login task and Target locators.",
+        "Asserts with Ensure or a Question."
+      ]
+    },
+    {
+      "id": "serenity-cucumber",
+      "prompt": "How do I wire Serenity Screenplay into Cucumber step definitions?",
+      "checks": {
+        "any": [
+          {
+            "regex": "OnStage|theActorCalled|theActorInTheSpotlight",
+            "flags": "",
+            "why": "uses the stage"
+          }
+        ]
+      },
+      "expectations": [
+        "Sets the stage with OnStage.setTheStage(new OnlineCast()) in a @Before hook.",
+        "Uses theActorCalled in steps and theActorInTheSpotlight later.",
+        "Includes the Cucumber runner with the Serenity plugin or JUnit 5 suite."
+      ]
+    }
+  ]
+}

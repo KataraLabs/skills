@@ -1,0 +1,46 @@
+{
+  "skill": "flaky-test-fixes-skill",
+  "path": "skills/lambdatest/flaky-test-fixes-skill",
+  "cases": [
+    {
+      "id": "just-add-retries",
+      "prompt": "This Playwright test fails about one run in ten in CI. Just add retries: 3 so CI goes green.",
+      "files": {
+        "cart.spec.ts": "test('adds to cart', async ({ page }) => {\n  await page.goto('/product/42');\n  await page.click('#add');\n  await page.waitForTimeout(1000);\n  const count = await page.textContent('.cart-count');\n  expect(count).toBe('1');\n});\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "reproduc|repeat-each|repeat|run it .* times|loop",
+            "flags": "i",
+            "why": "reproduces before fixing"
+          }
+        ]
+      },
+      "expectations": [
+        "Does not simply add retries as the fix; explains retries hide the cause.",
+        "Identifies the timing cause: a fixed wait and a one-shot textContent read.",
+        "Fixes with a web-first assertion such as toHaveText on the cart count.",
+        "Proves the fix by running the test many times (for example --repeat-each)."
+      ]
+    },
+    {
+      "id": "fails-in-full-suite",
+      "prompt": "A pytest test passes when run alone but fails when run with the full suite. How do I track it down?",
+      "checks": {
+        "any": [
+          {
+            "regex": "order|isolation|shared state|leak|global",
+            "flags": "i",
+            "why": "considers test order and shared state"
+          }
+        ]
+      },
+      "expectations": [
+        "Classifies it as a test-order or shared-state problem.",
+        "Suggests bisecting the order or running with random order (pytest-randomly) to find the polluting test.",
+        "Fixes the cause with proper fixture teardown or isolation rather than retries."
+      ]
+    }
+  ]
+}

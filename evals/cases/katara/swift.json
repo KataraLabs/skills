@@ -1,0 +1,99 @@
+{
+  "skill": "swift",
+  "path": "skills/katara/swift",
+  "cases": [
+    {
+      "id": "remove-force-unwraps",
+      "prompt": "Our app crashes on launch for some users. This is the settings loader. Make it safe.",
+      "files": {
+        "Sources/App/SettingsStore.swift": "import Foundation\n\nstruct Settings: Codable {\n    var theme: String\n    var fontSize: Int\n}\n\nfinal class SettingsStore {\n    func load() -> Settings {\n        let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!\n            .appendingPathComponent(\"settings.json\")\n        let data = try! Data(contentsOf: url)\n        return try! JSONDecoder().decode(Settings.self, from: data)\n    }\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "guard let|if let|\\?\\?",
+            "flags": "i",
+            "why": "unwraps optionals safely"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\\bthrows\\b",
+            "flags": "i",
+            "why": "makes loading throw"
+          },
+          {
+            "regex": "\\bcatch\\b",
+            "flags": "i",
+            "why": "handles errors with do/catch"
+          }
+        ]
+      },
+      "expectations": [
+        "Removes every `try!` and the force unwrap `.first!` from the loader.",
+        "A missing file and a corrupt file are handled, either by throwing a typed error or by falling back to default settings, without crashing.",
+        "Suggests injecting the file location or storage so the loader can be tested without the real disk."
+      ]
+    },
+    {
+      "id": "no-unchecked-sendable",
+      "prompt": "Swift 6 mode gives me \"Capture of non-sendable type 'ImageCache' in a @Sendable closure\". Can I just mark ImageCache `@unchecked Sendable`?",
+      "files": {
+        "Sources/App/ImageCache.swift": "import UIKit\n\nfinal class ImageCache {\n    private var images: [URL: UIImage] = [:]\n\n    func image(for url: URL) -> UIImage? { images[url] }\n\n    func store(_ image: UIImage, for url: URL) { images[url] = image }\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "\\bactor\\b|@MainActor",
+            "flags": "i",
+            "why": "isolates the cache with an actor or the main actor"
+          }
+        ]
+      },
+      "expectations": [
+        "Advises against `@unchecked Sendable` because the dictionary is mutated without synchronization, so it only hides a data race.",
+        "Proposes making the cache an actor or isolating it to the main actor (or another real synchronization) so the compiler can check it.",
+        "Notes that callers will need `await` (or must run on the main actor) after the change."
+      ]
+    },
+    {
+      "id": "xcodegen-and-swift-testing",
+      "prompt": "Add a test for `PriceFormatter.format(cents:)` (1999 gives \"$19.99\", 0 gives \"$0.00\") and tell me how to run the tests.",
+      "files": {
+        "project.yml": "name: Shop\ntargets:\n  Shop:\n    type: application\n    platform: iOS\n    sources: [Sources/Shop]\n  ShopTests:\n    type: bundle.unit-test\n    platform: iOS\n    sources: [Tests/ShopTests]\n    dependencies:\n      - target: Shop\nschemes:\n  Shop:\n    build:\n      targets: { Shop: all }\n    test:\n      targets: [ShopTests]\n",
+        "Tests/ShopTests/CartTests.swift": "import Testing\n@testable import Shop\n\nstruct CartTests {\n    @Test func emptyCartTotalsZero() {\n        #expect(Cart().totalCents == 0)\n    }\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "@Test",
+            "flags": "i",
+            "why": "writes a Swift Testing test"
+          },
+          {
+            "regex": "#expect",
+            "flags": "i",
+            "why": "asserts with #expect"
+          },
+          {
+            "regex": "xcodegen",
+            "flags": "i",
+            "why": "regenerates the project with XcodeGen"
+          }
+        ],
+        "none": [
+          {
+            "regex": ":\\s*XCTestCase\\b",
+            "flags": "i",
+            "why": "does not switch to XCTest"
+          }
+        ]
+      },
+      "expectations": [
+        "The new test uses Swift Testing like the existing CartTests, possibly parameterized with `@Test(arguments:)`.",
+        "Runs `xcodegen generate` (or says the project is generated from project.yml) instead of editing the .xcodeproj by hand.",
+        "Gives an `xcodebuild test -scheme Shop` command with a simulator destination and says to pick a simulator that exists on the machine (for example from `xcrun simctl list devices available`)."
+      ]
+    }
+  ]
+}

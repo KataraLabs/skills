@@ -1,0 +1,49 @@
+{
+  "skill": "build",
+  "path": "skills/addyosmani/build",
+  "cases": [
+    {
+      "id": "next-task-only",
+      "prompt": "Build the next task.",
+      "files": {
+        "tasks/todo.md": "# Todo: slug utility\n\n- [ ] Task 1: slugify(title) lowercases and joins words with hyphens. Acceptance: slugify('Hello World') === 'hello-world'.\n- [ ] Task 2: slugify strips characters other than a-z, 0-9 and hyphens. Acceptance: slugify('C++ & Go!') === 'c-go'.\n",
+        "src/slug.js": "'use strict';\n\nmodule.exports = {};\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "fail",
+            "why": "writes a failing test first",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Picks only Task 1 and stops after it.",
+        "Writes a failing test for the acceptance criterion before the implementation, then the minimum code to pass.",
+        "Asks the user to run the full suite and build (or shows the commands), proposes a commit message, and marks Task 1 complete."
+      ]
+    },
+    {
+      "id": "whole-plan-without-spec",
+      "prompt": "Build the whole plan, auto mode. The README describes what I want.",
+      "files": {
+        "README.md": "# invoicer\n\nA small tool to make invoices. Should support PDF export and email delivery, maybe Stripe later.\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "spec",
+            "why": "asks for a spec",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Stops because there is no spec at a known path (SPEC.md, a delta spec, docs/SPEC.md or spec/), and says a README does not count.",
+        "Suggests writing a spec first rather than inventing requirements from the README.",
+        "Does not start implementing tasks."
+      ]
+    }
+  ]
+}

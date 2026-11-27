@@ -1,0 +1,52 @@
+{
+  "skill": "api-mock-helper",
+  "path": "skills/lambdatest/api-skill/api-mocking",
+  "cases": [
+    {
+      "id": "msw-users",
+      "prompt": "Mock GET /api/users for my React component tests using MSW.",
+      "checks": {
+        "any": [
+          {
+            "regex": "setupServer|http\\.get|rest\\.get",
+            "flags": "i",
+            "why": "uses MSW handlers"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines an MSW handler for GET /api/users returning fixture data.",
+        "Starts the server in beforeAll, resets handlers in afterEach and closes in afterAll.",
+        "Shows overriding the handler in one test to return an error."
+      ]
+    },
+    {
+      "id": "wiremock-payments",
+      "prompt": "I need a WireMock stub for POST /payments returning 201 with a payment id, plus a 500 error case.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\"request\"",
+            "flags": "",
+            "why": "has a request matcher"
+          },
+          {
+            "regex": "\"response\"",
+            "flags": "",
+            "why": "has a response"
+          },
+          {
+            "regex": "500",
+            "flags": "",
+            "why": "covers the 500 case"
+          }
+        ]
+      },
+      "expectations": [
+        "Shows a JSON mapping matching method POST and the /payments URL.",
+        "Returns status 201 with a JSON body and Content-Type header.",
+        "Shows a way to trigger the 500 case, such as a body pattern, header, priority or scenario."
+      ]
+    }
+  ]
+}

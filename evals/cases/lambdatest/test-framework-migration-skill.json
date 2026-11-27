@@ -1,0 +1,62 @@
+{
+  "skill": "test-framework-migration-skill",
+  "path": "skills/lambdatest/test-framework-migration-skill",
+  "cases": [
+    {
+      "id": "selenium-to-playwright",
+      "prompt": "Migrate this Selenium test to Playwright TypeScript.",
+      "files": {
+        "LoginTest.java": "@Test\nvoid login() {\n  driver.get(baseUrl + \"/login\");\n  driver.findElement(By.id(\"email\")).sendKeys(\"a@b.c\");\n  driver.findElement(By.id(\"password\")).sendKeys(\"pw\");\n  driver.findElement(By.cssSelector(\"button[type=submit]\")).click();\n  new WebDriverWait(driver, Duration.ofSeconds(10))\n    .until(ExpectedConditions.visibilityOfElementLocated(By.id(\"welcome\")));\n  assertTrue(driver.findElement(By.id(\"welcome\")).isDisplayed());\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "expect\\(",
+            "flags": "",
+            "why": "uses expect"
+          }
+        ],
+        "any": [
+          {
+            "regex": "getBy|page\\.locator",
+            "flags": "",
+            "why": "uses Playwright locators"
+          }
+        ]
+      },
+      "expectations": [
+        "Produces a Playwright test using page.goto, fill and click.",
+        "Drops the explicit WebDriverWait because Playwright auto-waits, using a web-first assertion such as toBeVisible.",
+        "Explains the main mappings from Selenium to Playwright."
+      ]
+    },
+    {
+      "id": "jest-to-vitest",
+      "prompt": "Migrate this Jest test to Vitest.",
+      "files": {
+        "sum.test.js": "jest.mock('./api');\nconst api = require('./api');\nconst { total } = require('./total');\n\ntest('totals prices', async () => {\n  api.getPrices.mockResolvedValue([1, 2]);\n  const spy = jest.fn();\n  expect(await total(spy)).toBe(3);\n});\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "vi\\.(fn|mock)",
+            "flags": "",
+            "why": "uses vi APIs"
+          }
+        ],
+        "any": [
+          {
+            "regex": "from ['\"]vitest['\"]|globals",
+            "flags": "",
+            "why": "imports from vitest or enables globals"
+          }
+        ]
+      },
+      "expectations": [
+        "Replaces jest.mock and jest.fn with vi.mock and vi.fn.",
+        "Imports test helpers from vitest or enables globals in config.",
+        "Notes ESM import and vi.mock hoisting differences, or converts require to import."
+      ]
+    }
+  ]
+}

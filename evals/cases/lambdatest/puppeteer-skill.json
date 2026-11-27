@@ -1,0 +1,49 @@
+{
+  "skill": "puppeteer-skill",
+  "path": "skills/lambdatest/puppeteer-skill",
+  "cases": [
+    {
+      "id": "login-screenshot",
+      "prompt": "Write a Puppeteer script that logs in and takes a screenshot of the dashboard.",
+      "checks": {
+        "all": [
+          {
+            "regex": "browser\\.close",
+            "flags": "",
+            "why": "closes the browser"
+          }
+        ],
+        "any": [
+          {
+            "regex": "waitForSelector|waitForNavigation|locator\\(",
+            "flags": "",
+            "why": "waits for the page"
+          }
+        ]
+      },
+      "expectations": [
+        "Waits for navigation or a selector after submitting, not a fixed delay.",
+        "Closes the browser in finally.",
+        "Reads credentials from environment variables."
+      ]
+    },
+    {
+      "id": "puppeteer-jest",
+      "prompt": "How do I run Puppeteer tests with Jest?",
+      "checks": {
+        "any": [
+          {
+            "regex": "jest-puppeteer|beforeAll",
+            "flags": "",
+            "why": "sets up the browser per suite"
+          }
+        ]
+      },
+      "expectations": [
+        "Launches the browser in beforeAll and closes it in afterAll (or uses jest-puppeteer).",
+        "Creates a new page per test.",
+        "Raises the Jest timeout for browser tests."
+      ]
+    }
+  ]
+}

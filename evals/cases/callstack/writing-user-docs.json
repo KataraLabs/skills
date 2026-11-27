@@ -1,0 +1,50 @@
+{
+  "skill": "writing-user-docs",
+  "path": "skills/callstack/writing-user-docs",
+  "cases": [
+    {
+      "id": "tidy-help-article",
+      "prompt": "Tidy up this help article for our users.",
+      "files": {
+        "docs/export.md": "# Export Module\n\nOur powerful new Export Module seamlessly lets data be exported. In this article you will learn how exports work.\n\nExports are processed by a Kafka queue and stored in Redis for 24 hours before being uploaded to S3.\n\nTo export, simply click the Export button on the Reports screen and the file will be generated. Large reports may take a while.\n\nNote: exports over 50,000 rows will fail.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "\\byou\\b",
+            "flags": "i",
+            "why": "addresses the reader in the second person"
+          }
+        ]
+      },
+      "expectations": [
+        "The rewrite is in second person, active voice (\"You select Export...\"), without \"simply\", \"powerful\", \"seamlessly\" or \"new\".",
+        "It drops Kafka, Redis and S3, but keeps the behavior the reader needs, such as how long an export stays available.",
+        "The 50,000-row limit moves up front, before the steps, and the article says what to do when a report is over the limit.",
+        "The heading names the user goal (for example \"Export a report\") rather than \"Export Module\", and the \"In this article you will learn\" preamble is gone."
+      ]
+    },
+    {
+      "id": "readme-usage-section",
+      "prompt": "Write the Usage section of the README for our date parsing library `when-ts`.",
+      "files": {
+        "src/index.ts": "export class WhenParseError extends Error {\n  constructor(public readonly input: string) {\n    super(\"Could not understand: \" + input);\n  }\n}\n\n/**\n * Parses phrases like \"tomorrow 9am\", \"in 3 days\", \"next friday\".\n * Times are interpreted in the zone of `now` (defaults to the current time).\n * Throws WhenParseError for anything it cannot parse.\n */\nexport function parseRelative(input: string, now: Date = new Date()): Date {\n  throw new Error(\"implementation omitted\");\n}\n"
+      },
+      "checks": {
+        "none": [
+          {
+            "regex": "\\bfoo\\b|test123|lorem ipsum",
+            "flags": "i",
+            "why": "uses real-looking examples, not placeholders"
+          }
+        ]
+      },
+      "expectations": [
+        "Examples use realistic phrases (such as \"tomorrow 9am\" or \"in 3 days\") and show the result.",
+        "Documents the failure case: parseRelative throws WhenParseError, with an example of catching it.",
+        "Says how the `now` argument affects the result, since readers would otherwise get surprising times.",
+        "Does not describe the implementation or use time-relative words such as \"new\" or \"currently\"."
+      ]
+    }
+  ]
+}

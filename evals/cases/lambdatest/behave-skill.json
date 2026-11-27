@@ -1,0 +1,52 @@
+{
+  "skill": "behave-skill",
+  "path": "skills/lambdatest/behave-skill",
+  "cases": [
+    {
+      "id": "search-feature",
+      "prompt": "Write a behave feature and steps for searching our site, using Selenium on local Chrome.",
+      "checks": {
+        "all": [
+          {
+            "regex": "@(given|when|then)",
+            "flags": "",
+            "why": "uses behave step decorators"
+          },
+          {
+            "regex": "environment\\.py",
+            "flags": "",
+            "why": "uses environment.py"
+          }
+        ]
+      },
+      "expectations": [
+        "Creates the browser in before_scenario (or before_all) and quits it in after_scenario.",
+        "Steps use context to share the driver.",
+        "Uses explicit waits rather than sleeps."
+      ]
+    },
+    {
+      "id": "table-driven-login",
+      "prompt": "I want to run the same login scenario for three different users in behave.",
+      "checks": {
+        "all": [
+          {
+            "regex": "Scenario Outline",
+            "flags": "",
+            "why": "uses a scenario outline"
+          },
+          {
+            "regex": "Examples:",
+            "flags": "",
+            "why": "has examples"
+          }
+        ]
+      },
+      "expectations": [
+        "Writes a Scenario Outline with an Examples table of three users.",
+        "Step definitions take parameters from the placeholders.",
+        "Shows the expected outcome per row."
+      ]
+    }
+  ]
+}

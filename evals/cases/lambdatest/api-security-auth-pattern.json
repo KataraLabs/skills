@@ -1,0 +1,52 @@
+{
+  "skill": "api-security-auth-pattern",
+  "path": "skills/lambdatest/api-skill/api-security-patterns",
+  "cases": [
+    {
+      "id": "jwt-spa",
+      "prompt": "Design JWT authentication for our single-page app and API.",
+      "checks": {
+        "all": [
+          {
+            "regex": "refresh",
+            "flags": "i",
+            "why": "uses refresh tokens"
+          }
+        ],
+        "any": [
+          {
+            "regex": "httpOnly|http-only",
+            "flags": "i",
+            "why": "stores tokens in httpOnly cookies"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses short-lived access tokens and refresh tokens with rotation.",
+        "Validates signature, algorithm, expiry, issuer and audience; rejects alg none.",
+        "Advises against storing tokens in localStorage, or explains the trade-off and prefers httpOnly cookies."
+      ]
+    },
+    {
+      "id": "order-ownership",
+      "prompt": "Security review this endpoint.",
+      "files": {
+        "orders.js": "app.get('/orders/:id', requireAuth, async (req, res) => {\n  const order = await db.orders.findById(req.params.id);\n  if (!order) return res.status(404).end();\n  res.json(order);\n});\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "BOLA|object.level|IDOR|ownership|belongs to|owner",
+            "flags": "i",
+            "why": "flags broken object level authorization"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies broken object level authorization: any signed-in user can read any order by id.",
+        "Fixes it by checking the order belongs to req.user (or querying by owner).",
+        "Suggests returning 404 rather than 403 to avoid revealing existence, or mentions it."
+      ]
+    }
+  ]
+}

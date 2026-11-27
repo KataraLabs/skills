@@ -1,0 +1,56 @@
+{
+  "skill": "rspec-skill",
+  "path": "skills/lambdatest/rspec-skill",
+  "cases": [
+    {
+      "id": "user-model-spec",
+      "prompt": "Write an RSpec spec for User#full_name and its presence validations.",
+      "checks": {
+        "all": [
+          {
+            "regex": "describe",
+            "flags": "",
+            "why": "uses describe"
+          }
+        ],
+        "any": [
+          {
+            "regex": "let\\(|subject",
+            "flags": "",
+            "why": "uses let or subject"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses describe and context blocks.",
+        "Uses let or subject for the user.",
+        "Uses expect(...).to eq for full_name and checks validity for missing fields."
+      ]
+    },
+    {
+      "id": "stub-gateway",
+      "prompt": "How do I stub an external PaymentGateway in an RSpec spec for OrderService?",
+      "checks": {
+        "all": [
+          {
+            "regex": "allow\\(.*\\)\\.to receive|expect\\(.*\\)\\.to have_received|receive\\(",
+            "flags": "",
+            "why": "stubs a method"
+          }
+        ],
+        "any": [
+          {
+            "regex": "instance_double|class_double|double\\(",
+            "flags": "",
+            "why": "uses a double"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses a verifying double such as instance_double(PaymentGateway).",
+        "Stubs with allow(...).to receive(...).and_return(...).",
+        "Verifies the call with have_received or expect(...).to receive."
+      ]
+    }
+  ]
+}

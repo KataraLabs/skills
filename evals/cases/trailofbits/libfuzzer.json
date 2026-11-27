@@ -1,0 +1,66 @@
+{
+  "skill": "libfuzzer",
+  "path": "skills/trailofbits/libfuzzer",
+  "cases": [
+    {
+      "id": "harness-for-static-lib",
+      "prompt": "Set up libFuzzer for `int parse_record(const uint8_t *buf, size_t len)` in our C library. The library builds with autotools into libparse.a.",
+      "checks": {
+        "all": [
+          {
+            "regex": "LLVMFuzzerTestOneInput",
+            "flags": "i",
+            "why": "writes the libFuzzer entry point"
+          },
+          {
+            "regex": "fuzzer-no-link",
+            "flags": "i",
+            "why": "instruments the library with fuzzer-no-link"
+          }
+        ],
+        "any": [
+          {
+            "regex": "-fsanitize=fuzzer,address|-fsanitize=fuzzer\\s+-fsanitize=address",
+            "flags": "i",
+            "why": "links the harness with fuzzer and ASan"
+          }
+        ]
+      },
+      "expectations": [
+        "Builds the library with CC=clang and CFLAGS containing `-fsanitize=fuzzer-no-link -fsanitize=address`, then links the harness with `-fsanitize=fuzzer,address` and libparse.a.",
+        "The harness returns 0, does not call exit, and passes data and size straight to parse_record.",
+        "Gives the run command with a corpus directory."
+      ]
+    },
+    {
+      "id": "reproduce-minimize-continue",
+      "prompt": "We have a crash file crash-a9993e36 and a large corpus/ directory. How do I reproduce the crash, minimize the corpus, and keep fuzzing after a crash is found?",
+      "checks": {
+        "all": [
+          {
+            "regex": "-merge=1",
+            "flags": "i",
+            "why": "minimizes with -merge=1"
+          },
+          {
+            "regex": "-fork=",
+            "flags": "i",
+            "why": "uses fork mode"
+          }
+        ],
+        "any": [
+          {
+            "regex": "ignore_crashes",
+            "flags": "i",
+            "why": "continues past crashes"
+          }
+        ]
+      },
+      "expectations": [
+        "Reproduces by running the fuzz binary with the crash file as its argument.",
+        "Minimizes with `./fuzz -merge=1 minimized/ corpus/`.",
+        "Keeps fuzzing after crashes with `-fork=1 -ignore_crashes=1`."
+      ]
+    }
+  ]
+}

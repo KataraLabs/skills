@@ -1,0 +1,61 @@
+{
+  "skill": "create-react-native-library",
+  "path": "skills/callstack/create-react-native-library",
+  "cases": [
+    {
+      "id": "local-module-in-app",
+      "prompt": "Our React Native app needs to read the device's thermal state from native code on iOS and Android. Set up the native module inside this existing app.",
+      "checks": {
+        "all": [
+          {
+            "regex": "create-react-native-library",
+            "flags": "i",
+            "why": "scaffolds with create-react-native-library"
+          },
+          {
+            "regex": "--local",
+            "flags": "i",
+            "why": "creates a local library inside the app"
+          }
+        ],
+        "any": [
+          {
+            "regex": "turbo-module",
+            "flags": "i",
+            "why": "chooses a Turbo Module"
+          }
+        ]
+      },
+      "expectations": [
+        "Scaffolds a local library inside the existing app (the `--local` flow) rather than a separate npm package.",
+        "Chooses the Turbo Module type with native languages for both platforms (such as kotlin-objc).",
+        "Mentions that the local library is picked up by autolinking, or suggests checking `--help` before relying on the flags."
+      ]
+    },
+    {
+      "id": "publishable-library-with-expo-example",
+      "prompt": "Scaffold a new npm package `react-native-haptics-kit` that wraps the native haptics APIs, with an example app to try it in.",
+      "checks": {
+        "all": [
+          {
+            "regex": "create-react-native-library",
+            "flags": "i",
+            "why": "scaffolds with create-react-native-library"
+          }
+        ],
+        "any": [
+          {
+            "regex": "--example\\s+expo|Expo example",
+            "flags": "i",
+            "why": "uses the Expo example app"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses `npx create-react-native-library@latest react-native-haptics-kit` for a standalone library, not the --local flow.",
+        "Passes non-interactive options such as `--no-interactive`, `--type turbo-module` and `--example expo`.",
+        "Suggests running the tool with `--help` first to confirm the current options."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "skill": "frontend-ui-engineering",
+  "path": "skills/addyosmani/frontend-ui-engineering",
+  "cases": [
+    {
+      "id": "dropdown-menu",
+      "prompt": "Build a dropdown menu component for the design system. Conventions and our existing Button are attached.",
+      "files": {
+        "design-system.md": "# Menu component conventions\n\n- Framework: React with TypeScript.\n- Styling: existing `menu-*` utility classes; do not add a styling dependency.\n- Public components accept `className` and forward a DOM ref.\n- Components must support keyboard-only and screen-reader users.\n- Focus returns to the trigger when a menu closes.\n- Escape closes the menu; arrow keys move between enabled items.\n\nThe new dropdown should expose a trigger label and an array of actions. Disabled\nactions remain visible but cannot receive focus or execute.\n",
+        "Button.tsx": "import { forwardRef, type ButtonHTMLAttributes } from 'react';\n\nexport const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>(\n  function Button({ className = '', ...props }, ref) {\n    return <button ref={ref} className={`button ${className}`.trim()} {...props} />;\n  },\n);\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "aria-|role=",
+            "why": "uses ARIA roles or attributes",
+            "flags": "i"
+          },
+          {
+            "regex": "Escape",
+            "why": "handles Escape",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "ArrowDown|ArrowUp",
+            "why": "handles arrow keys",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Keyboard interaction is implemented: Escape closes, arrow keys move between enabled items, and focus returns to the trigger on close.",
+        "ARIA roles and states are used correctly (for example aria-haspopup and aria-expanded on the trigger, role=\"menu\" and role=\"menuitem\" on items), and disabled actions stay visible but cannot be focused or run.",
+        "Follows the conventions: React with TypeScript, forwardRef, a className prop, the menu-* classes and no new styling dependency.",
+        "Open state and active index are managed deliberately in the component rather than ad hoc DOM manipulation."
+      ]
+    },
+    {
+      "id": "pricing-card-design-system",
+      "prompt": "Make a pricing card component for our marketing page. Our tokens are attached. Make it look modern.",
+      "files": {
+        "tokens.css": ":root {\n  --color-bg: #ffffff;\n  --color-text: #1f2328;\n  --color-muted: #59636e;\n  --color-accent: #0a7c4a;\n  --radius-md: 6px;\n  --space-2: 8px;\n  --space-4: 16px;\n  --font-body: 'Source Sans 3', sans-serif;\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "var\\(--",
+            "why": "uses the project tokens",
+            "flags": "i"
+          }
+        ],
+        "none": [
+          {
+            "regex": "linear-gradient\\([^)]*(purple|indigo|violet|#6366f1|#8b5cf6|#7c3aed)",
+            "why": "avoids the generic purple gradient look",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses the supplied tokens for color, spacing, radius and font instead of hard-coded or default palette values.",
+        "Avoids the generic generated look (purple or indigo gradients, oversized cards, heavy shadows) in favor of the project's green accent and restrained styling.",
+        "Uses semantic markup (a heading, a list of features, a real button or link) and keeps text contrast readable."
+      ]
+    }
+  ]
+}

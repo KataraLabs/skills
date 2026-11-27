@@ -1,0 +1,44 @@
+{
+  "skill": "harness-writing",
+  "path": "skills/trailofbits/harness-writing",
+  "cases": [
+    {
+      "id": "review-bad-harness",
+      "prompt": "Review this libFuzzer harness.",
+      "files": {
+        "fuzz_config.cc": "extern \"C\" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {\n    uint32_t version = *(const uint32_t *)data;\n    Config *cfg = config_new();\n    if (config_parse(cfg, data + 4, size - 4) != 0) {\n        fprintf(stderr, \"parse failed for version %u\\n\", version);\n        exit(1);\n    }\n    log_config(cfg);\n    return 0;\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "size\\s*<\\s*(4|sizeof)",
+            "flags": "i",
+            "why": "checks the input size before reading"
+          }
+        ]
+      },
+      "expectations": [
+        "Flags reading 4 bytes and computing `size - 4` without checking that size is at least 4.",
+        "Flags `exit(1)` because it stops the fuzzer, and returns 0 on parse failure instead.",
+        "Flags the leaked Config (no free) and the per-iteration logging that slows the fuzzer."
+      ]
+    },
+    {
+      "id": "separate-harnesses-per-format",
+      "prompt": "Write one fuzz harness that exercises both our PNG decoder and our TCP packet parser, choosing which one based on the first byte.",
+      "checks": {
+        "any": [
+          {
+            "regex": "separate|two harnesses|one harness (per|for each)",
+            "flags": "i",
+            "why": "recommends separate harnesses"
+          }
+        ]
+      },
+      "expectations": [
+        "Recommends separate harnesses for the PNG decoder and the TCP parser, because unrelated formats make corpus entries useless across targets.",
+        "The harnesses handle empty and short inputs, stay deterministic and free what they allocate."
+      ]
+    }
+  ]
+}

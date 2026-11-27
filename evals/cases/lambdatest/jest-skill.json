@@ -1,0 +1,59 @@
+{
+  "skill": "jest-skill",
+  "path": "skills/lambdatest/jest-skill",
+  "cases": [
+    {
+      "id": "mock-axios",
+      "prompt": "Write Jest tests for this module, mocking axios.",
+      "files": {
+        "userService.js": "const axios = require('axios');\n\nasync function getUserName(id) {\n  const { data } = await axios.get(`/api/users/${id}`);\n  return data.name;\n}\n\nmodule.exports = { getUserName };\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "jest\\.mock\\(\\s*['\"]axios['\"]",
+            "flags": "",
+            "why": "mocks axios"
+          }
+        ],
+        "any": [
+          {
+            "regex": "mockResolvedValue|mockRejectedValue",
+            "flags": "",
+            "why": "resolves or rejects the mock"
+          }
+        ]
+      },
+      "expectations": [
+        "Tests the success path with mockResolvedValue.",
+        "Tests the failure path with mockRejectedValue and rejects assertions.",
+        "Clears or resets mocks between tests."
+      ]
+    },
+    {
+      "id": "debounce-timers",
+      "prompt": "How do I test a debounce function in Jest without actually waiting?",
+      "checks": {
+        "all": [
+          {
+            "regex": "useFakeTimers",
+            "flags": "",
+            "why": "uses fake timers"
+          }
+        ],
+        "any": [
+          {
+            "regex": "advanceTimersByTime|runAllTimers|runOnlyPendingTimers",
+            "flags": "",
+            "why": "advances time"
+          }
+        ]
+      },
+      "expectations": [
+        "Enables fake timers and advances time.",
+        "Asserts the callback is not called before the delay and called once after.",
+        "Restores real timers afterwards."
+      ]
+    }
+  ]
+}

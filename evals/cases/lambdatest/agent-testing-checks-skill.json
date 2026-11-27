@@ -1,0 +1,54 @@
+{
+  "skill": "agent-testing-checks-skill",
+  "path": "skills/lambdatest/agent-testing-checks-skill",
+  "cases": [
+    {
+      "id": "refund-bot-test-plan",
+      "prompt": "We are launching a support chatbot that can issue refunds through a tool call. What should our test plan cover before launch?",
+      "checks": {
+        "all": [
+          {
+            "regex": "prompt injection|injection",
+            "flags": "i",
+            "why": "covers prompt injection"
+          }
+        ],
+        "any": [
+          {
+            "regex": "tool call|tool argument|arguments|end state|side effect",
+            "flags": "i",
+            "why": "covers tool calls or their effects"
+          }
+        ]
+      },
+      "expectations": [
+        "Covers grounding or hallucination against the real source of truth (refund policy, order data).",
+        "Covers tool calls: the right tool, correct arguments, and the resulting side effect or end state of the refund.",
+        "Covers prompt injection or adversarial users and multi-turn conversations.",
+        "Recommends running each scenario several times and reporting a pass rate rather than a single pass or fail."
+      ]
+    },
+    {
+      "id": "exact-match-assertion",
+      "prompt": "This test for our agent fails randomly. How should I rewrite the assertion?",
+      "files": {
+        "agent.test.ts": "import { askAgent } from './agent';\n\ntest('answers shipping question', async () => {\n  const reply = await askAgent('How long does shipping take to Canada?');\n  expect(reply).toBe('Shipping to Canada takes 5 to 7 business days.');\n});\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "pass rate|several times|multiple runs|repeat|runs? (it|each) \\d|5 times|N times",
+            "flags": "i",
+            "why": "treats the test as repeated runs with a pass rate"
+          }
+        ]
+      },
+      "expectations": [
+        "Explains that an exact string match is wrong for non-deterministic output.",
+        "Replaces it with property assertions, such as checking that the reply contains the correct fact (5 to 7 business days) or matches required content.",
+        "Mentions an LLM judge with a written rubric only for qualities code cannot check, or says code checks come first.",
+        "Suggests running the case several times and judging by pass rate."
+      ]
+    }
+  ]
+}

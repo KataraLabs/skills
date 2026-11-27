@@ -1,0 +1,47 @@
+{
+  "skill": "accessibility-skill",
+  "path": "skills/lambdatest/accessibility-skill",
+  "cases": [
+    {
+      "id": "playwright-axe-scan",
+      "prompt": "Add an automated accessibility check to this Playwright test so it fails on serious WCAG violations.",
+      "files": {
+        "tests/home.spec.ts": "import { test, expect } from '@playwright/test';\n\ntest('home page loads', async ({ page }) => {\n  await page.goto('/');\n  await expect(page.getByRole('heading', { name: 'Welcome' })).toBeVisible();\n});\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "axe",
+            "flags": "i",
+            "why": "uses an axe-core based scanner"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses @axe-core/playwright (AxeBuilder) or an equivalent axe-core integration inside the existing test.",
+        "Limits the scan to WCAG tags (such as wcag2a, wcag2aa) or filters by impact so that serious or critical violations fail the test.",
+        "Asserts that the resulting violations list is empty (or empty after filtering).",
+        "Runs against a local browser, emulator or app; it does not require a hosted cloud grid or vendor account."
+      ]
+    },
+    {
+      "id": "cypress-a11y-checkout",
+      "prompt": "Our Cypress suite needs an accessibility check on the /checkout page. Show me how to add it.",
+      "checks": {
+        "any": [
+          {
+            "regex": "cypress-axe|checkA11y|injectAxe",
+            "flags": "i",
+            "why": "uses cypress-axe commands"
+          }
+        ]
+      },
+      "expectations": [
+        "Installs and imports cypress-axe (or axe-core) in the support file.",
+        "Calls injectAxe after cy.visit and before checkA11y.",
+        "Shows how to scope or configure the check (a context selector, rules, or includedImpacts).",
+        "Runs against a local browser, emulator or app; it does not require a hosted cloud grid or vendor account."
+      ]
+    }
+  ]
+}

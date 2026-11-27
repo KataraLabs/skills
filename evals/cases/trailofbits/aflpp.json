@@ -1,0 +1,61 @@
+{
+  "skill": "aflpp",
+  "path": "skills/trailofbits/aflpp",
+  "cases": [
+    {
+      "id": "multi-core-campaign",
+      "prompt": "We have a dedicated 16-core Linux box. How do I run AFL++ on all cores against our ./fuzz harness with seeds in seeds/?",
+      "checks": {
+        "all": [
+          {
+            "regex": "-M\\s+\\w+",
+            "flags": "i",
+            "why": "starts one primary instance with -M"
+          },
+          {
+            "regex": "-S\\s+\\w+",
+            "flags": "i",
+            "why": "starts secondary instances with -S"
+          }
+        ],
+        "any": [
+          {
+            "regex": "AFL_TMPDIR",
+            "flags": "i",
+            "why": "puts the working files on tmpfs"
+          }
+        ]
+      },
+      "expectations": [
+        "Runs one primary (-M) and the remaining instances as secondaries (-S), all sharing the same -o output directory.",
+        "Runs afl-system-config on the host before the campaign, and warns that it weakens OS security settings so it belongs on a dedicated machine.",
+        "Sets AFL_TMPDIR to a tmpfs such as /dev/shm."
+      ]
+    },
+    {
+      "id": "magic-values-cmplog",
+      "prompt": "AFL++ is stuck: coverage stops at a chain of magic-value comparisons in our parser. Which compiler mode and options should we use?",
+      "checks": {
+        "all": [
+          {
+            "regex": "CMPLOG|cmplog|-c\\s?0",
+            "flags": "i",
+            "why": "enables CMPLOG"
+          }
+        ],
+        "any": [
+          {
+            "regex": "afl-clang-lto",
+            "flags": "i",
+            "why": "tries LTO mode first"
+          }
+        ]
+      },
+      "expectations": [
+        "Recommends trying LTO mode (afl-clang-lto) first and falling back to afl-clang-fast if it does not build.",
+        "Builds a CMPLOG-instrumented target with AFL_LLVM_CMPLOG=1 and runs an instance with `-c0` (or a CMPLOG binary).",
+        "Mentions a dictionary (including AFL++ auto-dictionary from LTO builds) as another way past the magic values."
+      ]
+    }
+  ]
+}

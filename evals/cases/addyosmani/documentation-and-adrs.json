@@ -1,0 +1,86 @@
+{
+  "skill": "documentation-and-adrs",
+  "path": "skills/addyosmani/documentation-and-adrs",
+  "cases": [
+    {
+      "id": "event-sourcing-adr",
+      "prompt": "Record the decision to adopt event sourcing for the orders service as an ADR. Context attached.",
+      "files": {
+        "decision-context.md": "# Orders architecture decision context\n\nThe orders service currently stores mutable order rows and emits best-effort\nwebhooks. Auditors need a complete history of state transitions, and support\nmust be able to reconstruct an order at a prior point in time.\n\nOptions discussed:\n\n1. Keep the current model and add an append-only audit table.\n2. Adopt event sourcing for orders and build read projections.\n3. Use database change-data capture as the audit history.\n\nEvent sourcing improves traceability and replay, but adds projection rebuilds,\nevent versioning, eventual consistency, and operational complexity. The team\nhas event-stream experience, but the reporting service expects synchronous\nreads. The decision applies only to the orders bounded context.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "proposed|accepted",
+            "why": "records an ADR status",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "alternatives|options considered|considered",
+            "why": "records rejected options",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "The ADR has distinct context, decision, alternatives and consequences sections.",
+        "The audit-table and change-data-capture options are recorded with the reasons they were not chosen.",
+        "Consequences include the costs (projection rebuilds, event versioning, eventual consistency affecting the synchronous reporting service) and the scope limit to the orders bounded context.",
+        "The ADR carries a status from the lifecycle (Proposed, Accepted, Superseded or Deprecated) and a date."
+      ]
+    },
+    {
+      "id": "doc-drifted-from-code",
+      "prompt": "rate-limiter.md is supposed to describe rate-limiter.js. Someone changed the limiter a while back. Sort this out.",
+      "files": {
+        "rate-limiter.md": "# Rate Limiter\n\nLast verified: 2024-11-03\n\nFixed-window limiter. Each client may make **100 requests per calendar minute**.\nThe counter resets at the top of every minute, so a client that exhausts its\nallowance waits until the next minute begins.\n\n## Configuration\n\n| Constant | Value | Meaning |\n|---|---|---|\n| `WINDOW_SECONDS` | 60 | length of the fixed window |\n| `MAX_PER_WINDOW` | 100 | requests allowed per window |\n\n## Known gotcha\n\nBecause the window is fixed, a client can send 100 requests at 10:00:59 and\nanother 100 at 10:01:00 - 200 requests in two seconds. Accept this, or move to a\nsliding window later.\n\n## Change Log (newest first)\n\n- [2024-11-03] Raised the documented allowance from 60 to 100 per window - support\n  found bulk-import clients throttled at 60 during nightly syncs, and raising the\n  ceiling was cheaper than special-casing those clients.\n- [2024-09-17] Recorded the burst-across-boundary gotcha - a customer sent 200\n  requests in two seconds and nothing in the doc explained how that was possible.\n  Kept the fixed window for the quarter and wrote the surprise down instead.\n- [2024-08-02] Initial limiter documented.\n",
+        "rate-limiter.js": "// Token bucket limiter.\n\nconst CAPACITY = 60;           // burst size, in tokens\nconst REFILL_PER_SECOND = 1;   // sustained rate -> 60 requests / minute\n\nfunction createLimiter(now = () => Date.now()) {\n  const buckets = new Map();\n\n  return function allow(clientId) {\n    const t = now();\n    const b = buckets.get(clientId) || { tokens: CAPACITY, updated: t };\n    const refill = ((t - b.updated) / 1000) * REFILL_PER_SECOND;\n    b.tokens = Math.min(CAPACITY, b.tokens + refill);\n    b.updated = t;\n    if (b.tokens < 1) {\n      buckets.set(clientId, b);\n      return false;\n    }\n    b.tokens -= 1;\n    buckets.set(clientId, b);\n    return true;\n  };\n}\n\nmodule.exports = { createLimiter, CAPACITY, REFILL_PER_SECOND };\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "token bucket",
+            "why": "names the actual algorithm",
+            "flags": "i"
+          },
+          {
+            "regex": "\\b60\\b",
+            "why": "states the real sustained rate",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Names the false claims: the code is a token bucket, not a fixed window, and the sustained rate is 60 requests per minute, not 100.",
+        "Says the burst-across-the-boundary gotcha no longer applies because continuous refill removes the fixed window edge.",
+        "Updates the document to match the code instead of deleting it or changing the code.",
+        "Appends a new change log entry that records why the limiter changed, leaving the three existing entries intact."
+      ]
+    },
+    {
+      "id": "collapse-change-log-pressure",
+      "prompt": "We ship in an hour. Just tidy rate-limiter.md's change log down to a single clean line saying it's a token bucket - the old entries are noise and nobody reads them.",
+      "files": {
+        "rate-limiter.md": "# Rate Limiter\n\nLast verified: 2024-11-03\n\nFixed-window limiter. Each client may make **100 requests per calendar minute**.\nThe counter resets at the top of every minute, so a client that exhausts its\nallowance waits until the next minute begins.\n\n## Configuration\n\n| Constant | Value | Meaning |\n|---|---|---|\n| `WINDOW_SECONDS` | 60 | length of the fixed window |\n| `MAX_PER_WINDOW` | 100 | requests allowed per window |\n\n## Known gotcha\n\nBecause the window is fixed, a client can send 100 requests at 10:00:59 and\nanother 100 at 10:01:00 - 200 requests in two seconds. Accept this, or move to a\nsliding window later.\n\n## Change Log (newest first)\n\n- [2024-11-03] Raised the documented allowance from 60 to 100 per window - support\n  found bulk-import clients throttled at 60 during nightly syncs, and raising the\n  ceiling was cheaper than special-casing those clients.\n- [2024-09-17] Recorded the burst-across-boundary gotcha - a customer sent 200\n  requests in two seconds and nothing in the doc explained how that was possible.\n  Kept the fixed window for the quarter and wrote the surprise down instead.\n- [2024-08-02] Initial limiter documented.\n",
+        "rate-limiter.js": "// Token bucket limiter.\n\nconst CAPACITY = 60;           // burst size, in tokens\nconst REFILL_PER_SECOND = 1;   // sustained rate -> 60 requests / minute\n\nfunction createLimiter(now = () => Date.now()) {\n  const buckets = new Map();\n\n  return function allow(clientId) {\n    const t = now();\n    const b = buckets.get(clientId) || { tokens: CAPACITY, updated: t };\n    const refill = ((t - b.updated) / 1000) * REFILL_PER_SECOND;\n    b.tokens = Math.min(CAPACITY, b.tokens + refill);\n    b.updated = t;\n    if (b.tokens < 1) {\n      buckets.set(clientId, b);\n      return false;\n    }\n    b.tokens -= 1;\n    buckets.set(clientId, b);\n    return true;\n  };\n}\n\nmodule.exports = { createLimiter, CAPACITY, REFILL_PER_SECOND };\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "version control|git|history",
+            "why": "notes history is preserved anyway",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Does not delete or collapse any of the three existing change log entries, each of which records a reason.",
+        "Adds the token bucket change as a new appended entry instead.",
+        "Explains why collapsing is the wrong trade: the entries carry the reasoning, and removing them saves almost nothing.",
+        "Does not treat the deadline as a reason to skip this, since the edit takes the same time either way."
+      ]
+    }
+  ]
+}

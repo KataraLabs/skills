@@ -1,0 +1,58 @@
+{
+  "skill": "pytest-skill",
+  "path": "skills/lambdatest/pytest-skill",
+  "cases": [
+    {
+      "id": "refactor-to-idioms",
+      "prompt": "Refactor these tests using pytest idioms.",
+      "files": {
+        "test_cart.py": "import unittest\nfrom cart import Cart\n\nclass TestCart(unittest.TestCase):\n    def test_one_item(self):\n        c = Cart()\n        c.add('apple', 1.0)\n        self.assertEqual(c.total(), 1.0)\n\n    def test_two_items(self):\n        c = Cart()\n        c.add('apple', 1.0)\n        c.add('pear', 2.0)\n        self.assertEqual(c.total(), 3.0)\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "@pytest\\.fixture",
+            "flags": "",
+            "why": "uses a fixture"
+          },
+          {
+            "regex": "@pytest\\.mark\\.parametrize",
+            "flags": "",
+            "why": "parametrizes"
+          }
+        ]
+      },
+      "expectations": [
+        "Replaces the class with plain functions and bare assert statements.",
+        "Moves Cart creation into a fixture (optionally in conftest.py).",
+        "Collapses the cases with parametrize.",
+        "Uses pytest.approx for float totals, or mentions it."
+      ]
+    },
+    {
+      "id": "raises-and-mock",
+      "prompt": "Write pytest tests: parse_age(\"-1\") raises ValueError, and fetch_user() calls requests.get which should be mocked.",
+      "checks": {
+        "all": [
+          {
+            "regex": "pytest\\.raises",
+            "flags": "",
+            "why": "uses pytest.raises"
+          }
+        ],
+        "any": [
+          {
+            "regex": "monkeypatch|mocker|unittest\\.mock|patch",
+            "flags": "",
+            "why": "mocks requests.get"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses pytest.raises(ValueError), optionally with match.",
+        "Mocks requests.get with monkeypatch or pytest-mock where fetch_user looks it up.",
+        "Does not make a real HTTP call."
+      ]
+    }
+  ]
+}

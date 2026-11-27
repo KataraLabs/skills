@@ -1,0 +1,56 @@
+{
+  "skill": "modern-python",
+  "path": "skills/trailofbits/modern-python",
+  "cases": [
+    {
+      "id": "new-project-with-uv",
+      "prompt": "Start a new Python CLI project called `logscan` with tests, linting and type checking set up.",
+      "checks": {
+        "all": [
+          {
+            "regex": "uv init",
+            "flags": "i",
+            "why": "creates the project with uv"
+          },
+          {
+            "regex": "uv add --(group|dev)",
+            "flags": "i",
+            "why": "adds dev tools to a dependency group"
+          },
+          {
+            "regex": "ruff",
+            "flags": "i",
+            "why": "uses ruff"
+          }
+        ]
+      },
+      "expectations": [
+        "Dev tools (pytest, ruff, ty) go in `[dependency-groups]` via `uv add --group dev` (or `--dev`), not in optional-dependencies or requirements.txt.",
+        "Runs tools with `uv run` (for example `uv run pytest`) instead of activating a virtual environment.",
+        "Adds dependencies with `uv add` rather than editing pyproject.toml by hand or using `uv pip install`."
+      ]
+    },
+    {
+      "id": "pep723-script",
+      "prompt": "Write a one-off script that fetches a URL with httpx and prints the status code. I do not want a whole project for it.",
+      "checks": {
+        "all": [
+          {
+            "regex": "# /// script",
+            "flags": "i",
+            "why": "declares inline script metadata"
+          },
+          {
+            "regex": "uv run",
+            "flags": "i",
+            "why": "runs it with uv run"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses a PEP 723 inline metadata block listing httpx under dependencies (and a requires-python).",
+        "Runs it with `uv run script.py`, with no requirements.txt or virtual environment setup."
+      ]
+    }
+  ]
+}

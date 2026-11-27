@@ -1,0 +1,47 @@
+{
+  "skill": "specflow-skill",
+  "path": "skills/lambdatest/specflow-skill",
+  "cases": [
+    {
+      "id": "calculator-bindings",
+      "prompt": "Write a SpecFlow feature and step bindings for a calculator that adds two numbers.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\[Binding\\]",
+            "flags": "",
+            "why": "marks a binding class"
+          },
+          {
+            "regex": "\\[(Given|When|Then)\\(",
+            "flags": "",
+            "why": "binds steps"
+          }
+        ]
+      },
+      "expectations": [
+        "Writes a feature with Given, When, Then steps.",
+        "Step methods take typed parameters from the step text.",
+        "Shares state through context injection or ScenarioContext."
+      ]
+    },
+    {
+      "id": "table-create-users",
+      "prompt": "How do I use a Gherkin table in SpecFlow to create several users in one step?",
+      "checks": {
+        "any": [
+          {
+            "regex": "CreateSet|CreateInstance",
+            "flags": "",
+            "why": "uses table helpers"
+          }
+        ]
+      },
+      "expectations": [
+        "Shows a feature step with a table.",
+        "Uses table.CreateSet<User>() from SpecFlow.Assist.",
+        "Shows the User class matching the columns."
+      ]
+    }
+  ]
+}

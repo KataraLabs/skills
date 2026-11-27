@@ -1,0 +1,47 @@
+{
+  "skill": "behat-skill",
+  "path": "skills/lambdatest/behat-skill",
+  "cases": [
+    {
+      "id": "login-feature",
+      "prompt": "Write a Behat feature and context for logging into our web app.",
+      "checks": {
+        "all": [
+          {
+            "regex": "Feature:",
+            "flags": "",
+            "why": "writes a feature"
+          },
+          {
+            "regex": "@(Given|When|Then)",
+            "flags": "",
+            "why": "annotates step methods"
+          }
+        ]
+      },
+      "expectations": [
+        "Writes Gherkin scenarios for successful and failed login.",
+        "Implements a FeatureContext with step annotations, or extends MinkContext.",
+        "Shows behat.yml with the Mink extension and a local base_url."
+      ]
+    },
+    {
+      "id": "state-between-steps",
+      "prompt": "How do I share state between steps and reset it between scenarios in Behat?",
+      "checks": {
+        "any": [
+          {
+            "regex": "@BeforeScenario|@AfterScenario",
+            "flags": "",
+            "why": "uses scenario hooks"
+          }
+        ]
+      },
+      "expectations": [
+        "Stores state in properties on the context object.",
+        "Uses @BeforeScenario or @AfterScenario hooks to reset it.",
+        "Mentions that Behat creates a fresh context per scenario, or how contexts can access each other via the environment."
+      ]
+    }
+  ]
+}

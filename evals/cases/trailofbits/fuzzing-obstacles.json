@@ -1,0 +1,47 @@
+{
+  "skill": "fuzzing-obstacles",
+  "path": "skills/trailofbits/fuzzing-obstacles",
+  "cases": [
+    {
+      "id": "crc-check-bypass",
+      "prompt": "Our fuzzer never gets past this CRC check, so the record parser is never reached. What should we do?",
+      "files": {
+        "record.c": "int parse_record(const uint8_t *buf, size_t len) {\n    if (len < 8) return -1;\n    uint32_t stored = read_u32(buf + len - 4);\n    if (crc32(buf, len - 4) != stored) {\n        return -1;\n    }\n    return parse_fields(buf, len - 4);\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION",
+            "flags": "i",
+            "why": "guards the bypass with the fuzzing build macro"
+          }
+        ]
+      },
+      "expectations": [
+        "Skips only the CRC failure return under `#ifndef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION`, leaving the length check and the rest of validation in place.",
+        "Checks whether parse_fields assumes anything the CRC guaranteed, to avoid false-positive crashes.",
+        "Says to compare coverage before and after the patch and to comment why the bypass is safe."
+      ]
+    },
+    {
+      "id": "nondeterministic-seed-rust",
+      "prompt": "Crashes from our cargo-fuzz target don't reproduce when we rerun the artifact. What's wrong?",
+      "files": {
+        "src/session.rs": "use rand::Rng;\n\npub fn decode_session(input: &[u8]) -> Result<Session, Error> {\n    let nonce: u64 = rand::thread_rng().gen();\n    let started = std::time::SystemTime::now();\n    let header = Header::parse(input)?;\n    Session::build(header, nonce, started)\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "cfg!\\(fuzzing\\)|cfg\\(fuzzing\\)",
+            "flags": "i",
+            "why": "switches behavior under cfg(fuzzing)"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies the random nonce and the wall-clock time as sources of non-determinism that make crashes irreproducible.",
+        "Makes them deterministic in fuzzing builds (a fixed seed or a value derived from the input) behind cfg(fuzzing), keeping the difference from production small."
+      ]
+    }
+  ]
+}

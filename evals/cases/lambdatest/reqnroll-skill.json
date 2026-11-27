@@ -1,0 +1,55 @@
+{
+  "skill": "reqnroll-skill",
+  "path": "skills/lambdatest/reqnroll-skill",
+  "cases": [
+    {
+      "id": "reqnroll-login",
+      "prompt": "Write a Reqnroll feature and C# step definitions for logging in with Selenium, running locally with NUnit.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\[Binding\\]",
+            "flags": "",
+            "why": "marks a binding class"
+          },
+          {
+            "regex": "\\[(Given|When|Then)\\(",
+            "flags": "",
+            "why": "binds steps"
+          }
+        ]
+      },
+      "expectations": [
+        "Writes a feature file with Gherkin scenarios.",
+        "Creates and disposes the WebDriver in [BeforeScenario] and [AfterScenario] hooks, sharing it through context injection or ScenarioContext.",
+        "Uses explicit waits rather than Thread.Sleep.",
+        "Runs against a local browser, emulator or app; it does not require a hosted cloud grid or vendor account."
+      ]
+    },
+    {
+      "id": "specflow-migration",
+      "prompt": "How do we migrate our SpecFlow project to Reqnroll?",
+      "checks": {
+        "all": [
+          {
+            "regex": "Reqnroll",
+            "flags": "",
+            "why": "names Reqnroll"
+          }
+        ],
+        "any": [
+          {
+            "regex": "TechTalk\\.SpecFlow|using Reqnroll",
+            "flags": "",
+            "why": "covers the namespace change"
+          }
+        ]
+      },
+      "expectations": [
+        "Swaps SpecFlow packages for the matching Reqnroll packages (for example Reqnroll.NUnit).",
+        "Changes the TechTalk.SpecFlow namespace to Reqnroll.",
+        "Mentions the configuration file (specflow.json to reqnroll.json) or the compatibility package."
+      ]
+    }
+  ]
+}

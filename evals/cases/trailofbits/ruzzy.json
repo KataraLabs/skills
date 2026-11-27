@@ -1,0 +1,60 @@
+{
+  "skill": "ruzzy",
+  "path": "skills/trailofbits/ruzzy",
+  "cases": [
+    {
+      "id": "fuzz-gem-c-extension",
+      "prompt": "Fuzz the C extension in our Ruby gem `fastcsv` with Ruzzy on a Linux box.",
+      "checks": {
+        "all": [
+          {
+            "regex": "LD_PRELOAD",
+            "flags": "i",
+            "why": "preloads the ASan runtime"
+          },
+          {
+            "regex": "ASAN_PATH",
+            "flags": "i",
+            "why": "uses Ruzzy's ASan library path"
+          }
+        ],
+        "any": [
+          {
+            "regex": "fuzzer-no-link",
+            "flags": "i",
+            "why": "installs the gem with fuzzer instrumentation"
+          }
+        ]
+      },
+      "expectations": [
+        "Installs the gem with clang and CFLAGS including `-fsanitize=address,fuzzer-no-link`.",
+        "Sets ASAN_OPTIONS with allocator_may_return_null=1, detect_leaks=0 and use_sigaltstack=0.",
+        "The harness lambda rescues Ruby exceptions, returns 0 and is passed to Ruzzy.fuzz."
+      ]
+    },
+    {
+      "id": "pure-ruby-on-macos",
+      "prompt": "Fuzz a pure Ruby method `Semver.parse` with Ruzzy on my MacBook.",
+      "checks": {
+        "all": [
+          {
+            "regex": "Ruzzy\\.trace",
+            "flags": "i",
+            "why": "uses a tracer script for pure Ruby"
+          }
+        ],
+        "any": [
+          {
+            "regex": "Docker|Linux",
+            "flags": "i",
+            "why": "notes the platform limitation"
+          }
+        ]
+      },
+      "expectations": [
+        "Says Ruzzy supports Linux only and suggests the Docker image or a Linux environment on macOS.",
+        "Uses two scripts: a tracer that calls Ruzzy.trace on the harness file, and the harness that calls Ruzzy.fuzz."
+      ]
+    }
+  ]
+}

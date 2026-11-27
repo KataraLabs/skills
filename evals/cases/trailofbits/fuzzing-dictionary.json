@@ -1,0 +1,51 @@
+{
+  "skill": "fuzzing-dictionary",
+  "path": "skills/trailofbits/fuzzing-dictionary",
+  "cases": [
+    {
+      "id": "http-parser-dictionary",
+      "prompt": "Write a libFuzzer dictionary for our HTTP/1.1 request parser and show how to use it.",
+      "checks": {
+        "all": [
+          {
+            "regex": "-dict=",
+            "flags": "i",
+            "why": "passes the dictionary with -dict="
+          },
+          {
+            "regex": "\"GET\"",
+            "flags": "",
+            "why": "includes method tokens as quoted strings"
+          }
+        ]
+      },
+      "expectations": [
+        "The dictionary lists one quoted token per line (methods, header names, \"HTTP/1.1\") with # comments grouping them.",
+        "Non-printable bytes such as CRLF are written as escapes (\\r\\n or \\x0D\\x0A).",
+        "Entries are short atomic tokens rather than whole requests, and the list stays focused."
+      ]
+    },
+    {
+      "id": "magic-bytes-aflpp",
+      "prompt": "Our file format starts with the bytes 89 50 4E 47 0D 0A 1A 0A. Add that to a dictionary and run AFL++ with it.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\\\x89",
+            "flags": "i",
+            "why": "writes the magic with hex escapes"
+          },
+          {
+            "regex": "-x\\s+\\S+",
+            "flags": "i",
+            "why": "passes the dictionary to afl-fuzz with -x"
+          }
+        ]
+      },
+      "expectations": [
+        "Writes the signature as a hex-escaped quoted string such as \"\\x89PNG\\x0D\\x0A\\x1A\\x0A\".",
+        "Runs afl-fuzz with `-x <file>.dict`."
+      ]
+    }
+  ]
+}

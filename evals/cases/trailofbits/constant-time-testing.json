@@ -1,0 +1,59 @@
+{
+  "skill": "constant-time-testing",
+  "path": "skills/trailofbits/constant-time-testing",
+  "cases": [
+    {
+      "id": "tag-compare-early-exit",
+      "prompt": "Check whether our MAC tag comparison is constant time, and tell me how to test it.",
+      "files": {
+        "mac.c": "#include <stddef.h>\n#include <stdint.h>\n\nint check_tag(const uint8_t *expected, const uint8_t *got, size_t len) {\n    for (size_t i = 0; i < len; i++) {\n        if (expected[i] != got[i]) return 0;\n    }\n    return 1;\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "dudect",
+            "flags": "i",
+            "why": "tests statistically with dudect"
+          }
+        ],
+        "any": [
+          {
+            "regex": "Timecop|Valgrind",
+            "flags": "i",
+            "why": "can pinpoint the leak with Timecop"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies the early return on the first mismatching byte as a secret-dependent branch that leaks timing.",
+        "Fixes it by accumulating differences (for example OR of XORs) over every byte and deciding once at the end.",
+        "Describes a dudect test with two input classes (fixed versus random) run for minutes, not seconds, at the production optimization level."
+      ]
+    },
+    {
+      "id": "short-o0-run-proves-little",
+      "prompt": "Our dudect run of 20 seconds on a build with -O0 showed no leak, so the code is constant time, right?",
+      "checks": {
+        "any": [
+          {
+            "regex": "minutes",
+            "flags": "i",
+            "why": "asks for a run of several minutes or more"
+          }
+        ],
+        "none": [
+          {
+            "regex": "^\\s*(yes|correct)\\b",
+            "flags": "i",
+            "why": "does not agree that the code is proven constant time"
+          }
+        ]
+      },
+      "expectations": [
+        "Says no: a 20-second run is too short to detect weak signals; run for 5 to 10 minutes or more.",
+        "Explains that -O0 can hide leaks the optimizer introduces, so test at the production optimization level and on the target architecture.",
+        "Notes that a statistical test not finding a leak does not prove its absence, and points to formal tools for high assurance."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "skill": "flutter-testing-skill",
+  "path": "skills/lambdatest/flutter-testing-skill",
+  "cases": [
+    {
+      "id": "counter-widget-test",
+      "prompt": "Write a widget test for our Counter widget (shows a number and a + button).",
+      "checks": {
+        "all": [
+          {
+            "regex": "testWidgets",
+            "flags": "",
+            "why": "uses testWidgets"
+          },
+          {
+            "regex": "pumpWidget",
+            "flags": "",
+            "why": "pumps the widget"
+          }
+        ],
+        "any": [
+          {
+            "regex": "find\\.(byKey|text|byType|byIcon)",
+            "flags": "",
+            "why": "uses finders"
+          }
+        ]
+      },
+      "expectations": [
+        "Wraps the widget in MaterialApp when needed.",
+        "Taps the button then calls pump before asserting.",
+        "Uses findsOneWidget or findsNothing matchers."
+      ]
+    },
+    {
+      "id": "login-integration",
+      "prompt": "Write a Flutter integration test for the login flow.",
+      "checks": {
+        "all": [
+          {
+            "regex": "IntegrationTestWidgetsFlutterBinding",
+            "flags": "",
+            "why": "initializes the integration binding"
+          }
+        ],
+        "any": [
+          {
+            "regex": "pumpAndSettle",
+            "flags": "",
+            "why": "waits with pumpAndSettle"
+          }
+        ]
+      },
+      "expectations": [
+        "Places the test under integration_test/.",
+        "Uses enterText and tap with Key-based finders.",
+        "Waits with pumpAndSettle and asserts the home screen appears."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "skill": "cypress-skill",
+  "path": "skills/lambdatest/cypress-skill",
+  "cases": [
+    {
+      "id": "login-intercept",
+      "prompt": "Write a Cypress test for our login form. The form posts to POST /api/login.",
+      "checks": {
+        "all": [
+          {
+            "regex": "cy\\.intercept",
+            "flags": "",
+            "why": "intercepts the request"
+          }
+        ],
+        "any": [
+          {
+            "regex": "cy\\.wait\\(\\s*['\"]@",
+            "flags": "",
+            "why": "waits on an alias"
+          }
+        ]
+      },
+      "expectations": [
+        "Selects elements with data-cy or data-testid attributes.",
+        "Waits on the intercepted alias instead of cy.wait with a number.",
+        "Asserts the result with should.",
+        "Runs against a local browser, emulator or app; it does not require a hosted cloud grid or vendor account."
+      ]
+    },
+    {
+      "id": "reuse-login",
+      "prompt": "How do I avoid logging in through the UI in every Cypress spec?",
+      "checks": {
+        "any": [
+          {
+            "regex": "cy\\.session",
+            "flags": "",
+            "why": "uses cy.session"
+          },
+          {
+            "regex": "Cypress\\.Commands\\.add",
+            "flags": "",
+            "why": "adds a custom command"
+          }
+        ]
+      },
+      "expectations": [
+        "Creates a custom login command.",
+        "Caches the session with cy.session, or logs in through cy.request.",
+        "Keeps one UI login test for the form itself."
+      ]
+    }
+  ]
+}

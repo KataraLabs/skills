@@ -1,0 +1,57 @@
+{
+  "skill": "detox-skill",
+  "path": "skills/lambdatest/detox-skill",
+  "cases": [
+    {
+      "id": "rn-login",
+      "prompt": "Write a Detox test for our React Native login screen.",
+      "checks": {
+        "all": [
+          {
+            "regex": "by\\.id",
+            "flags": "",
+            "why": "uses testIDs"
+          }
+        ],
+        "any": [
+          {
+            "regex": "toBeVisible|waitFor",
+            "flags": "",
+            "why": "asserts visibility"
+          }
+        ]
+      },
+      "expectations": [
+        "Adds testID props to the components and matches them with by.id.",
+        "Uses typeText and tap actions.",
+        "Launches or reloads the app in beforeAll or beforeEach.",
+        "Runs against a local browser, emulator or app; it does not require a hosted cloud grid or vendor account."
+      ]
+    },
+    {
+      "id": "detox-config",
+      "prompt": "Configure Detox for an iOS simulator and an Android emulator.",
+      "checks": {
+        "all": [
+          {
+            "regex": "configurations",
+            "flags": "",
+            "why": "defines configurations"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\\.detoxrc|detox\\.config",
+            "flags": "",
+            "why": "writes the Detox config"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines apps, devices and configurations for ios.sim and android.emu.",
+        "Includes build commands and binary paths.",
+        "Shows detox build and detox test commands."
+      ]
+    }
+  ]
+}

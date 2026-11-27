@@ -1,0 +1,87 @@
+{
+  "skill": "sql",
+  "path": "skills/katara/sql",
+  "cases": [
+    {
+      "id": "big-table-column-and-index",
+      "prompt": "Add a required `region` column (text, default 'us') to `orders` and index it. We use golang-migrate on PostgreSQL 16; orders has about 80 million rows and takes writes all day.",
+      "files": {
+        "migrations/000041_add_order_status_index.up.sql": "CREATE INDEX CONCURRENTLY IF NOT EXISTS orders_status_idx ON orders (status);\n",
+        "migrations/000041_add_order_status_index.down.sql": "DROP INDEX CONCURRENTLY IF EXISTS orders_status_idx;\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "CONCURRENTLY",
+            "flags": "i",
+            "why": "creates the index concurrently"
+          },
+          {
+            "regex": "000042",
+            "flags": "i",
+            "why": "adds the next numbered migration"
+          }
+        ]
+      },
+      "expectations": [
+        "Adds a new migration numbered 000042 with both an .up.sql and a .down.sql file, and does not edit 000041.",
+        "Creates the index with CREATE INDEX CONCURRENTLY, outside a transaction (in its own migration if needed).",
+        "Handles NOT NULL safely: either adds the column in steps (nullable, backfill in batches, then the constraint) or explains why a constant default on PostgreSQL 11+ avoids a table rewrite."
+      ]
+    },
+    {
+      "id": "not-in-and-equals-null",
+      "prompt": "This report returns zero rows even though there are customers with no orders. Why?",
+      "files": {
+        "reports/inactive_customers.sql": "-- orders.customer_id is NULL for guest checkouts\nSELECT c.id, c.email\nFROM customers c\nWHERE c.id NOT IN (SELECT o.customer_id FROM orders o)\n  AND c.deleted_at = NULL;\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "IS NULL",
+            "flags": "i",
+            "why": "uses IS NULL"
+          },
+          {
+            "regex": "NOT EXISTS",
+            "flags": "i",
+            "why": "rewrites with NOT EXISTS"
+          }
+        ]
+      },
+      "expectations": [
+        "Explains that `= NULL` is never true, so the deleted_at filter removes every row.",
+        "Explains that NOT IN against a subquery containing a NULL customer_id returns no rows.",
+        "Rewrites the query with NOT EXISTS (or a filtered subquery) and `deleted_at IS NULL`."
+      ]
+    },
+    {
+      "id": "rename-column-expand-contract",
+      "prompt": "Write a PostgreSQL migration renaming `users.email_addr` to `users.email`. The app runs on several servers that are updated one at a time.",
+      "checks": {
+        "any": [
+          {
+            "regex": "expand|contract",
+            "flags": "i",
+            "why": "names the expand and contract approach"
+          },
+          {
+            "regex": "write (to )?both|both columns|dual.?write",
+            "flags": "i",
+            "why": "writes to both columns during the rollout"
+          },
+          {
+            "regex": "later migration|separate migration|follow-?up migration",
+            "flags": "i",
+            "why": "drops the old column in a later migration"
+          }
+        ]
+      },
+      "expectations": [
+        "Warns that a direct RENAME COLUMN breaks servers still running the old code during a rolling deploy.",
+        "Proposes adding the new column, writing to both and backfilling, deploying code that reads the new column, then dropping the old column in a later migration.",
+        "Treats dropping the old column as destructive and leaves it for the user's explicit go-ahead or a separate step."
+      ]
+    }
+  ]
+}

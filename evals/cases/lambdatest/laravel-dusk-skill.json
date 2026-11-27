@@ -1,0 +1,49 @@
+{
+  "skill": "laravel-dusk-skill",
+  "path": "skills/lambdatest/laravel-dusk-skill",
+  "cases": [
+    {
+      "id": "dusk-login",
+      "prompt": "Write a Laravel Dusk test for logging in.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\$this->browse",
+            "flags": "",
+            "why": "uses browse"
+          }
+        ],
+        "any": [
+          {
+            "regex": "->(visit|type|press)\\(",
+            "flags": "",
+            "why": "uses Dusk actions"
+          }
+        ]
+      },
+      "expectations": [
+        "Extends DuskTestCase and uses DatabaseMigrations or a factory user.",
+        "Uses dusk selectors or field names with type and press.",
+        "Asserts with assertPathIs or waitForText."
+      ]
+    },
+    {
+      "id": "dusk-ajax-table",
+      "prompt": "My Dusk test is flaky on a table that loads by AJAX. How do I fix it?",
+      "checks": {
+        "any": [
+          {
+            "regex": "waitFor(Text|Location)?\\(|waitUntil",
+            "flags": "",
+            "why": "waits explicitly"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses waitFor, waitForText or waitUntilMissing instead of pause.",
+        "Explains pause is fixed and unreliable.",
+        "Shows the corrected assertion."
+      ]
+    }
+  ]
+}

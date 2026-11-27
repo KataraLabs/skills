@@ -1,0 +1,56 @@
+{
+  "skill": "phpunit-skill",
+  "path": "skills/lambdatest/phpunit-skill",
+  "cases": [
+    {
+      "id": "cart-data-provider",
+      "prompt": "Write PHPUnit tests for a Cart class (add items, total) using a data provider.",
+      "checks": {
+        "all": [
+          {
+            "regex": "extends TestCase",
+            "flags": "",
+            "why": "extends TestCase"
+          }
+        ],
+        "any": [
+          {
+            "regex": "@dataProvider|#\\[DataProvider",
+            "flags": "",
+            "why": "uses a data provider"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses setUp to create the Cart.",
+        "Uses a static data provider method.",
+        "Uses assertSame or assertEquals with appropriate precision for money."
+      ]
+    },
+    {
+      "id": "mock-mailer",
+      "prompt": "How do I mock a Mailer dependency in PHPUnit and check send() was called once?",
+      "checks": {
+        "all": [
+          {
+            "regex": "createMock",
+            "flags": "",
+            "why": "creates a mock"
+          }
+        ],
+        "any": [
+          {
+            "regex": "expects\\(\\s*\\$this->once\\(\\)|expects\\(self::once\\(\\)|once\\(\\)",
+            "flags": "",
+            "why": "expects one call"
+          }
+        ]
+      },
+      "expectations": [
+        "Creates the mock with createMock(Mailer::class).",
+        "Sets expects(once())->method(\"send\") with argument constraints.",
+        "Injects the mock into the class under test."
+      ]
+    }
+  ]
+}

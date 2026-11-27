@@ -1,0 +1,57 @@
+{
+  "skill": "openapi-spec-generator",
+  "path": "skills/lambdatest/api-skill/openapi-spec-generator",
+  "cases": [
+    {
+      "id": "spec-from-fastapi",
+      "prompt": "Generate an OpenAPI 3 spec for this code.",
+      "files": {
+        "main.py": "@app.get('/books/{book_id}')\ndef get_book(book_id: int):\n    book = db.get(book_id)\n    if not book:\n        raise HTTPException(404, 'not found')\n    return {'id': book.id, 'title': book.title, 'year': book.year}\n\n@app.post('/books', status_code=201)\ndef create_book(body: BookIn):  # title: str, year: int | None\n    return db.create(body)\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "components:|\"components\"",
+            "flags": "",
+            "why": "uses components"
+          }
+        ],
+        "any": [
+          {
+            "regex": "openapi:\\s*['\"]?3|\"openapi\":\\s*\"3",
+            "flags": "",
+            "why": "declares OpenAPI 3"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines both paths with the path parameter typed as integer.",
+        "Puts Book and BookIn schemas under components with title required and year optional.",
+        "Documents 200, 201 and 404 responses."
+      ]
+    },
+    {
+      "id": "todo-spec-bearer",
+      "prompt": "Write an OpenAPI spec for a todo API (list, create, update, delete) secured with bearer tokens.",
+      "checks": {
+        "all": [
+          {
+            "regex": "securitySchemes",
+            "flags": "",
+            "why": "declares security schemes"
+          },
+          {
+            "regex": "bearer",
+            "flags": "i",
+            "why": "uses bearer auth"
+          }
+        ]
+      },
+      "expectations": [
+        "Declares a bearer securityScheme and applies it globally or per operation.",
+        "Covers all four operations with request bodies and responses.",
+        "Includes 401 responses."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "skill": "atheris",
+  "path": "skills/trailofbits/atheris",
+  "cases": [
+    {
+      "id": "native-extension-asan",
+      "prompt": "Fuzz the C extension `fastjson._speedups` in our Python package with Atheris to find memory corruption.",
+      "checks": {
+        "all": [
+          {
+            "regex": "LD_PRELOAD",
+            "flags": "i",
+            "why": "preloads the ASan runtime"
+          },
+          {
+            "regex": "fuzzer-no-link",
+            "flags": "i",
+            "why": "builds the extension with fuzzer-no-link instrumentation"
+          }
+        ]
+      },
+      "expectations": [
+        "Rebuilds the extension with clang and `-fsanitize=address,fuzzer-no-link` in CFLAGS (and sets LDSHARED to clang -shared).",
+        "Preloads Atheris's asan_with_fuzzer.so with LD_PRELOAD when running the harness.",
+        "The harness imports the module inside `atheris.instrument_imports()` and defines TestOneInput, catching only the exceptions the parser is expected to raise."
+      ]
+    },
+    {
+      "id": "harness-review-imports-exceptions",
+      "prompt": "Review this Atheris harness. It runs, but coverage barely moves.",
+      "files": {
+        "fuzz_toml.py": "import sys\nimport atheris\n\n\ndef TestOneInput(data):\n    import tomlparse\n    try:\n        tomlparse.loads(data.decode(\"utf-8\"))\n    except Exception:\n        pass\n\n\natheris.Setup(sys.argv, TestOneInput)\natheris.Fuzz()\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "instrument_imports|instrument_func",
+            "flags": "i",
+            "why": "instruments the target code"
+          }
+        ]
+      },
+      "expectations": [
+        "Points out that tomlparse is never instrumented and moves its import into `with atheris.instrument_imports():` before Setup.",
+        "Replaces `except Exception` with the specific expected errors (such as the parser error and UnicodeDecodeError) so real bugs still surface."
+      ]
+    }
+  ]
+}

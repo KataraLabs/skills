@@ -1,0 +1,54 @@
+{
+  "skill": "cucumber-skill",
+  "path": "skills/lambdatest/cucumber-skill",
+  "cases": [
+    {
+      "id": "cart-steps-java",
+      "prompt": "Write Cucumber Java step definitions for a shopping cart feature (add item, check total).",
+      "checks": {
+        "all": [
+          {
+            "regex": "@(Given|When|Then)",
+            "flags": "",
+            "why": "annotates steps"
+          },
+          {
+            "regex": "Feature:",
+            "flags": "",
+            "why": "writes a feature"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\\{int\\}|\\{string\\}|\\{double\\}",
+            "flags": "",
+            "why": "uses Cucumber expressions"
+          }
+        ]
+      },
+      "expectations": [
+        "Writes a feature file and matching step definitions with Cucumber expressions.",
+        "Includes a runner (JUnit Platform suite or @CucumberOptions).",
+        "Uses @Before or @After hooks, or shares state through dependency injection."
+      ]
+    },
+    {
+      "id": "repeated-login-steps",
+      "prompt": "Every scenario in our feature files starts with the same three login steps. How do I clean this up?",
+      "checks": {
+        "all": [
+          {
+            "regex": "Background:",
+            "flags": "",
+            "why": "uses Background"
+          }
+        ]
+      },
+      "expectations": [
+        "Moves the shared steps into a Background block.",
+        "Optionally suggests a single declarative step like \"Given I am logged in\".",
+        "Keeps scenarios focused on behavior."
+      ]
+    }
+  ]
+}

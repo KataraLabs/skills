@@ -1,0 +1,59 @@
+{
+  "skill": "newman-report-analyzer",
+  "path": "skills/lambdatest/api-skill/newman/newman-report-analyzer",
+  "cases": [
+    {
+      "id": "analyze-cli-output",
+      "prompt": "Summarize what failed in this Newman run and why.",
+      "files": {
+        "newman.log": "→ Login\n  POST https://api.local:8443/auth [200 OK, 512B, 180ms]\n→ Get Profile\n  GET https://api.local:8443/me [401 Unauthorized, 120B, 95ms]\n  1. Status code is 200\n→ List Orders\n  GET https://api.local:8443/orders [errored]\n     connect ECONNREFUSED 127.0.0.1:8443\n→ Search\n  GET https://api.local:8443/search?q=a [200 OK, 80KB, 4870ms]\n\n#  failure       detail\n1. AssertionError  Status code is 200\n                   expected response to have status code 200 but got 401\n2. Error           connect ECONNREFUSED 127.0.0.1:8443\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "401",
+            "flags": "",
+            "why": "covers the 401"
+          },
+          {
+            "regex": "ECONNREFUSED|connection refused|refused",
+            "flags": "i",
+            "why": "covers the connection error"
+          }
+        ]
+      },
+      "expectations": [
+        "Summarizes the run with counts of failures.",
+        "Diagnoses the 401 as a missing or unset auth token, likely the token from Login not being saved to a variable.",
+        "Diagnoses ECONNREFUSED as the server not reachable at that host and port.",
+        "Flags the slow Search request (about 4.9 s)."
+      ]
+    },
+    {
+      "id": "analyze-json-report",
+      "prompt": "Analyze this Newman JSON report excerpt.",
+      "files": {
+        "report.json": "{\n  \"run\": {\n    \"stats\": { \"assertions\": { \"total\": 12, \"failed\": 2 } },\n    \"failures\": [\n      { \"source\": { \"name\": \"Create User\" }, \"error\": { \"name\": \"AssertionError\", \"test\": \"Response has id\", \"message\": \"expected undefined to be a number\" } },\n      { \"source\": { \"name\": \"Delete User\" }, \"error\": { \"name\": \"AssertionError\", \"test\": \"Status code is 204\", \"message\": \"expected response to have status code 204 but got 404\" } }\n    ]\n  }\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "Create User",
+            "flags": "",
+            "why": "names the first failure"
+          },
+          {
+            "regex": "Delete User",
+            "flags": "",
+            "why": "names the second failure"
+          }
+        ]
+      },
+      "expectations": [
+        "Reports 2 of 12 assertions failing.",
+        "Connects the failures: Create User did not return an id, so Delete User likely used an empty id and got 404.",
+        "Suggests concrete fixes such as checking the create response shape and the variable set in its test script."
+      ]
+    }
+  ]
+}

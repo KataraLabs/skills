@@ -1,0 +1,55 @@
+{
+  "skill": "api-health-monitoring",
+  "path": "skills/lambdatest/api-skill/api-health-monitoring",
+  "cases": [
+    {
+      "id": "liveness-readiness",
+      "prompt": "Add health check endpoints to our Node API, which depends on Postgres and Redis.",
+      "checks": {
+        "all": [
+          {
+            "regex": "live|healthz",
+            "flags": "i",
+            "why": "has a liveness endpoint"
+          },
+          {
+            "regex": "ready|readiness",
+            "flags": "i",
+            "why": "has a readiness endpoint"
+          }
+        ]
+      },
+      "expectations": [
+        "Separates liveness (process is up) from readiness (dependencies reachable).",
+        "Readiness checks Postgres and Redis with short timeouts.",
+        "Returns 503 when a dependency is down and 200 when healthy, with a JSON status body.",
+        "Liveness does not depend on Postgres or Redis."
+      ]
+    },
+    {
+      "id": "checkout-slos",
+      "prompt": "Define SLOs and alerts for our checkout API.",
+      "checks": {
+        "all": [
+          {
+            "regex": "error budget|burn rate|budget",
+            "flags": "i",
+            "why": "uses error budgets or burn rate"
+          }
+        ],
+        "any": [
+          {
+            "regex": "p9[59]|percentile|latency",
+            "flags": "i",
+            "why": "defines a latency objective"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines availability and latency SLIs with numeric targets.",
+        "Ties alerts to error budget or burn rate rather than single errors.",
+        "Names metrics to expose, such as a request duration histogram and error counter."
+      ]
+    }
+  ]
+}

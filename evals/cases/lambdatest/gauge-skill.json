@@ -1,0 +1,49 @@
+{
+  "skill": "gauge-skill",
+  "path": "skills/lambdatest/gauge-skill",
+  "cases": [
+    {
+      "id": "login-spec",
+      "prompt": "Write a Gauge spec and Java step implementations for logging in.",
+      "checks": {
+        "all": [
+          {
+            "regex": "@Step",
+            "flags": "",
+            "why": "implements steps"
+          }
+        ],
+        "any": [
+          {
+            "regex": "^#\\s+\\w",
+            "flags": "m",
+            "why": "writes a spec heading"
+          }
+        ]
+      },
+      "expectations": [
+        "Writes a Markdown spec with scenarios as ## headings and steps as * bullets.",
+        "Uses quoted parameters in steps that map to method arguments.",
+        "Step implementations use @Step annotations."
+      ]
+    },
+    {
+      "id": "data-driven-spec",
+      "prompt": "Make a Gauge spec that runs the login scenario for several users from a table.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\|.*\\|",
+            "flags": "",
+            "why": "uses a table"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses a data table at spec level (or a CSV) with column names.",
+        "References columns as <column> parameters in steps.",
+        "Explains the scenario runs once per row."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "skill": "test",
+  "path": "skills/addyosmani/test",
+  "cases": [
+    {
+      "id": "prove-it-bug-fix",
+      "prompt": "isLeapYear(1900) returns true but 1900 was not a leap year. Fix it.",
+      "files": {
+        "leap.js": "function isLeapYear(year) {\n  return year % 4 === 0;\n}\n\nmodule.exports = { isLeapYear };\n",
+        "leap.test.js": "const test = require('node:test');\nconst assert = require('node:assert/strict');\nconst { isLeapYear } = require('./leap');\n\ntest('2024 is a leap year', () => assert.equal(isLeapYear(2024), true));\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "1900",
+            "why": "tests the reported year",
+            "flags": "i"
+          },
+          {
+            "regex": "400",
+            "why": "handles the 400-year rule",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Writes a test for isLeapYear(1900) === false first and says it fails against the current code.",
+        "Fixes the function with the full rule (divisible by 4, not by 100 unless by 400) and adds a case such as 2000.",
+        "Asks the user to run the test and the full suite (or gives the command) to confirm it passes."
+      ]
+    },
+    {
+      "id": "new-feature-test-first",
+      "prompt": "Add a maxLength option to truncate(text, maxLength) that cuts at a word boundary and appends an ellipsis. Work test-first.",
+      "checks": {
+        "any": [
+          {
+            "regex": "fail",
+            "why": "expects the tests to fail first",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Presents tests describing the behavior before the implementation and says they should fail first.",
+        "Tests cover edge cases such as text shorter than maxLength, a single word longer than maxLength, and the ellipsis counting toward the limit or not (stated explicitly).",
+        "Then gives an implementation that makes the tests pass, with any refactor keeping them green."
+      ]
+    }
+  ]
+}

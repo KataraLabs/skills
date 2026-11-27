@@ -1,0 +1,47 @@
+{
+  "skill": "api-compliance-checker",
+  "path": "skills/lambdatest/api-skill/api-compliance",
+  "cases": [
+    {
+      "id": "pci-card-numbers",
+      "prompt": "Our payments API returns full card numbers in GET /payments/{id}. What should change for PCI-DSS?",
+      "checks": {
+        "all": [
+          {
+            "regex": "last ?(4|four)|mask",
+            "flags": "i",
+            "why": "masks the card number"
+          }
+        ]
+      },
+      "expectations": [
+        "Says the full PAN must not be returned and shows a masked form (for example only the last four digits).",
+        "Says CVV or security codes must never be stored or returned.",
+        "Mentions keeping card data out of logs, or tokenization, or restricting access."
+      ]
+    },
+    {
+      "id": "gdpr-endpoints",
+      "prompt": "We need GDPR data subject endpoints for our user API. Design them.",
+      "checks": {
+        "all": [
+          {
+            "regex": "export|portab|access",
+            "flags": "i",
+            "why": "includes data access or export"
+          },
+          {
+            "regex": "delet|erasure|forget",
+            "flags": "i",
+            "why": "includes erasure"
+          }
+        ]
+      },
+      "expectations": [
+        "Includes endpoints for access or export of personal data and for erasure.",
+        "Includes rectification or consent management.",
+        "Mentions identity verification or audit logging for these requests, and asynchronous handling where exports are large."
+      ]
+    }
+  ]
+}

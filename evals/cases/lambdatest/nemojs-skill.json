@@ -1,0 +1,49 @@
+{
+  "skill": "nemojs-skill",
+  "path": "skills/lambdatest/nemojs-skill",
+  "cases": [
+    {
+      "id": "nemo-login",
+      "prompt": "Write a Nemo.js test that logs into our site.",
+      "checks": {
+        "all": [
+          {
+            "regex": "nemo",
+            "flags": "i",
+            "why": "uses Nemo"
+          }
+        ],
+        "any": [
+          {
+            "regex": "nemo-view|view\\.",
+            "flags": "",
+            "why": "uses nemo-view"
+          }
+        ]
+      },
+      "expectations": [
+        "Configures Nemo with the nemo-view plugin and a local browser.",
+        "Defines locators in a JSON locator file.",
+        "Uses Mocha before and after hooks that create Nemo and quit the driver."
+      ]
+    },
+    {
+      "id": "nemo-locators",
+      "prompt": "How should I organize locators in a Nemo.js project?",
+      "checks": {
+        "all": [
+          {
+            "regex": "locator",
+            "flags": "i",
+            "why": "discusses locators"
+          }
+        ]
+      },
+      "expectations": [
+        "Puts locators in JSON files per page under a locator directory.",
+        "Accesses them through nemo.view generated methods.",
+        "Prefers stable selectors such as ids or data attributes."
+      ]
+    }
+  ]
+}

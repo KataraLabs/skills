@@ -1,0 +1,47 @@
+{
+  "skill": "xunit-skill",
+  "path": "skills/lambdatest/xunit-skill",
+  "cases": [
+    {
+      "id": "xunit-theory",
+      "prompt": "Write xUnit tests for Calculator.Add with several cases.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\[Theory\\]",
+            "flags": "",
+            "why": "uses Theory"
+          },
+          {
+            "regex": "\\[InlineData",
+            "flags": "",
+            "why": "uses InlineData"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses [Theory] with [InlineData] and [Fact] for single cases.",
+        "Uses Assert.Equal.",
+        "Uses the constructor for setup rather than a setup attribute."
+      ]
+    },
+    {
+      "id": "shared-db-fixture",
+      "prompt": "How do I share an expensive database fixture across tests in xUnit?",
+      "checks": {
+        "any": [
+          {
+            "regex": "IClassFixture|ICollectionFixture",
+            "flags": "",
+            "why": "uses fixtures"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses IClassFixture<T> for one class or ICollectionFixture<T> with [CollectionDefinition] across classes.",
+        "Implements IDisposable or IAsyncLifetime for setup and teardown.",
+        "Notes that tests in one collection do not run in parallel."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "skill": "rust",
+  "path": "skills/katara/rust",
+  "cases": [
+    {
+      "id": "parse-without-panics",
+      "prompt": "This parser panics on bad input from clients. Make it return errors instead, and add tests.",
+      "files": {
+        "Cargo.toml": "[package]\nname = \"wire\"\nversion = \"0.4.0\"\nedition = \"2021\"\nrust-version = \"1.74\"\n\n[dependencies]\nthiserror = \"1\"\n",
+        "src/frame.rs": "pub struct Frame {\n    pub kind: u8,\n    pub len: u16,\n    pub body: Vec<u8>,\n}\n\npub fn parse(buf: &[u8]) -> Frame {\n    let kind = buf[0];\n    let len = u16::from_be_bytes([buf[1], buf[2]]);\n    let body = buf[3..3 + len as usize].to_vec();\n    Frame { kind, len, body }\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "Result<\\s*Frame",
+            "flags": "i",
+            "why": "returns Result<Frame, _>"
+          },
+          {
+            "regex": "thiserror|#\\[error",
+            "flags": "i",
+            "why": "defines the error with thiserror, which the crate already uses"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\\.get\\(",
+            "flags": "i",
+            "why": "uses .get for bounds-checked access"
+          },
+          {
+            "regex": "len\\(\\)\\s*<",
+            "flags": "i",
+            "why": "checks the length before indexing"
+          }
+        ]
+      },
+      "expectations": [
+        "Every slice index on untrusted input is replaced by a length check or `.get(...)`, so short or truncated buffers return an error.",
+        "No `unwrap()` or `expect()` is added on the input path.",
+        "Tests cover at least an empty buffer and a buffer shorter than its declared length, in a `#[cfg(test)] mod tests` block or under tests/."
+      ]
+    },
+    {
+      "id": "std-mutex-across-await",
+      "prompt": "Clippy warns about this, and under load the server sometimes stalls. What is going on?",
+      "files": {
+        "src/cache.rs": "use std::collections::HashMap;\nuse std::sync::{Arc, Mutex};\n\npub struct Cache {\n    inner: Arc<Mutex<HashMap<String, String>>>,\n}\n\nimpl Cache {\n    pub async fn get_or_fetch(&self, key: &str) -> String {\n        let mut map = self.inner.lock().unwrap();\n        if let Some(v) = map.get(key) {\n            return v.clone();\n        }\n        let value = fetch_remote(key).await;\n        map.insert(key.to_string(), value.clone());\n        value\n    }\n}\n\nasync fn fetch_remote(key: &str) -> String {\n    format!(\"value-for-{key}\")\n}\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "tokio::sync::Mutex",
+            "flags": "i",
+            "why": "switches to an async-aware mutex"
+          },
+          {
+            "regex": "drop\\s*\\(\\s*map\\s*\\)",
+            "flags": "i",
+            "why": "drops the guard before awaiting"
+          },
+          {
+            "regex": "(before|across) (an |the )?\\.?await",
+            "flags": "i",
+            "why": "explains the guard is held across the await"
+          }
+        ]
+      },
+      "expectations": [
+        "Explains that the std::sync::Mutex guard is held across `.await`, which blocks other tasks on that lock and can stall the runtime.",
+        "Fixes it by releasing the guard before the await (and re-locking to insert) or by using an async mutex.",
+        "Mentions that `lock().unwrap()` panics on a poisoned lock, or otherwise avoids unwrap in this server path."
+      ]
+    },
+    {
+      "id": "workspace-checks-with-nextest",
+      "prompt": "I changed the `parser` crate in this workspace. What should I run before opening the PR?",
+      "files": {
+        "Cargo.toml": "[workspace]\nmembers = [\"crates/parser\", \"crates/server\", \"crates/cli\"]\nresolver = \"2\"\n\n[workspace.lints.clippy]\nunwrap_used = \"deny\"\n",
+        ".config/nextest.toml": "[profile.default]\nretries = 0\nslow-timeout = \"30s\"\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "nextest run",
+            "flags": "i",
+            "why": "runs tests with cargo-nextest, which the workspace configures"
+          },
+          {
+            "regex": "cargo clippy",
+            "flags": "i",
+            "why": "runs clippy"
+          },
+          {
+            "regex": "cargo fmt",
+            "flags": "i",
+            "why": "checks formatting"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses `cargo nextest run` rather than plain `cargo test`, because the workspace has a nextest config.",
+        "Runs clippy with warnings denied (for example `-- -D warnings`) over all targets.",
+        "Scopes a quick run to the parser crate (`-p parser`) and also runs the whole workspace, since server and cli may depend on parser."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "skill": "espresso-skill",
+  "path": "skills/lambdatest/espresso-skill",
+  "cases": [
+    {
+      "id": "login-activity",
+      "prompt": "Write an Espresso test in Kotlin for our LoginActivity (fields email, password, button login, shows text \"Welcome\").",
+      "checks": {
+        "all": [
+          {
+            "regex": "onView\\(\\s*withId",
+            "flags": "",
+            "why": "uses onView(withId)"
+          }
+        ],
+        "any": [
+          {
+            "regex": "ActivityScenarioRule|ActivityScenario",
+            "flags": "",
+            "why": "launches the activity"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses typeText and closeSoftKeyboard then click.",
+        "Checks the result with matches(isDisplayed()) or withText.",
+        "Runs with AndroidJUnit4."
+      ]
+    },
+    {
+      "id": "idling-resource",
+      "prompt": "My Espresso test fails because a network call has not finished. Thread.sleep fixes it. What is the better way?",
+      "checks": {
+        "all": [
+          {
+            "regex": "IdlingResource",
+            "flags": "i",
+            "why": "uses an idling resource"
+          }
+        ]
+      },
+      "expectations": [
+        "Recommends an IdlingResource (CountingIdlingResource or OkHttp idling resource).",
+        "Shows registering and unregistering it.",
+        "Explains why Thread.sleep is slow and unreliable."
+      ]
+    }
+  ]
+}

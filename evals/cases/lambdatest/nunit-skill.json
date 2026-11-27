@@ -1,0 +1,49 @@
+{
+  "skill": "nunit-skill",
+  "path": "skills/lambdatest/nunit-skill",
+  "cases": [
+    {
+      "id": "nunit-testcase",
+      "prompt": "Write NUnit tests for Calculator.Add with multiple cases.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\[TestCase\\(",
+            "flags": "",
+            "why": "uses TestCase"
+          }
+        ],
+        "any": [
+          {
+            "regex": "Assert\\.That",
+            "flags": "",
+            "why": "uses the constraint model"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses [TestFixture] and [TestCase] attributes.",
+        "Uses Assert.That with Is.EqualTo.",
+        "Uses [SetUp] for shared setup where needed."
+      ]
+    },
+    {
+      "id": "nunit-parallel",
+      "prompt": "How do I run NUnit tests in parallel safely?",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\[Parallelizable",
+            "flags": "",
+            "why": "uses Parallelizable"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses [Parallelizable] with a ParallelScope.",
+        "Warns about shared state in fixture fields and recommends per-test instances or FixtureLifeCycle.InstancePerTestCase.",
+        "Mentions LevelOfParallelism."
+      ]
+    }
+  ]
+}

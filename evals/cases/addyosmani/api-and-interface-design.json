@@ -1,0 +1,58 @@
+{
+  "skill": "api-and-interface-design",
+  "path": "skills/addyosmani/api-and-interface-design",
+  "cases": [
+    {
+      "id": "url-shortener-contracts",
+      "prompt": "Design the public API for a URL-shortening service: create, resolve, stats. Produce the endpoint contracts. The brief is attached.",
+      "files": {
+        "service-brief.md": "# URL shortener service brief\n\nThe service needs public operations to create a short URL, resolve a slug, and\nread aggregate click statistics. Clients include a browser extension and a\nmobile app, so contracts must remain backward compatible.\n\nKnown constraints:\n\n- Destination URLs are supplied by untrusted users.\n- Slugs are six to twelve URL-safe characters.\n- A missing slug and an expired slug must be distinguishable to operators, but\n  the public API must not expose internal storage details.\n- Statistics may be delayed by up to one minute.\n\nStill undecided:\n\n- Whether callers may request custom slugs.\n- Whether links expire by default.\n- Whether statistics require authentication.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "\\b(400|404|409|410|422)\\b",
+            "why": "specifies error status codes",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "version|/v1\\b",
+            "why": "states a versioning approach",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Error responses are specified with status codes and one consistent error shape, not just happy paths.",
+        "User-supplied destination URLs are validated at the boundary (scheme, length or format), and slug length rules (six to twelve URL-safe characters) are enforced.",
+        "A versioning or backward-compatibility strategy is stated, given the browser extension and mobile clients.",
+        "The three undecided items (custom slugs, default expiry, authentication for stats) are raised as open questions or explicit assumptions rather than silently decided."
+      ]
+    },
+    {
+      "id": "add-required-field",
+      "prompt": "Our public GET /v1/orders/{id} response has `total` as a number in dollars. Finance wants it as integer cents and wants a required `currency` field added to POST /v1/orders. Third-party integrations and old mobile app versions call both endpoints. Just change them in place; what does the new contract look like?",
+      "checks": {
+        "any": [
+          {
+            "regex": "breaking|backward",
+            "why": "identifies the change as breaking",
+            "flags": "i"
+          },
+          {
+            "regex": "/v2\\b|new field|additive|optional",
+            "why": "proposes an additive or versioned path",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies that changing the type or unit of `total` and adding a required request field are breaking changes for existing consumers.",
+        "Proposes a compatible path instead of an in-place change: a new field such as `total_cents` alongside `total`, an optional `currency` with a documented default, or a new version.",
+        "Notes that existing clients may depend on current observable behavior (Hyrum's Law or equivalent reasoning) and suggests how to deprecate the old field over time."
+      ]
+    }
+  ]
+}

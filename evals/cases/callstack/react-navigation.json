@@ -1,0 +1,56 @@
+{
+  "skill": "react-navigation",
+  "path": "skills/callstack/react-navigation",
+  "cases": [
+    {
+      "id": "follow-existing-dynamic-api",
+      "prompt": "Add a Settings screen to this app that opens as a modal from Home. We are on React Navigation 7.",
+      "files": {
+        "src/App.tsx": "import { NavigationContainer } from \"@react-navigation/native\";\nimport { createNativeStackNavigator } from \"@react-navigation/native-stack\";\nimport { HomeScreen } from \"./screens/HomeScreen\";\nimport { DetailsScreen } from \"./screens/DetailsScreen\";\n\nconst Stack = createNativeStackNavigator();\n\nexport default function App() {\n  return (\n    <NavigationContainer>\n      <Stack.Navigator>\n        <Stack.Screen name=\"Home\" component={HomeScreen} />\n        <Stack.Screen name=\"Details\" component={DetailsScreen} />\n      </Stack.Navigator>\n    </NavigationContainer>\n  );\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "<Stack\\.Screen[^>]*Settings|name=[\"']Settings[\"']",
+            "flags": "i",
+            "why": "adds Settings as a Stack.Screen element"
+          }
+        ],
+        "none": [
+          {
+            "regex": "createStaticNavigation\\(",
+            "flags": "i",
+            "why": "does not switch the app to the static API"
+          }
+        ]
+      },
+      "expectations": [
+        "Keeps the existing component-based (dynamic) API: a new <Stack.Screen> inside the existing navigator.",
+        "Presents the screen as a modal through screen options (for example `presentation: 'modal'`), alone or in a Stack.Group.",
+        "Shows how Home navigates to it, for example `navigation.navigate(\"Settings\")`."
+      ]
+    },
+    {
+      "id": "new-app-prefers-static-api",
+      "prompt": "I am starting a new React Native app with React Navigation 7. Set up bottom tabs with Home and Profile screens.",
+      "checks": {
+        "all": [
+          {
+            "regex": "createStaticNavigation",
+            "flags": "i",
+            "why": "uses the static API entry point"
+          },
+          {
+            "regex": "createBottomTabNavigator",
+            "flags": "i",
+            "why": "uses the bottom tab navigator"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses the static, object-based API (a `screens` object passed to createBottomTabNavigator and createStaticNavigation) because the app has no navigation yet.",
+        "Configures both Home and Profile tabs and renders the resulting Navigation component at the app root."
+      ]
+    }
+  ]
+}

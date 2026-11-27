@@ -1,0 +1,50 @@
+{
+  "skill": "xcuitest-skill",
+  "path": "skills/lambdatest/xcuitest-skill",
+  "cases": [
+    {
+      "id": "xcuitest-login",
+      "prompt": "Write an XCUITest UI test for our iOS login screen.",
+      "checks": {
+        "all": [
+          {
+            "regex": "XCUIApplication",
+            "flags": "",
+            "why": "uses XCUIApplication"
+          }
+        ],
+        "any": [
+          {
+            "regex": "waitForExistence",
+            "flags": "",
+            "why": "waits for existence"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses accessibility identifiers to find fields and buttons.",
+        "Uses tap and typeText.",
+        "Waits with waitForExistence and asserts with XCTAssert.",
+        "Runs against a local browser, emulator or app; it does not require a hosted cloud grid or vendor account."
+      ]
+    },
+    {
+      "id": "launch-arguments",
+      "prompt": "How do I reset app state before each XCUITest run?",
+      "checks": {
+        "any": [
+          {
+            "regex": "launchArguments|launchEnvironment",
+            "flags": "",
+            "why": "passes launch arguments"
+          }
+        ]
+      },
+      "expectations": [
+        "Passes launch arguments or environment from the test to the app.",
+        "Shows the app reading them to reset state or use a stub backend.",
+        "Launches a fresh XCUIApplication in setUp."
+      ]
+    }
+  ]
+}

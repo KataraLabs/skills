@@ -1,0 +1,91 @@
+{
+  "skill": "typescript",
+  "path": "skills/katara/typescript",
+  "cases": [
+    {
+      "id": "nodenext-import-and-pnpm",
+      "prompt": "Add a `slugify(title: string): string` helper in a new file src/slug.ts and use it from src/index.ts to build a `postPath(title)` function. Then tell me which commands to run to check the change.",
+      "files": {
+        "package.json": "{\n  \"name\": \"blog-tools\",\n  \"type\": \"module\",\n  \"packageManager\": \"pnpm@9.12.0\",\n  \"scripts\": {\n    \"typecheck\": \"tsc --noEmit\",\n    \"lint\": \"eslint .\",\n    \"test\": \"vitest\"\n  },\n  \"devDependencies\": { \"typescript\": \"^5.6.0\", \"vitest\": \"^2.1.0\", \"eslint\": \"^9.12.0\" }\n}\n",
+        "tsconfig.json": "{\n  \"compilerOptions\": {\n    \"module\": \"NodeNext\",\n    \"moduleResolution\": \"NodeNext\",\n    \"target\": \"ES2022\",\n    \"strict\": true,\n    \"outDir\": \"dist\"\n  },\n  \"include\": [\"src\"]\n}\n",
+        "src/index.ts": "import { formatDate } from \"./date.js\";\n\nexport function postHeader(title: string, date: Date): string {\n  return title + \" (\" + formatDate(date) + \")\";\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "from\\s+[\"']\\./slug\\.js[\"']",
+            "flags": "i",
+            "why": "imports the new module with a .js extension, as NodeNext resolution requires"
+          },
+          {
+            "regex": "\\bpnpm\\b",
+            "flags": "i",
+            "why": "runs commands with the project's package manager"
+          }
+        ]
+      },
+      "expectations": [
+        "The import of the new helper in src/index.ts uses the \"./slug.js\" specifier, matching the existing \"./date.js\" import and NodeNext resolution.",
+        "The suggested commands use pnpm and include a type check (the typecheck script or tsc --noEmit), lint and tests.",
+        "The test command runs Vitest once (for example `vitest run` or `pnpm test -- --run`) rather than leaving it in watch mode, or the reply notes that the plain script watches."
+      ]
+    },
+    {
+      "id": "validate-untrusted-json",
+      "prompt": "This webhook handler crashes in production when a partner sends a malformed body. Fix it.",
+      "files": {
+        "src/webhook.ts": "import type { Request, Response } from \"express\";\nimport { recordPayment } from \"./payments.js\";\n\ntype PaymentEvent = { kind: \"payment\"; id: string; amountCents: number };\n\nexport async function handleWebhook(req: Request, res: Response) {\n  const event = JSON.parse(req.body) as PaymentEvent;\n  await recordPayment(event.id, event.amountCents);\n  res.sendStatus(204);\n}\n",
+        "package.json": "{\n  \"name\": \"payments-api\",\n  \"type\": \"module\",\n  \"dependencies\": { \"express\": \"^4.21.0\", \"zod\": \"^3.23.8\" },\n  \"devDependencies\": { \"typescript\": \"^5.6.0\", \"@types/express\": \"^4.17.21\" }\n}\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "\\bunknown\\b",
+            "flags": "i",
+            "why": "treats the parsed body as unknown"
+          },
+          {
+            "regex": "safeParse|z\\.object",
+            "flags": "i",
+            "why": "validates the shape with zod"
+          }
+        ],
+        "none": [
+          {
+            "regex": "as any\\b|:\\s*any\\b",
+            "flags": "i",
+            "why": "does not silence the type with any"
+          }
+        ]
+      },
+      "expectations": [
+        "The fix validates the parsed body at runtime instead of trusting the `as PaymentEvent` cast.",
+        "It uses zod, which the project already depends on, rather than adding a new validation library or hand-rolling a large checker.",
+        "A body that fails to parse as JSON or fails validation gets a 4xx response instead of an unhandled exception."
+      ]
+    },
+    {
+      "id": "floating-promises-in-foreach",
+      "prompt": "Users report that after `importAll` resolves, some rows are still missing from the database and the returned count is often 0. Why, and how do I fix it? Add a test too.",
+      "files": {
+        "src/import.ts": "import { saveRow } from \"./db.js\";\n\nexport async function importAll(rows: readonly { id: string }[]): Promise<number> {\n  let saved = 0;\n  rows.forEach(async (row) => {\n    await saveRow(row);\n    saved++;\n  });\n  return saved;\n}\n",
+        "package.json": "{\n  \"name\": \"importer\",\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"vitest\", \"typecheck\": \"tsc --noEmit\" },\n  \"devDependencies\": { \"typescript\": \"^5.6.0\", \"vitest\": \"^2.1.0\" }\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "Promise\\.all|for\\s*\\(\\s*const\\s+\\w+\\s+of",
+            "flags": "i",
+            "why": "waits for every save with Promise.all or a for...of loop"
+          }
+        ]
+      },
+      "expectations": [
+        "Explains that `forEach(async ...)` starts promises nobody awaits, so the function returns before the saves finish.",
+        "The fix awaits every save (Promise.all for parallel or for...of for sequential) and returns an accurate count.",
+        "The test is a Vitest test that mocks saveRow and checks that all rows were saved by the time importAll resolves.",
+        "The command given to run the test runs once (for example `npx vitest run src/import.test.ts`), not in watch mode."
+      ]
+    }
+  ]
+}

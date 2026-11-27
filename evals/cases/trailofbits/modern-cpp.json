@@ -1,0 +1,70 @@
+{
+  "skill": "modern-cpp",
+  "path": "skills/trailofbits/modern-cpp",
+  "cases": [
+    {
+      "id": "modernize-buffer-code",
+      "prompt": "Modernize this for C++23.",
+      "files": {
+        "name.cpp": "#define MAX_NAME 64\n\nint read_name(const char *src, char *out, int out_len) {\n    char buf[MAX_NAME];\n    sprintf(buf, \"%s\", src);\n    strncpy(out, buf, out_len);\n    return 0;\n}\n\nWidget *make_widget() { return new Widget(); }\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "unique_ptr|make_unique",
+            "flags": "i",
+            "why": "returns an owning smart pointer"
+          }
+        ],
+        "any": [
+          {
+            "regex": "std::span",
+            "flags": "i",
+            "why": "uses std::span for the buffer"
+          },
+          {
+            "regex": "std::string",
+            "flags": "i",
+            "why": "uses std::string for the name"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies the sprintf into a fixed 64-byte buffer as an overflow.",
+        "Replaces the pointer-and-length interface with std::string, std::string_view or std::span, and `#define` with constexpr if a constant remains.",
+        "Returns std::unique_ptr<Widget> via std::make_unique instead of a raw new.",
+        "Uses std::expected (or another typed result) instead of an int error code if the function can fail."
+      ]
+    },
+    {
+      "id": "hardening-flags",
+      "prompt": "Which compiler flags should our security-sensitive C++ service build with? We use Clang and libc++.",
+      "checks": {
+        "all": [
+          {
+            "regex": "_FORTIFY_SOURCE=3",
+            "flags": "i",
+            "why": "enables FORTIFY_SOURCE level 3"
+          },
+          {
+            "regex": "_LIBCPP_HARDENING_MODE",
+            "flags": "i",
+            "why": "enables hardened libc++"
+          }
+        ],
+        "any": [
+          {
+            "regex": "-fstack-protector-strong",
+            "flags": "i",
+            "why": "enables the stack protector"
+          }
+        ]
+      },
+      "expectations": [
+        "Lists warning flags (-Wall -Wextra -Wpedantic, optionally -Werror) and -Wunsafe-buffer-usage for Clang.",
+        "Includes hardening flags such as -fstack-clash-protection, -ftrivial-auto-var-init=zero, PIE and full RELRO.",
+        "Recommends running ASan and UBSan in CI (and TSan for concurrent code)."
+      ]
+    }
+  ]
+}

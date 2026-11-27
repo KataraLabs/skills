@@ -1,0 +1,45 @@
+{
+  "skill": "using-agent-skills",
+  "path": "skills/addyosmani/using-agent-skills",
+  "cases": [
+    {
+      "id": "login-broken-after-deploy",
+      "prompt": "A user says: 'the login page is broken after yesterday's deploy'. Decide which skill applies and why. Incident notes attached.",
+      "files": {
+        "incident.md": "# Login regression report\n\nThe login page began returning HTTP 500 after yesterday's deployment. The\nrequest reaches the authentication callback, then fails before a session cookie\nis written. There is no confirmed root cause yet. The user asked for help\ngetting login working again, not for a new authentication design.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "debugging-and-error-recovery",
+            "why": "routes to the debugging skill",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Chooses debugging-and-error-recovery, following the \"something broke\" branch of the routing tree.",
+        "The rationale cites the routing logic and the incident facts (a regression with no confirmed root cause), not a guess.",
+        "States its assumptions, and does not route to a design or spec skill since the user asked to restore login, not redesign it."
+      ]
+    },
+    {
+      "id": "retire-partner-endpoints",
+      "prompt": "We need to replace our v1 REST endpoints, which 30 partners call, with the new v2 ones over the next quarter. Which skill should guide this, and what is the first thing it would have us do?",
+      "checks": {
+        "all": [
+          {
+            "regex": "deprecation-and-migration",
+            "why": "routes to the deprecation skill",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Chooses deprecation-and-migration and explains the choice from the routing tree.",
+        "Names a sensible first step from that skill, such as measuring current v1 usage per partner or announcing a timeline, rather than starting with code.",
+        "States any assumption it is making about the request."
+      ]
+    }
+  ]
+}

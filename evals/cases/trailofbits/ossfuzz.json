@@ -1,0 +1,70 @@
+{
+  "skill": "ossfuzz",
+  "path": "skills/trailofbits/ossfuzz",
+  "cases": [
+    {
+      "id": "enroll-project",
+      "prompt": "Enroll our open source C library in OSS-Fuzz. We already have a libFuzzer harness in fuzz/parse_fuzzer.c.",
+      "checks": {
+        "all": [
+          {
+            "regex": "project\\.yaml",
+            "flags": "i",
+            "why": "adds project.yaml"
+          },
+          {
+            "regex": "Dockerfile",
+            "flags": "i",
+            "why": "adds a Dockerfile"
+          },
+          {
+            "regex": "build\\.sh",
+            "flags": "i",
+            "why": "adds build.sh"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\\$LIB_FUZZING_ENGINE",
+            "flags": "i",
+            "why": "links with $LIB_FUZZING_ENGINE"
+          }
+        ]
+      },
+      "expectations": [
+        "Creates projects/<name>/ with project.yaml, a Dockerfile based on the OSS-Fuzz base-builder image, and build.sh.",
+        "Clones the source in the Dockerfile rather than in build.sh, and build.sh links the harness with $CC/$CFLAGS and $LIB_FUZZING_ENGINE into $OUT.",
+        "Tests locally with infra/helper.py (build_image, build_fuzzers, run_fuzzer) before opening the pull request."
+      ]
+    },
+    {
+      "id": "reproduce-locally",
+      "prompt": "OSS-Fuzz reported a crash in project `libfoo`, harness `parse_fuzzer`. How do I build and run it locally to reproduce?",
+      "checks": {
+        "all": [
+          {
+            "regex": "helper\\.py",
+            "flags": "i",
+            "why": "uses infra/helper.py"
+          },
+          {
+            "regex": "build_fuzzers",
+            "flags": "i",
+            "why": "builds the fuzzers"
+          }
+        ],
+        "any": [
+          {
+            "regex": "reproduce|run_fuzzer",
+            "flags": "i",
+            "why": "runs the harness on the test case"
+          }
+        ]
+      },
+      "expectations": [
+        "Clones google/oss-fuzz and runs `infra/helper.py build_image libfoo` and `build_fuzzers --sanitizer=address libfoo` (or the sanitizer from the report).",
+        "Runs the harness against the downloaded test case (for example `helper.py reproduce libfoo parse_fuzzer <testcase>`)."
+      ]
+    }
+  ]
+}

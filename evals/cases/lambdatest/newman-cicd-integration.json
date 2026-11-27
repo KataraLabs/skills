@@ -1,0 +1,55 @@
+{
+  "skill": "newman-cicd-integration",
+  "path": "skills/lambdatest/api-skill/newman/newman-cicd-helper",
+  "cases": [
+    {
+      "id": "github-actions-newman",
+      "prompt": "Run our Postman collection with Newman in GitHub Actions and publish JUnit results.",
+      "checks": {
+        "all": [
+          {
+            "regex": "newman run",
+            "flags": "",
+            "why": "runs newman"
+          },
+          {
+            "regex": "junit",
+            "flags": "i",
+            "why": "uses the JUnit reporter"
+          }
+        ]
+      },
+      "expectations": [
+        "Provides a workflow YAML that installs Node and Newman.",
+        "Passes the environment file and keeps secrets in repository secrets, not in the file.",
+        "Uploads or publishes the JUnit report even when tests fail.",
+        "The job fails when Newman reports failures."
+      ]
+    },
+    {
+      "id": "gitlab-newman-html",
+      "prompt": "Write a GitLab CI job for our Newman tests with an HTML report as an artifact.",
+      "checks": {
+        "all": [
+          {
+            "regex": "artifacts:",
+            "flags": "",
+            "why": "declares artifacts"
+          }
+        ],
+        "any": [
+          {
+            "regex": "htmlextra|html",
+            "flags": "i",
+            "why": "uses an HTML reporter"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses a Node image and installs newman and an HTML reporter.",
+        "Writes the report to a path listed under artifacts with when: always.",
+        "Uses CI variables for secrets."
+      ]
+    }
+  ]
+}

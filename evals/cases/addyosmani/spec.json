@@ -1,0 +1,52 @@
+{
+  "skill": "spec",
+  "path": "skills/addyosmani/spec",
+  "cases": [
+    {
+      "id": "new-spec-no-file",
+      "prompt": "Write a spec for a command-line tool that converts a folder of Markdown files into one PDF. There is no SPEC.md in the repo yet.",
+      "checks": {
+        "all": [
+          {
+            "regex": "SPEC\\.md",
+            "why": "names SPEC.md as the output",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "boundar",
+            "why": "covers boundaries",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Asks clarifying questions about objective and users, core features and acceptance criteria, stack and constraints, and boundaries, or states assumptions for them.",
+        "The spec, if drafted, covers objective, commands, project structure, code style, testing strategy and boundaries.",
+        "Says the spec goes in SPEC.md at the project root and asks the user to confirm before going further."
+      ]
+    },
+    {
+      "id": "delta-spec-for-change",
+      "prompt": "Add SAML single sign-on to the app described in SPEC.md. Write the spec for it.",
+      "files": {
+        "SPEC.md": "# Team Notes SPEC\n\nStatus: implemented\n\n## Objective\nShared notes for small teams. Email and password sign-in.\n\n## Commands\nnpm run dev, npm test, npm run build\n\n## Boundaries\n- Always: hash passwords with argon2.\n- Ask first: new third-party services.\n- Never: store plaintext secrets.\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "SPEC-[a-z0-9-]+\\.md|delta",
+            "why": "writes a delta spec",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Writes a delta spec in a separate file (for example SPEC-saml-sso.md) covering only the change, and does not overwrite SPEC.md.",
+        "Raises the boundary in SPEC.md that a new third-party service needs asking first, since an identity provider is one.",
+        "Asks the user to confirm before going further."
+      ]
+    }
+  ]
+}

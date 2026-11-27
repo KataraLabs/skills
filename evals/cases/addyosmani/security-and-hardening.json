@@ -1,0 +1,57 @@
+{
+  "skill": "security-and-hardening",
+  "path": "skills/addyosmani/security-and-hardening",
+  "cases": [
+    {
+      "id": "webhook-ssrf",
+      "prompt": "Harden this endpoint helper that accepts a user-supplied webhook URL and fetches it server-side.",
+      "files": {
+        "webhook.js": "'use strict';\n\nasync function previewWebhook(url, fetchImpl = fetch) {\n  const response = await fetchImpl(url, { redirect: 'follow' });\n  return {\n    status: response.status,\n    body: (await response.text()).slice(0, 2048),\n  };\n}\n\nmodule.exports = { previewWebhook };\n",
+        "webhook.test.js": "'use strict';\n\nconst assert = require('node:assert/strict');\nconst test = require('node:test');\nconst { previewWebhook } = require('./webhook');\n\ntest('returns a bounded preview from a successful request', async () => {\n  const result = await previewWebhook('https://example.com/hook', async () => ({\n    status: 200,\n    text: async () => 'ok',\n  }));\n  assert.deepEqual(result, { status: 200, body: 'ok' });\n});\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "redirect",
+            "why": "addresses redirect following",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "169\\.254|127\\.|10\\.|192\\.168|private|loopback|link-local",
+            "why": "blocks private and reserved addresses",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies the trust boundary (untrusted URL fetched from inside the network) before proposing controls.",
+        "SSRF protection covers private, loopback, link-local and metadata addresses after DNS resolution, not just an https scheme check, and redirects are disabled or re-validated.",
+        "Validates the URL at the boundary and adds timeouts or response size limits.",
+        "Error responses and logs do not expose internal details or secrets, and tests are proposed for the blocked cases."
+      ]
+    },
+    {
+      "id": "password-storage",
+      "prompt": "Here is my signup handler. Anything to fix before I ship?",
+      "files": {
+        "signup.js": "const crypto = require('node:crypto');\n\nasync function signup(req, res, db) {\n  const { email, password } = req.body;\n  const hash = crypto.createHash('sha256').update(password).digest('hex');\n  try {\n    await db.insert('users', { email, password: hash });\n    res.json({ ok: true });\n  } catch (err) {\n    res.status(500).json({ error: err.message, stack: err.stack });\n  }\n}\n\nmodule.exports = { signup };\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "bcrypt|argon2|scrypt",
+            "why": "uses a password hashing function",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Replaces unsalted SHA-256 with a slow password hash such as bcrypt, scrypt or argon2.",
+        "Removes the error message and stack trace from the response and returns a generic error.",
+        "Adds input validation for email and password and mentions rate limiting or duplicate-email handling that does not reveal account existence."
+      ]
+    }
+  ]
+}

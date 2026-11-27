@@ -1,0 +1,52 @@
+{
+  "skill": "webperf",
+  "path": "skills/addyosmani/webperf",
+  "cases": [
+    {
+      "id": "quick-mode-no-metrics",
+      "prompt": "Do a web performance audit of our landing page. I do not have a Lighthouse report or a live URL yet.",
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"en\">\n<head>\n  <link rel=\"stylesheet\" href=\"https://fonts.example.com/css?family=Display\">\n  <script src=\"/js/analytics.js\"></script>\n  <script src=\"/js/app.bundle.js\"></script>\n</head>\n<body>\n  <img src=\"/img/hero-4000px.jpg\" class=\"hero\">\n  <div id=\"reviews\"></div>\n  <script>fetch('/api/reviews').then(r => r.json()).then(render);</script>\n</body>\n</html>\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "potential impact",
+            "why": "labels quick-mode findings as potential impact",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "not measured",
+            "why": "marks unmeasured metrics",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Runs in quick mode and labels each finding as potential impact, with no invented LCP, INP or CLS values; the scorecard marks metrics not measured.",
+        "Finds the render-blocking scripts in the head, the oversized hero image without width, height or responsive sources, and the reviews block that can shift layout when it loads.",
+        "Ranks findings by likely effect on Core Web Vitals and explains how to get measured data (for example a Lighthouse JSON report) for a deep audit."
+      ]
+    },
+    {
+      "id": "not-for-cli-library",
+      "prompt": "Run a web performance audit on our npm package, a command-line tool that converts CSV to JSON. It feels slow on big files.",
+      "checks": {
+        "any": [
+          {
+            "regex": "browser|web (app|page)|core web vitals|not (a |the )?(right|web)|does not apply|doesn.t apply|out of scope",
+            "why": "says a web audit does not fit",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Says a web performance audit does not apply to a command-line tool with no browser-facing output.",
+        "Redirects to general performance work instead: measure on a large file first, profile, then fix the measured bottleneck (for example streaming instead of reading the whole file).",
+        "Does not produce a Core Web Vitals scorecard."
+      ]
+    }
+  ]
+}

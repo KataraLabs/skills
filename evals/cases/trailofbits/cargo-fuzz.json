@@ -1,0 +1,56 @@
+{
+  "skill": "cargo-fuzz",
+  "path": "skills/trailofbits/cargo-fuzz",
+  "cases": [
+    {
+      "id": "set-up-cargo-fuzz",
+      "prompt": "Add fuzzing to our Rust crate `ogg-lite`, which exposes `pub fn parse_page(buf: &[u8]) -> Result<Page, Error>`.",
+      "checks": {
+        "all": [
+          {
+            "regex": "cargo (\\+nightly )?fuzz init",
+            "flags": "i",
+            "why": "initializes with cargo fuzz init"
+          },
+          {
+            "regex": "fuzz_target!",
+            "flags": "i",
+            "why": "writes a fuzz_target! harness"
+          },
+          {
+            "regex": "nightly",
+            "flags": "i",
+            "why": "notes the nightly toolchain"
+          }
+        ]
+      },
+      "expectations": [
+        "The harness lives under fuzz/fuzz_targets/ and calls parse_page from the library crate.",
+        "Err results are ignored rather than unwrapped, so only real panics or memory errors count as crashes.",
+        "Runs it with `cargo +nightly fuzz run <target>`."
+      ]
+    },
+    {
+      "id": "reproduce-and-speed-up",
+      "prompt": "The fuzzer saved fuzz/artifacts/parse_page/crash-1a2b3c. How do I reproduce it? And can fuzzing go faster? The crate has no unsafe code.",
+      "checks": {
+        "all": [
+          {
+            "regex": "fuzz run\\s+parse_page\\s+\\S*artifacts",
+            "flags": "i",
+            "why": "reruns the target on the crash file"
+          },
+          {
+            "regex": "--sanitizer[= ]none",
+            "flags": "i",
+            "why": "disables sanitizers for safe Rust"
+          }
+        ]
+      },
+      "expectations": [
+        "Reproduces by running `cargo +nightly fuzz run parse_page fuzz/artifacts/parse_page/crash-1a2b3c`.",
+        "Suggests `--sanitizer none` for a safe-Rust crate for roughly double the speed, optionally confirming the absence of unsafe with cargo-geiger."
+      ]
+    }
+  ]
+}

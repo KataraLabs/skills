@@ -1,0 +1,56 @@
+{
+  "skill": "vitest-skill",
+  "path": "skills/lambdatest/vitest-skill",
+  "cases": [
+    {
+      "id": "mock-api-module",
+      "prompt": "Write Vitest tests for a function that calls fetchUser from ./api, mocking that module.",
+      "checks": {
+        "all": [
+          {
+            "regex": "vi\\.(mock|fn|spyOn)",
+            "flags": "",
+            "why": "uses vi mocks"
+          }
+        ],
+        "any": [
+          {
+            "regex": "from ['\"]vitest['\"]",
+            "flags": "",
+            "why": "imports from vitest"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses vi.mock(\"./api\") and mockResolvedValue.",
+        "Writes async tests with await.",
+        "Resets or restores mocks between tests."
+      ]
+    },
+    {
+      "id": "react-config",
+      "prompt": "Set up vitest.config.ts for React component tests with jsdom and coverage.",
+      "checks": {
+        "all": [
+          {
+            "regex": "coverage",
+            "flags": "",
+            "why": "configures coverage"
+          }
+        ],
+        "any": [
+          {
+            "regex": "environment:\\s*['\"](jsdom|happy-dom)",
+            "flags": "",
+            "why": "sets the DOM environment"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses defineConfig with the React plugin.",
+        "Sets test.environment to jsdom and a setupFiles entry for jest-dom matchers.",
+        "Configures coverage with a provider such as v8."
+      ]
+    }
+  ]
+}

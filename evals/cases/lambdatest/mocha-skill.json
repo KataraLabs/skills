@@ -1,0 +1,49 @@
+{
+  "skill": "mocha-skill",
+  "path": "skills/lambdatest/mocha-skill",
+  "cases": [
+    {
+      "id": "async-sinon",
+      "prompt": "Write Mocha + Chai tests for an async getUser(id) that calls db.findUser, using a Sinon stub.",
+      "checks": {
+        "all": [
+          {
+            "regex": "sinon\\.(stub|createSandbox)",
+            "flags": "",
+            "why": "stubs with Sinon"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\\.restore\\(\\)",
+            "flags": "",
+            "why": "restores stubs"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses async/await or returns the promise in it blocks.",
+        "Restores stubs in afterEach.",
+        "Covers a not-found or rejected case."
+      ]
+    },
+    {
+      "id": "mocha-timeout",
+      "prompt": "My Mocha test times out at 2000 ms. How do I fix it?",
+      "checks": {
+        "any": [
+          {
+            "regex": "this\\.timeout|--timeout|timeout:",
+            "flags": "",
+            "why": "adjusts the timeout"
+          }
+        ]
+      },
+      "expectations": [
+        "Shows this.timeout() or the --timeout option.",
+        "Notes this.timeout does not work inside arrow functions.",
+        "Checks for a missing done call or an unresolved promise as the real cause."
+      ]
+    }
+  ]
+}

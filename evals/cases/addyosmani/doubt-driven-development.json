@@ -1,0 +1,55 @@
+{
+  "skill": "doubt-driven-development",
+  "path": "skills/addyosmani/doubt-driven-development",
+  "cases": [
+    {
+      "id": "irreversible-migration-plan",
+      "prompt": "Before we run this irreversible data migration on Saturday, put the plan through adversarial review.",
+      "files": {
+        "migration-plan.md": "# Customer identifier migration\n\nPlan: replace integer customer IDs with UUIDs in a single maintenance window.\n\n1. Disable writes.\n2. Run `ALTER TABLE customers DROP COLUMN id CASCADE`.\n3. Add a UUID `id` column and populate it.\n4. Re-enable writes after fifteen minutes.\n\nClaims made by the author:\n\n- All foreign keys will be recreated automatically.\n- The table contains fewer than one million rows.\n- The operation completes within the maintenance window.\n- The backup from last night is sufficient rollback protection.\n- No external systems persist the integer identifier.\n\nNo rehearsal, row count, dependency inventory, restore timing, or rollback\ntest is attached.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "cascade",
+            "why": "challenges the DROP COLUMN CASCADE step",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "restore|rehears|dry run",
+            "why": "asks for restore or rehearsal evidence",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "The author's claims are pulled out and challenged one by one.",
+        "At least one claim is tested against the plan itself, for example that DROP COLUMN ... CASCADE drops the dependent foreign keys rather than recreating them, so the new UUID column has no links to the old integer references.",
+        "The verdict separates what is verified from doubts that survive, and names the missing evidence (row count, dependency inventory, rehearsal, restore timing, external consumers) as conditions before running."
+      ]
+    },
+    {
+      "id": "thread-safety-claim",
+      "prompt": "I'm confident this cache is safe under concurrent requests, so I'm about to merge it. Give it a quick doubt pass first.",
+      "files": {
+        "cache.js": "const cache = new Map();\n\nasync function getUser(id, db) {\n  if (!cache.has(id)) {\n    const user = await db.loadUser(id);\n    cache.set(id, user);\n  }\n  return cache.get(id);\n}\n\nfunction invalidate(id) {\n  cache.delete(id);\n}\n\nmodule.exports = { getUser, invalidate };\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "race|interleav|concurrent",
+            "why": "tests the concurrency claim",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "States the claim being tested in one or two sentences before examining it.",
+        "Finds the check-then-act gap across the await: concurrent callers for the same id all load from the database, and an invalidate() during the load lets a stale user be written back into the cache.",
+        "Gives a verdict on the claim (it does not hold as stated) with a concrete fix, such as caching the in-flight promise, rather than a general list of strengths and weaknesses."
+      ]
+    }
+  ]
+}

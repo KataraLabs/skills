@@ -1,0 +1,83 @@
+{
+  "skill": "constraint-driven-development",
+  "path": "skills/addyosmani/constraint-driven-development",
+  "cases": [
+    {
+      "id": "no-numbers-in-mind",
+      "prompt": "Set up constraints for this repo. I don't really know what numbers to pick. It's a TypeScript service with Vitest and ESLint.",
+      "checks": {
+        "all": [
+          {
+            "regex": "CONSTRAINTS\\.md",
+            "why": "records the bar in CONSTRAINTS.md",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "today|current (value|number|level)|measure",
+            "why": "proposes measuring today's value",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Asks no more than four questions, and each comes with a usable default.",
+        "With no target number from the user, proposes recording today's value and holding it rather than inventing a threshold.",
+        "Says where each check runs, keeping fast checks (types, lint, focused tests) in the edit loop and slower checks later.",
+        "Every number written down comes with a reason."
+      ]
+    },
+    {
+      "id": "coverage-jump",
+      "prompt": "Our coverage is 62% and I want to enforce 85% starting today.",
+      "checks": {
+        "all": [
+          {
+            "regex": "62",
+            "why": "works from the measured 62%",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "ratchet|must not (fall|drop|decrease)|never (fall|drop)|hold|not (go|drop|fall) below",
+            "why": "offers a hold-the-line ratchet",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Points out that a threshold the codebase fails today makes every build red.",
+        "Offers recording 62% and requiring that it not fall as an alternative the user can adopt now, with 85% as a goal.",
+        "Does not silently accept 85% without stating the consequence."
+      ]
+    },
+    {
+      "id": "accessibility-as-constraint",
+      "prompt": "Accessibility matters to us. Add it as a constraint.",
+      "checks": {
+        "all": [
+          {
+            "regex": "axe",
+            "why": "names axe-core",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "url|preview",
+            "why": "notes axe needs a running URL",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Names axe-core and gives the install and run commands rather than only stating a violation threshold.",
+        "Notes that axe needs a running URL and asks for one, or drops the dimension if there is none.",
+        "Records the command that produces the verdict next to the rule in CONSTRAINTS.md.",
+        "Places the check at a preview-deploy or later stage rather than in the per-edit loop."
+      ]
+    }
+  ]
+}

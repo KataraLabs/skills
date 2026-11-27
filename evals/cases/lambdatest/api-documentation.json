@@ -1,0 +1,57 @@
+{
+  "skill": "api-documentation",
+  "path": "skills/lambdatest/api-skill/api-documentation",
+  "cases": [
+    {
+      "id": "document-express-routes",
+      "prompt": "Write API documentation for these routes.",
+      "files": {
+        "routes/notes.js": "router.get('/notes', auth, async (req, res) => {\n  const { limit = 20 } = req.query;\n  res.json(await Note.find({ owner: req.user.id }).limit(limit));\n});\n\nrouter.post('/notes', auth, async (req, res) => {\n  if (!req.body.title) return res.status(400).json({ error: 'title required' });\n  res.status(201).json(await Note.create({ ...req.body, owner: req.user.id }));\n});\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "400",
+            "flags": "",
+            "why": "documents the 400 error"
+          },
+          {
+            "regex": "201",
+            "flags": "",
+            "why": "documents the 201 response"
+          }
+        ]
+      },
+      "expectations": [
+        "Documents both endpoints with method, path, authentication and the limit query parameter.",
+        "Gives request and response examples.",
+        "Lists error responses including 400 when title is missing and 401 for missing auth."
+      ]
+    },
+    {
+      "id": "document-token-endpoint",
+      "prompt": "Document this endpoint: POST /v1/tokens takes {\"email\", \"password\"} and returns {\"token\", \"expires_in\"}. It returns 401 on bad credentials.",
+      "checks": {
+        "all": [
+          {
+            "regex": "401",
+            "flags": "",
+            "why": "documents 401"
+          }
+        ],
+        "any": [
+          {
+            "regex": "example|curl",
+            "flags": "i",
+            "why": "includes an example"
+          }
+        ]
+      },
+      "expectations": [
+        "Shows the request body fields with types and which are required.",
+        "Shows a success response example with token and expires_in.",
+        "Documents the 401 error with an example error body."
+      ]
+    }
+  ]
+}

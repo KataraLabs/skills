@@ -1,0 +1,56 @@
+{
+  "skill": "api-rate-limiting-helper",
+  "path": "skills/lambdatest/api-skill/api-ratelimit-helper",
+  "cases": [
+    {
+      "id": "per-key-limit",
+      "prompt": "Add rate limiting to our public API: 100 requests per minute per API key.",
+      "checks": {
+        "all": [
+          {
+            "regex": "429",
+            "flags": "",
+            "why": "returns 429"
+          }
+        ],
+        "any": [
+          {
+            "regex": "Retry-After|RateLimit|X-RateLimit",
+            "flags": "i",
+            "why": "sends rate limit headers"
+          }
+        ]
+      },
+      "expectations": [
+        "Picks an algorithm (token bucket, sliding window) and explains why.",
+        "Returns 429 with Retry-After and rate limit headers.",
+        "Uses a shared store such as Redis so the limit holds across instances."
+      ]
+    },
+    {
+      "id": "client-retry",
+      "prompt": "Our Python client hammers a third-party API and gets 429s. Write retry logic.",
+      "checks": {
+        "all": [
+          {
+            "regex": "backoff|exponential",
+            "flags": "i",
+            "why": "backs off exponentially"
+          }
+        ],
+        "any": [
+          {
+            "regex": "jitter|random",
+            "flags": "i",
+            "why": "adds jitter"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses exponential backoff with jitter and a maximum number of retries.",
+        "Honors the Retry-After header when present.",
+        "Only retries retriable responses (429, 5xx), not 4xx client errors."
+      ]
+    }
+  ]
+}

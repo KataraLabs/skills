@@ -1,0 +1,58 @@
+{
+  "skill": "coverage-analysis",
+  "path": "skills/trailofbits/coverage-analysis",
+  "cases": [
+    {
+      "id": "see-uncovered-code",
+      "prompt": "Our libFuzzer campaign on a C parser has plateaued at about 38% coverage according to the fuzzer stats. How do I see exactly which code is not reached?",
+      "checks": {
+        "all": [
+          {
+            "regex": "-fprofile-instr-generate",
+            "flags": "i",
+            "why": "builds with LLVM source coverage"
+          },
+          {
+            "regex": "llvm-cov",
+            "flags": "i",
+            "why": "reports with llvm-cov"
+          }
+        ],
+        "any": [
+          {
+            "regex": "llvm-profdata",
+            "flags": "i",
+            "why": "merges raw profiles with llvm-profdata"
+          }
+        ]
+      },
+      "expectations": [
+        "Builds a separate coverage binary with `-fprofile-instr-generate -fcoverage-mapping` and runs it over the saved corpus, rather than relying on the fuzzer's own stats.",
+        "Produces a line-level report (llvm-cov show or report) and filters out the harness code.",
+        "Turns uncovered regions into concrete work: dictionary entries for magic values, new seeds, or harness changes."
+      ]
+    },
+    {
+      "id": "coverage-run-crashes",
+      "prompt": "When we replay our corpus through the coverage build it crashes partway and we get no report. The coverage build uses -O3.",
+      "checks": {
+        "any": [
+          {
+            "regex": "fork",
+            "flags": "i",
+            "why": "isolates each input in a child process"
+          },
+          {
+            "regex": "-O[02]",
+            "flags": "i",
+            "why": "uses a lower optimization level"
+          }
+        ]
+      },
+      "expectations": [
+        "Explains that a crashing input stops coverage collection, and either fixes or removes crashing inputs or runs each input in a forked child.",
+        "Recommends -O0 or -O2 for the coverage build because -O3 can remove code and skew coverage."
+      ]
+    }
+  ]
+}

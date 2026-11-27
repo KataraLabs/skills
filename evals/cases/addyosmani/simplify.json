@@ -1,0 +1,56 @@
+{
+  "skill": "simplify",
+  "path": "skills/addyosmani/simplify",
+  "cases": [
+    {
+      "id": "nested-ternaries",
+      "prompt": "Simplify this function.",
+      "files": {
+        "shipping.js": "function shippingCost(order) {\n  return order ? (order.items && order.items.length ? (order.country === 'US' ? (order.total > 50 ? 0 : 5) : (order.total > 100 ? 10 : 20)) : 0) : 0;\n}\n\nmodule.exports = { shippingCost };\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "\\bif\\s*\\(",
+            "why": "replaces the ternaries with if statements or guards",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Replaces the nested ternaries with guard clauses or if/else, keeping every branch (no order, no items, US over and under 50, other countries over and under 100).",
+        "Keeps behavior identical, including the strict > comparisons at exactly 50 and 100.",
+        "Asks the user to run the tests after the change, or proposes tests covering the branches if none exist."
+      ]
+    },
+    {
+      "id": "test-failed-after-simplify",
+      "prompt": "I applied your simplification and a test now fails. What now?",
+      "files": {
+        "simplify.diff": "-  const name = (user.nickname !== undefined && user.nickname !== null) ? user.nickname : user.fullName;\n+  const name = user.nickname || user.fullName;\n",
+        "test-output.txt": "not ok 3 - keeps an empty nickname\n  expected: ''\n  actual: 'Ada Lovelace'\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "revert|undo|roll back|back out",
+            "why": "reverts the failing simplification",
+            "flags": "i"
+          }
+        ],
+        "all": [
+          {
+            "regex": "\\?\\?",
+            "why": "uses nullish coalescing to keep behavior",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Reverts the change (or treats it as reverted) instead of editing the test to match.",
+        "Explains that || also replaces an empty string, while the original only replaced null or undefined.",
+        "Offers user.nickname ?? user.fullName as the behavior-preserving version and asks to rerun the tests."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "skill": "postman-test-script-generator",
+  "path": "skills/lambdatest/api-skill/postman/postman-testcase-generator",
+  "cases": [
+    {
+      "id": "user-tests",
+      "prompt": "Write Postman tests for GET /users/1: status 200, response under 500 ms, has id and email, and save the id for the next request.",
+      "checks": {
+        "all": [
+          {
+            "regex": "pm\\.test",
+            "flags": "",
+            "why": "uses pm.test"
+          },
+          {
+            "regex": "pm\\.(environment|collectionVariables|variables)\\.set",
+            "flags": "",
+            "why": "saves the id"
+          }
+        ]
+      },
+      "expectations": [
+        "Asserts status with pm.response.to.have.status(200).",
+        "Asserts pm.response.responseTime is below 500.",
+        "Checks id and email exist (property checks or a JSON schema)."
+      ]
+    },
+    {
+      "id": "oauth-pre-request",
+      "prompt": "Write a Postman pre-request script that fetches an OAuth client-credentials token and caches it until it expires.",
+      "checks": {
+        "all": [
+          {
+            "regex": "pm\\.sendRequest",
+            "flags": "",
+            "why": "uses pm.sendRequest"
+          }
+        ]
+      },
+      "expectations": [
+        "Skips the request when a cached token is still valid by checking a stored expiry.",
+        "Stores the token and its expiry in variables.",
+        "Reads client id and secret from variables rather than hard-coding them."
+      ]
+    }
+  ]
+}

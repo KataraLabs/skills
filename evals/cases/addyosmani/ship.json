@@ -1,0 +1,54 @@
+{
+  "skill": "ship",
+  "path": "skills/addyosmani/ship",
+  "cases": [
+    {
+      "id": "critical-finding-blocks",
+      "prompt": "Is this ready to ship to production? Here are the change summary and the review notes.",
+      "files": {
+        "change-summary.md": "# Release 2.4\n\n- 14 files changed, 620 lines: new password reset flow (token email, reset form, API).\n- Unit tests: 41 passing. No test for an expired or reused token.\n- Code review note: reset tokens are 6-digit numbers with no attempt limit.\n- New env var RESET_TOKEN_TTL; not yet set in production.\n- No feature flag. Rollback: none written.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "no-?\\s?go",
+            "why": "reaches NO-GO",
+            "flags": "i"
+          },
+          {
+            "regex": "rollback",
+            "why": "includes a rollback plan",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Runs or describes three independent passes (code review, security audit, test coverage) and merges them into one decision.",
+        "Treats the guessable 6-digit token with no attempt limit as a Critical security blocker, making the verdict NO-GO.",
+        "Lists the missing expired or reused token tests and the unset RESET_TOKEN_TTL as blockers or required fixes.",
+        "Includes a rollback plan with trigger conditions and steps, since there is no GO without one."
+      ]
+    },
+    {
+      "id": "tiny-auth-diff-still-reviewed",
+      "prompt": "It's a 6-line change, skip the full review and just tell me GO.",
+      "files": {
+        "auth.diff": "--- a/src/middleware/auth.js\n+++ b/src/middleware/auth.js\n@@ -8,6 +8,6 @@\n function requireAdmin(req, res, next) {\n-  if (req.user && req.user.role === 'admin') return next();\n+  if (req.user && req.user.role.includes('admin')) return next();\n   res.status(403).end();\n }\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "includes|substring|sub-admin|not_admin|nonadmin|non-admin",
+            "why": "spots the loosened role check",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Does not skip the reviews, because the change touches authorization even though it is small.",
+        "Finds that role.includes('admin') accepts any role containing the substring (and behaves differently if role is an array or missing), loosening the admin check.",
+        "Does not give a GO; the verdict comes with a rollback plan or the conditions for a GO."
+      ]
+    }
+  ]
+}

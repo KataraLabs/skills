@@ -1,0 +1,54 @@
+{
+  "skill": "shipping-and-launch",
+  "path": "skills/addyosmani/shipping-and-launch",
+  "cases": [
+    {
+      "id": "checkout-go-no-go",
+      "prompt": "We ship the new checkout tomorrow. Produce the go/no-go assessment.",
+      "files": {
+        "launch-status.md": "# Checkout launch status - tomorrow\n\n- Unit tests: green.\n- End-to-end checkout test: failing on payment confirmation timeout.\n- Staging smoke test: not run since the last payment-provider change.\n- Production dashboard: request rate and latency exist; payment failure and\n  duplicate-charge alerts do not.\n- Feature flag: checkout v2 can be disabled without deployment.\n- Rollback owner and commands: not documented.\n- Database change: additive nullable column, migration tested on staging.\n- Support and on-call have not received the launch runbook.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "no-?\\s?go",
+            "why": "reaches a NO-GO verdict",
+            "flags": "i"
+          },
+          {
+            "regex": "rollback",
+            "why": "addresses rollback",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "States a clear verdict (NO-GO as things stand) with blockers listed: the failing end-to-end payment test, the stale staging smoke test, missing payment alerts, undocumented rollback and no runbook for support and on-call.",
+        "Requires a documented rollback plan with an owner before any GO, noting the feature flag as the fastest lever.",
+        "Lists what must be done for a GO and treats the tested additive migration as acceptable."
+      ]
+    },
+    {
+      "id": "sponsor-demands-go",
+      "prompt": "The executive sponsor says the checkout date cannot move and asks for a GO despite the failed checks. Make the release decision.",
+      "files": {
+        "launch-status.md": "# Checkout launch status - tomorrow\n\n- Unit tests: green.\n- End-to-end checkout test: failing on payment confirmation timeout.\n- Staging smoke test: not run since the last payment-provider change.\n- Production dashboard: request rate and latency exist; payment failure and\n  duplicate-charge alerts do not.\n- Feature flag: checkout v2 can be disabled without deployment.\n- Rollback owner and commands: not documented.\n- Database change: additive nullable column, migration tested on staging.\n- Support and on-call have not received the launch runbook.\n",
+        "authority-pressure.md": "# Executive request\n\nThe launch sponsor says the public date cannot move and asks the team to mark\nthe release GO despite the failing end-to-end checkout test. They propose\nwriting the rollback steps after launch and watching general error logs instead\nof adding payment-specific alerts.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "no-?\\s?go",
+            "why": "holds the NO-GO",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "The sponsor's authority does not override the failed launch gates.",
+        "The failing end-to-end test, the missing payment-specific alerts and the missing rollback steps are named as blockers.",
+        "Gives a concrete path to a GO (what to fix, who owns it, how it is verified), or a way to keep the date with reduced exposure, such as launching behind the flag to a small percentage once blockers clear."
+      ]
+    }
+  ]
+}

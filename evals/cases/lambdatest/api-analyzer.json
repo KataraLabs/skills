@@ -1,0 +1,56 @@
+{
+  "skill": "api-analyzer",
+  "path": "skills/lambdatest/api-skill/api-analyzer",
+  "cases": [
+    {
+      "id": "get-with-body",
+      "prompt": "Is this API request correct?\n\ncurl -X GET https://api.example.com/users -H \"Content-Type: application/json\" -H \"Authorization: abc123\" -d '{\"name\":\"ana\"}'",
+      "checks": {
+        "all": [
+          {
+            "regex": "Bearer|scheme|Basic",
+            "flags": "i",
+            "why": "flags the Authorization header missing a scheme"
+          }
+        ],
+        "any": [
+          {
+            "regex": "GET[^.\\n]*body|body[^.\\n]*GET",
+            "flags": "i",
+            "why": "flags a body sent with GET"
+          }
+        ]
+      },
+      "expectations": [
+        "Points out that sending a JSON body with GET is non-standard and often ignored; suggests query parameters or a different method.",
+        "Points out that the Authorization header lacks a scheme such as Bearer.",
+        "Gives an overall verdict and a corrected request."
+      ]
+    },
+    {
+      "id": "post-wrong-content-type",
+      "prompt": "Why does this request get a 415 from the server?\n\ncurl -X POST \"https://api.example.com/search?q=red shoes\" -H \"Content-Type: text/plain\" -d '{\"limit\": 10}'",
+      "checks": {
+        "all": [
+          {
+            "regex": "application\\/json",
+            "flags": "i",
+            "why": "says the content type should be application/json"
+          }
+        ],
+        "any": [
+          {
+            "regex": "encod|%20|\\+",
+            "flags": "i",
+            "why": "flags the unencoded space in the query"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies that the body is JSON but Content-Type is text/plain, which explains the 415.",
+        "Notes the unencoded space in the query string and shows it encoded.",
+        "Provides a corrected curl command."
+      ]
+    }
+  ]
+}

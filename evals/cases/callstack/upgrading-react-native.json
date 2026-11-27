@@ -1,0 +1,59 @@
+{
+  "skill": "upgrading-react-native",
+  "path": "skills/callstack/upgrading-react-native",
+  "cases": [
+    {
+      "id": "template-diff-first",
+      "prompt": "Upgrade our app from React Native 0.76.9 to 0.78.2. Where do I start and what are the steps?",
+      "files": {
+        "package.json": "{\n  \"name\": \"fieldnotes\",\n  \"dependencies\": {\n    \"react\": \"18.3.1\",\n    \"react-native\": \"0.76.9\",\n    \"react-native-screens\": \"^3.35.0\",\n    \"react-native-reanimated\": \"^3.16.1\"\n  }\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "rn-diff-purge|Upgrade Helper",
+            "flags": "i",
+            "why": "starts from the Upgrade Helper / rn-diff-purge template diff"
+          },
+          {
+            "regex": "pod install",
+            "flags": "i",
+            "why": "reinstalls CocoaPods after the native changes"
+          }
+        ]
+      },
+      "expectations": [
+        "Starts by fetching the template diff for exactly 0.76.9 to 0.78.2 and applying its native iOS and Android changes.",
+        "Checks third-party dependencies (such as react-native-screens and reanimated) for versions compatible with 0.78.",
+        "Aligns the React version with what React Native 0.78 expects (React 19).",
+        "Ends by verifying that both the Android and the iOS builds succeed."
+      ]
+    },
+    {
+      "id": "expo-project-upgrade",
+      "prompt": "Bump React Native in this app to a newer version.",
+      "files": {
+        "package.json": "{\n  \"name\": \"tidepool\",\n  \"main\": \"expo-router/entry\",\n  \"dependencies\": {\n    \"expo\": \"~52.0.11\",\n    \"expo-router\": \"~4.0.9\",\n    \"react\": \"18.3.1\",\n    \"react-native\": \"0.76.3\"\n  }\n}\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "Expo SDK|SDK 5[3-9]",
+            "flags": "i",
+            "why": "upgrades through the Expo SDK"
+          },
+          {
+            "regex": "expo install",
+            "flags": "i",
+            "why": "aligns versions with expo install"
+          }
+        ]
+      },
+      "expectations": [
+        "Recognizes this as an Expo project and upgrades through the Expo SDK, which decides the React Native version, rather than bumping react-native alone.",
+        "Uses `npx expo install` (for example with `--fix`) to bring Expo packages in line with the new SDK.",
+        "Includes a verification step on both iOS and Android after the upgrade."
+      ]
+    }
+  ]
+}

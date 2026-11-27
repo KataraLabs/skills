@@ -1,0 +1,64 @@
+{
+  "skill": "source-driven-development",
+  "path": "skills/addyosmani/source-driven-development",
+  "cases": [
+    {
+      "id": "express-sessions-cited",
+      "prompt": "Implement server-side sessions for our Express 5 app using the framework's recommended approach, citing sources. Task notes attached.",
+      "files": {
+        "framework-task.md": "# Session implementation task\n\nImplement server-side sessions for an Express 5 application. The project uses\n`express-session` and must follow the currently documented production approach\nfor proxy settings, secure cookies, session stores, and secret configuration.\n\nGround behavioral claims in official Express or `express-session`\ndocumentation and cite the exact pages used. Do not rely on remembered Express\n4 defaults. Flag any deployment-specific assumption that cannot be verified\nfrom the repository or official documentation.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "expressjs\\.com|github\\.com/expressjs",
+            "why": "cites official Express or express-session docs",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "MemoryStore|memory store",
+            "why": "addresses the default store",
+            "flags": "i"
+          },
+          {
+            "regex": "trust proxy",
+            "why": "addresses proxy settings",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Claims about express-session and Express behavior cite official documentation pages.",
+        "Covers the documented production points: a store other than the default MemoryStore, secure cookies with trust proxy behind a proxy, and the secret from configuration rather than source.",
+        "Flags assumptions it cannot verify (deployment proxy layout, store choice, whether the docs it cites match the installed versions) instead of stating them as fact, and does not rely on remembered Express 4 defaults."
+      ]
+    },
+    {
+      "id": "renamed-react-hook",
+      "prompt": "Write a React 19 form that shows server validation errors using useFormState from react-dom. Cite where the API is documented.",
+      "checks": {
+        "all": [
+          {
+            "regex": "useActionState",
+            "why": "uses the current hook name",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "react\\.dev",
+            "why": "cites the official React docs",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Notes that useFormState was renamed to useActionState (imported from react) in React 19 and uses the current API.",
+        "Cites the official React documentation for the hook.",
+        "Flags any detail it could not verify against the docs as unverified rather than presenting it as fact."
+      ]
+    }
+  ]
+}

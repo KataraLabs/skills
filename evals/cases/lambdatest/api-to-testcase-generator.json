@@ -1,0 +1,63 @@
+{
+  "skill": "api-to-testcase-generator",
+  "path": "skills/lambdatest/api-skill/api-to-testcase-generator",
+  "cases": [
+    {
+      "id": "pytest-create-user",
+      "prompt": "Generate pytest + requests tests for POST /users: name is required, email must be valid, 201 on success, 400 on invalid input, 409 on duplicate email.",
+      "checks": {
+        "all": [
+          {
+            "regex": "def test_",
+            "flags": "",
+            "why": "writes pytest functions"
+          },
+          {
+            "regex": "409",
+            "flags": "",
+            "why": "tests the duplicate case"
+          }
+        ],
+        "any": [
+          {
+            "regex": "parametrize",
+            "flags": "",
+            "why": "parametrizes invalid inputs"
+          }
+        ]
+      },
+      "expectations": [
+        "Covers the success case asserting 201 and the response body.",
+        "Covers missing name and invalid email with 400, ideally via parametrize.",
+        "Covers duplicate email with 409.",
+        "Uses a fixture or variable for the base URL rather than hard-coding a hosted service."
+      ]
+    },
+    {
+      "id": "jest-from-openapi",
+      "prompt": "Write Jest + supertest tests from this spec.",
+      "files": {
+        "openapi.yaml": "openapi: 3.0.3\npaths:\n  /items/{id}:\n    get:\n      parameters:\n        - name: id\n          in: path\n          required: true\n          schema: { type: integer, minimum: 1 }\n      responses:\n        '200':\n          description: OK\n        '404':\n          description: Not found\n        '400':\n          description: Invalid id\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "supertest|request\\(app\\)",
+            "flags": "i",
+            "why": "uses supertest"
+          },
+          {
+            "regex": "404",
+            "flags": "",
+            "why": "tests 404"
+          }
+        ]
+      },
+      "expectations": [
+        "Tests 200 for an existing id, 404 for a missing one and 400 for an invalid id (such as 0 or a string).",
+        "Uses describe and it or test blocks with async/await.",
+        "Asserts both status and response body shape."
+      ]
+    }
+  ]
+}

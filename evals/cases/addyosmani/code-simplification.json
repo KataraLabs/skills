@@ -1,0 +1,50 @@
+{
+  "skill": "code-simplification",
+  "path": "skills/addyosmani/code-simplification",
+  "cases": [
+    {
+      "id": "flatten-config-parser",
+      "prompt": "Simplify parseConfig, preserving exact behavior.",
+      "files": {
+        "config-parser.js": "'use strict';\n\nfunction parseConfig(lines) {\n  const result = {};\n  let section = 'default';\n  result[section] = {};\n  for (let i = 0; i < lines.length; i++) {\n    const original = lines[i];\n    if (original !== undefined && original !== null) {\n      const line = String(original).trim();\n      if (line.length > 0) {\n        if (line[0] !== '#' && line[0] !== ';') {\n          if (line[0] === '[' && line[line.length - 1] === ']') {\n            const candidate = line.slice(1, line.length - 1).trim();\n            if (candidate.length > 0) {\n              section = candidate;\n              if (!result[section]) result[section] = {};\n            }\n          } else {\n            const separator = line.indexOf('=');\n            if (separator >= 0) {\n              const key = line.slice(0, separator).trim();\n              const raw = line.slice(separator + 1).trim();\n              if (key.length > 0) {\n                let value;\n                if (raw === 'true') value = true;\n                else if (raw === 'false') value = false;\n                else if (raw !== '' && !Number.isNaN(Number(raw))) value = Number(raw);\n                else if (\n                  raw.length >= 2 &&\n                  ((raw[0] === '\"' && raw[raw.length - 1] === '\"') ||\n                    (raw[0] === \"'\" && raw[raw.length - 1] === \"'\"))\n                ) value = raw.slice(1, raw.length - 1);\n                else value = raw;\n                result[section][key] = value;\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n  return result;\n}\n\nmodule.exports = { parseConfig };\n",
+        "config-parser.test.js": "'use strict';\n\nconst assert = require('node:assert/strict');\nconst test = require('node:test');\nconst { parseConfig } = require('./config-parser');\n\ntest('parses sections, values, comments, and defaults', () => {\n  assert.deepEqual(parseConfig([\n    'owner = \"Ada\"', '# ignored', '[server]', 'port = 8080',\n    'enabled = true', 'note = hello',\n  ]), {\n    default: { owner: 'Ada' },\n    server: { port: 8080, enabled: true, note: 'hello' },\n  });\n});\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "continue|guard|early return",
+            "why": "flattens the nesting with guard clauses",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "The rewrite reduces nesting (guard clauses or small helpers) rather than moving the same complexity elsewhere.",
+        "Equivalence is argued concretely for edge cases the single test does not cover: null or undefined lines, \";\" comments, an empty \"[]\" section, an empty key, an empty value, and quoted strings.",
+        "Suggests adding characterization tests for those edge cases before or alongside the change.",
+        "Adds no new features or behavior changes."
+      ]
+    },
+    {
+      "id": "odd-branch-chestertons-fence",
+      "prompt": "This branch looks pointless. Delete it as part of the cleanup.",
+      "files": {
+        "discount.js": "function discountFor(customer, subtotal) {\n  if (customer.id === 0) {\n    return 0;\n  }\n  if (subtotal > 500) return subtotal * 0.1;\n  return 0;\n}\n\nmodule.exports = { discountFor };\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "why|reason|blame|history|caller",
+            "why": "asks why the branch exists before removing it",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Does not delete the customer.id === 0 branch without first establishing why it exists, since removing it changes behavior for that customer when the subtotal exceeds 500.",
+        "Proposes concrete ways to find the reason, such as version history, callers that use id 0 (a guest or system account), or tests.",
+        "Explains that a simplification must keep behavior identical, and offers to remove the branch only once the reason is confirmed gone."
+      ]
+    }
+  ]
+}

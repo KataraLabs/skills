@@ -1,0 +1,54 @@
+{
+  "skill": "postman-collection-generator",
+  "path": "skills/lambdatest/api-skill/postman/postman-collection-generator",
+  "cases": [
+    {
+      "id": "collection-from-curl",
+      "prompt": "Turn these into a Postman collection.\n\ncurl -X POST https://api.example.com/v1/login -H \"Content-Type: application/json\" -d '{\"email\":\"a@b.c\",\"password\":\"x\"}'\ncurl https://api.example.com/v1/orders -H \"Authorization: Bearer TOKEN\"",
+      "checks": {
+        "all": [
+          {
+            "regex": "getpostman\\.com|v2\\.1",
+            "flags": "i",
+            "why": "uses the v2.1 schema"
+          },
+          {
+            "regex": "\\{\\{\\w+\\}\\}",
+            "flags": "",
+            "why": "uses variables"
+          }
+        ]
+      },
+      "expectations": [
+        "Outputs collection JSON with info and the v2.1 schema URL.",
+        "Replaces the host with a {{baseUrl}} variable and the token with a variable.",
+        "Optionally saves the token from login in a test script; both requests are present with correct methods and bodies."
+      ]
+    },
+    {
+      "id": "notes-crud-with-env",
+      "prompt": "Create a Postman collection for CRUD on /notes and a matching environment file.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\"item\"",
+            "flags": "",
+            "why": "collection has items"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\"values\"",
+            "flags": "",
+            "why": "environment has values"
+          }
+        ]
+      },
+      "expectations": [
+        "Includes list, get, create, update and delete requests.",
+        "Provides an environment file with baseUrl and other variables.",
+        "Uses a noteId variable set from the create response or a path variable."
+      ]
+    }
+  ]
+}

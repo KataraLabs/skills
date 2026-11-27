@@ -1,0 +1,60 @@
+{
+  "skill": "property-based-testing",
+  "path": "skills/trailofbits/property-based-testing",
+  "cases": [
+    {
+      "id": "roundtrip-property",
+      "prompt": "Add tests for these functions. The project already uses Hypothesis.",
+      "files": {
+        "varint.py": "def encode_varint(n: int) -> bytes:\n    if n < 0:\n        raise ValueError(\"negative\")\n    out = bytearray()\n    while True:\n        byte = n & 0x7F\n        n >>= 7\n        if n:\n            out.append(byte | 0x80)\n        else:\n            out.append(byte)\n            return bytes(out)\n\n\ndef decode_varint(data: bytes) -> int:\n    result = shift = 0\n    for b in data:\n        result |= (b & 0x7F) << shift\n        if not b & 0x80:\n            return result\n        shift += 7\n    raise ValueError(\"truncated\")\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "@given",
+            "flags": "i",
+            "why": "writes a Hypothesis property"
+          }
+        ],
+        "any": [
+          {
+            "regex": "decode_varint\\(\\s*encode_varint\\(",
+            "flags": "i",
+            "why": "asserts decode(encode(x)) == x"
+          },
+          {
+            "regex": "round.?trip",
+            "flags": "i",
+            "why": "names the roundtrip property"
+          }
+        ]
+      },
+      "expectations": [
+        "The main property is the roundtrip `decode_varint(encode_varint(n)) == n`.",
+        "Non-negative inputs come from the strategy (for example `st.integers(min_value=0)`) rather than from assume().",
+        "The assertions do not re-implement the encoding, and the negative-input ValueError is checked separately."
+      ]
+    },
+    {
+      "id": "tautology-and-vacuity",
+      "prompt": "Review this property test.",
+      "files": {
+        "test_money.py": "from hypothesis import assume, given, strategies as st\n\nfrom money import add_cents\n\n\n@given(st.integers(), st.integers())\ndef test_add(a, b):\n    assume(0 < a < 100 and 0 < b < 100)\n    assert add_cents(a, b) == a + b\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "tautolog|restat|re-?implement",
+            "flags": "i",
+            "why": "flags the assertion as a restatement of the implementation"
+          }
+        ]
+      },
+      "expectations": [
+        "Flags `add_cents(a, b) == a + b` as a tautology that recomputes the implementation.",
+        "Flags the assume() as filtering out nearly all generated integers, and moves the range into the strategy (for example `st.integers(1, 99)`).",
+        "Proposes stronger properties such as commutativity, associativity or adding zero as identity."
+      ]
+    }
+  ]
+}

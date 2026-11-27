@@ -1,0 +1,56 @@
+{
+  "skill": "incremental-implementation",
+  "path": "skills/addyosmani/incremental-implementation",
+  "cases": [
+    {
+      "id": "csv-export-from-plan",
+      "prompt": "Implement CSV export for the reports page, working from the existing task plan.",
+      "files": {
+        "tasks/plan.md": "# CSV export plan\n\n1. Add a pure report-to-CSV formatter with unit tests.\n2. Add a download adapter that uses the formatter.\n3. Wire an Export button to the reports page.\n\nEach task must be independently verified and committed before starting the\nnext. Existing report filtering behavior must remain unchanged.\n",
+        "reports.js": "'use strict';\n\nfunction visibleReports(reports) {\n  return reports.filter((report) => !report.archived);\n}\n\nmodule.exports = { visibleReports };\n",
+        "reports.test.js": "'use strict';\n\nconst assert = require('node:assert/strict');\nconst test = require('node:test');\nconst { visibleReports } = require('./reports');\n\ntest('hides archived reports', () => {\n  assert.deepEqual(visibleReports([\n    { id: 1, archived: false },\n    { id: 2, archived: true },\n  ]), [{ id: 1, archived: false }]);\n});\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "task 1|slice|step 1|first (task|slice)",
+            "why": "works one slice at a time",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Starts with the first task (the pure formatter with unit tests) instead of delivering all three tasks as one change.",
+        "Verification (tests passing) is required before the next slice begins, and each slice is proposed as its own commit.",
+        "Existing report filtering is left unchanged, and the formatter handles values containing commas or quotes."
+      ]
+    },
+    {
+      "id": "sunk-cost-draft",
+      "prompt": "A two-day CSV export draft mixes every layer and has no tests, but management says splitting it would waste the effort already spent. Decide how to proceed.",
+      "files": {
+        "scenario.md": "# Sunk-cost scenario\n\nAnother developer spent two days on `draft-export.js` and says it is 90% done.\nIt combines formatting, browser download behavior, UI state, and analytics in\none untested function. Management wants it committed unchanged today because\ndiscarding or splitting it would \"waste\" the work already invested.\n\nThe existing task plan requires independently verified formatter, adapter, and\nUI slices.\n",
+        "draft-export.js": "'use strict';\n\nasync function exportReports(reports, setStatus, analytics) {\n  setStatus('working');\n  const csv = `name,total\\n${reports.map((r) => `${r.name},${r.total}`).join('\\n')}`;\n  const blob = new Blob([csv], { type: 'text/csv' });\n  const link = document.createElement('a');\n  link.href = URL.createObjectURL(blob);\n  link.download = 'reports.csv';\n  document.body.appendChild(link);\n  link.click();\n  link.remove();\n  analytics.track('report_exported', { count: reports.length });\n  setStatus('done');\n}\n\nmodule.exports = { exportReports };\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "sunk",
+            "why": "names the sunk cost reasoning",
+            "flags": "i"
+          },
+          {
+            "regex": "slice",
+            "why": "splits into slices",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Does not accept sunk cost as a reason to commit the untested combined function.",
+        "Decomposes the draft into independently useful slices (formatter, download adapter, UI state and analytics), reusing its code rather than discarding it.",
+        "Requires tests or other verification before each slice is committed, and notes a concrete defect in the draft such as unescaped commas or quotes in names."
+      ]
+    }
+  ]
+}

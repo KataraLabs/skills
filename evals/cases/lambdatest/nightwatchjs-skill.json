@@ -1,0 +1,56 @@
+{
+  "skill": "nightwatchjs-skill",
+  "path": "skills/lambdatest/nightwatchjs-skill",
+  "cases": [
+    {
+      "id": "nightwatch-login",
+      "prompt": "Write a Nightwatch test for logging in, running on local Chrome.",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\.(assert|expect|verify)\\.",
+            "flags": "",
+            "why": "uses assertions"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\\.url\\(|navigateTo",
+            "flags": "",
+            "why": "opens the page"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses waitForElementVisible or Nightwatch auto-waiting element commands.",
+        "Shows nightwatch.conf.js with a local chrome environment.",
+        "Ends the session with browser.end() or relies on the runner."
+      ]
+    },
+    {
+      "id": "nightwatch-page-object",
+      "prompt": "Write a Nightwatch page object for our login page.",
+      "checks": {
+        "all": [
+          {
+            "regex": "elements\\s*:",
+            "flags": "",
+            "why": "defines elements"
+          }
+        ],
+        "any": [
+          {
+            "regex": "commands\\s*:",
+            "flags": "",
+            "why": "defines commands"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines url, elements and commands in the page object.",
+        "Uses the page object from a test via browser.page.",
+        "Keeps selectors in the page object rather than the test."
+      ]
+    }
+  ]
+}

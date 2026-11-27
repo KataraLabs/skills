@@ -1,0 +1,55 @@
+{
+  "skill": "postman-openapi-converter",
+  "path": "skills/lambdatest/api-skill/postman/postman-openapi-converter",
+  "cases": [
+    {
+      "id": "openapi-to-collection",
+      "prompt": "Convert this OpenAPI spec into a Postman collection.",
+      "files": {
+        "openapi.yaml": "openapi: 3.0.3\nservers:\n  - url: https://api.example.com/v2\ncomponents:\n  securitySchemes:\n    bearer: { type: http, scheme: bearer }\nsecurity: [{ bearer: [] }]\npaths:\n  /pets/{id}:\n    get:\n      parameters:\n        - { name: id, in: path, required: true, schema: { type: integer } }\n      responses: { '200': { description: OK } }\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "\\{\\{baseUrl\\}\\}",
+            "flags": "",
+            "why": "maps the server to baseUrl"
+          }
+        ],
+        "any": [
+          {
+            "regex": ":id|\\{\\{id\\}\\}|\\{\\{petId\\}\\}",
+            "flags": "",
+            "why": "converts the path parameter"
+          }
+        ]
+      },
+      "expectations": [
+        "Maps the server URL to a baseUrl variable.",
+        "Converts the path parameter to Postman syntax.",
+        "Sets bearer auth using a token variable."
+      ]
+    },
+    {
+      "id": "swagger-2-convert",
+      "prompt": "Convert this Swagger 2.0 file to a Postman collection.",
+      "files": {
+        "swagger.json": "{\n  \"swagger\": \"2.0\",\n  \"host\": \"api.example.com\",\n  \"basePath\": \"/v1\",\n  \"schemes\": [\"https\"],\n  \"paths\": {\n    \"/users\": {\n      \"post\": {\n        \"parameters\": [{ \"in\": \"body\", \"name\": \"body\", \"schema\": { \"type\": \"object\", \"properties\": { \"name\": { \"type\": \"string\" } }, \"required\": [\"name\"] } }],\n        \"responses\": { \"201\": { \"description\": \"Created\" } }\n      }\n    }\n  }\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "baseUrl",
+            "flags": "",
+            "why": "uses a baseUrl variable"
+          }
+        ]
+      },
+      "expectations": [
+        "Builds the base URL from schemes, host and basePath.",
+        "Generates an example JSON body with a name field from the body parameter schema.",
+        "Outputs valid collection v2.1 JSON."
+      ]
+    }
+  ]
+}

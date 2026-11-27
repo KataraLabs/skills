@@ -1,0 +1,47 @@
+{
+  "skill": "git-workflow-and-versioning",
+  "path": "skills/addyosmani/git-workflow-and-versioning",
+  "cases": [
+    {
+      "id": "split-mixed-working-tree",
+      "prompt": "My working tree mixes a refactor, a bug fix, and a new feature (diff attached). Turn it into a clean history: tell me the commits and the commands.",
+      "files": {
+        "app.js (committed version)": "'use strict';\n\nfunction total(items) {\n  return items.reduce((sum, item) => sum + item.price, 0);\n}\n\nmodule.exports = { total };\n",
+        "app.test.js": "'use strict';\n\nconst assert = require('node:assert/strict');\nconst test = require('node:test');\nconst { total } = require('./app');\n\ntest('totals item prices', () => {\n  assert.equal(total([{ price: 1 }, { price: 2 }]), 3);\n});\n",
+        "working-tree.patch": "diff --git a/git-workflow-and-versioning/app.js b/git-workflow-and-versioning/app.js\n--- a/git-workflow-and-versioning/app.js\n+++ b/git-workflow-and-versioning/app.js\n@@ -1,7 +1,15 @@\n 'use strict';\n\n-function total(items) {\n+function sumPrices(items) {\n   return items.reduce((sum, item) => sum + item.price, 0);\n+}\n+\n+function total(items) {\n+  return Math.round(sumPrices(items) * 100) / 100;\n }\n\n-module.exports = { total };\n+function exportCsv(items) {\n+  return ['price', ...items.map((item) => item.price)].join('\\n');\n+}\n+\n+module.exports = { exportCsv, total };\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "add -p|--patch|hunk|git add -i|stage",
+            "why": "stages the changes in parts",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Proposes three separate commits: extracting sumPrices (refactor), rounding total to cents (fix), and adding exportCsv (feature).",
+        "Commit messages are imperative and make sense on their own.",
+        "Each commit leaves the code working, for example the refactor keeps total exported and unchanged in behavior, and tests are suggested for the rounding fix and exportCsv."
+      ]
+    },
+    {
+      "id": "force-push-shared-branch",
+      "prompt": "I pushed a commit to main with a typo in the message an hour ago. Teammates have pulled since. How do I amend it and force-push?",
+      "checks": {
+        "any": [
+          {
+            "regex": "rewrite|rewriting|shared|teammates",
+            "why": "warns about rewriting shared history",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Advises against amending and force-pushing a shared branch that others have pulled, explaining that it rewrites history they already have.",
+        "Offers a safe alternative, such as leaving the message, or adding a note or a follow-up commit.",
+        "If it mentions how a force push would be done at all, it is framed as needing team agreement (for example with --force-with-lease), not as the recommended path."
+      ]
+    }
+  ]
+}

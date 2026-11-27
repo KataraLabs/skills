@@ -1,0 +1,62 @@
+{
+  "skill": "newman-script-helper",
+  "path": "skills/lambdatest/api-skill/newman/newman-script-helper",
+  "cases": [
+    {
+      "id": "full-run-command",
+      "prompt": "Give me the Newman command to run collection.json with dev.postman_environment.json, 3 iterations, data from users.csv, and both HTML and JUnit reports.",
+      "checks": {
+        "all": [
+          {
+            "regex": "-e |--environment",
+            "flags": "",
+            "why": "passes the environment"
+          },
+          {
+            "regex": "-d |--iteration-data",
+            "flags": "",
+            "why": "passes the data file"
+          },
+          {
+            "regex": "-n |--iteration-count",
+            "flags": "",
+            "why": "sets iterations"
+          },
+          {
+            "regex": "--reporters?|-r ",
+            "flags": "",
+            "why": "sets reporters"
+          }
+        ]
+      },
+      "expectations": [
+        "Produces one complete newman run command with all requested options.",
+        "Uses htmlextra or html plus junit reporters with export paths.",
+        "Explains the flags briefly."
+      ]
+    },
+    {
+      "id": "hangs-and-continues",
+      "prompt": "My Newman run hangs on slow requests and keeps going after the first failure. Which flags fix that?",
+      "checks": {
+        "all": [
+          {
+            "regex": "--timeout-request",
+            "flags": "",
+            "why": "sets a request timeout"
+          },
+          {
+            "regex": "--bail",
+            "flags": "",
+            "why": "stops on failure"
+          }
+        ]
+      },
+      "expectations": [
+        "Recommends --timeout-request (or --timeout) with a millisecond value.",
+        "Recommends --bail to stop on the first failure.",
+        "Shows a full example command."
+      ]
+    }
+  ]
+}

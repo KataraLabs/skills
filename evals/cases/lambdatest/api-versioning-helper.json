@@ -1,0 +1,49 @@
+{
+  "skill": "api-versioning-helper",
+  "path": "skills/lambdatest/api-skill/api-versioning-helper",
+  "cases": [
+    {
+      "id": "rename-field",
+      "prompt": "We need to rename the field `name` to `full_name` in our GET /users response. How do we do this without breaking clients?",
+      "checks": {
+        "any": [
+          {
+            "regex": "deprecat|Sunset",
+            "flags": "i",
+            "why": "deprecates the old field"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies the rename as a breaking change.",
+        "Proposes an additive path: return both fields for a period, or introduce a new version.",
+        "Describes a deprecation timeline with Deprecation or Sunset headers and client communication."
+      ]
+    },
+    {
+      "id": "url-vs-header",
+      "prompt": "URL versioning or header versioning for our public API?",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\/v1|\\/v2",
+            "flags": "i",
+            "why": "shows URL versioning"
+          }
+        ],
+        "any": [
+          {
+            "regex": "Accept|header",
+            "flags": "i",
+            "why": "shows header versioning"
+          }
+        ]
+      },
+      "expectations": [
+        "Compares URL path and header (or media type) versioning on caching, discoverability and client ease.",
+        "Makes a clear recommendation.",
+        "Mentions the lifecycle for retiring old versions."
+      ]
+    }
+  ]
+}

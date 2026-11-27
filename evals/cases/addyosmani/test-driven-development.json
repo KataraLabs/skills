@@ -1,0 +1,99 @@
+{
+  "skill": "test-driven-development",
+  "path": "skills/addyosmani/test-driven-development",
+  "cases": [
+    {
+      "id": "lost-cent-bug",
+      "prompt": "Finance filed the reconciliation bug written up in BUG.md. Fix it.",
+      "files": {
+        "BUG.md": "# Bug report: cents lost on three-way splits\n\nFrom finance reconciliation (ticket FIN-482):\n\n> Splitting $100.00 three ways returns `[3333, 3333, 3333]`. That sums to\n> $99.99, one cent short. Reconciliation flags every three-way invoice we\n> processed this month.\n\nReproduces with `splitCents(10000, 3)`: expected `[3334, 3333, 3333]`\n(sums to 10000), got `[3333, 3333, 3333]` (sums to 9999).\n",
+        "README.md": "# split-payment\n\nUtility for splitting an amount of money among `n` participants without\nlosing or inventing cents. Amounts are integer cents throughout; the\nlibrary never touches floating point.\n\n## API\n\n`splitCents(totalCents, n)` returns an array of `n` integer cent amounts.\n`totalCents` is a non-negative integer, `n` is a positive integer.\n\n## Invariants\n\nEvery result must satisfy both invariants, for every input:\n\n1. **Exactness** - the shares sum to exactly `totalCents`. Money is never\n   lost or created.\n2. **Fairness** - no two shares differ by more than one cent. When the\n   total does not divide evenly, the leftover cents go to the earliest\n   shares, one cent each.\n\nFor example, `splitCents(100, 7)` is `[15, 15, 14, 14, 14, 14, 14]`.\n\n## Tests\n\n```\nnpm test\n```\n",
+        "package.json": "{\n  \"name\": \"split-payment\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Splits an amount in integer cents into fair shares.\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node --test\"\n  }\n}\n",
+        "src/split.js": "'use strict';\n\nfunction splitCents(totalCents, n) {\n  const share = Math.floor(totalCents / n);\n  return Array.from({ length: n }, () => share);\n}\n\nmodule.exports = { splitCents };\n",
+        "test/split.test.js": "'use strict';\n\nconst assert = require('node:assert/strict');\nconst test = require('node:test');\nconst { splitCents } = require('../src/split');\n\ntest('splits an evenly divisible total into equal shares', () => {\n  assert.deepEqual(splitCents(10000, 4), [2500, 2500, 2500, 2500]);\n});\n\ntest('a single participant receives the whole total', () => {\n  assert.deepEqual(splitCents(500, 1), [500]);\n});\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "10000\\s*,\\s*3",
+            "why": "reproduces the reported case",
+            "flags": "i"
+          },
+          {
+            "regex": "npm test|node --test",
+            "why": "runs the suite with the project command",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "100\\s*,\\s*7|15,\\s*15,\\s*14",
+            "why": "tests the fairness invariant with a remainder above one",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "A test reproducing splitCents(10000, 3) is written first and described as failing before src/split.js changes.",
+        "The fix gives leftover cents one each to the earliest shares, so splitCents(10000, 3) is [3334, 3333, 3333] and splitCents(100, 7) is [15, 15, 14, 14, 14, 14, 14].",
+        "A separate test covers the fairness invariant on an input with a remainder of at least 2.",
+        "The full suite is run (or the user is asked to run it) with npm test after the fix."
+      ]
+    },
+    {
+      "id": "hotfix-pressure",
+      "prompt": "The tech lead says the lost-cent bug in BUG.md is a one-liner (add the leftover cents to the last share) and the hotfix window closes in ten minutes. Apply the fix; tests can be backfilled next sprint.",
+      "files": {
+        "BUG.md": "# Bug report: cents lost on three-way splits\n\nFrom finance reconciliation (ticket FIN-482):\n\n> Splitting $100.00 three ways returns `[3333, 3333, 3333]`. That sums to\n> $99.99, one cent short. Reconciliation flags every three-way invoice we\n> processed this month.\n\nReproduces with `splitCents(10000, 3)`: expected `[3334, 3333, 3333]`\n(sums to 10000), got `[3333, 3333, 3333]` (sums to 9999).\n",
+        "README.md": "# split-payment\n\nUtility for splitting an amount of money among `n` participants without\nlosing or inventing cents. Amounts are integer cents throughout; the\nlibrary never touches floating point.\n\n## API\n\n`splitCents(totalCents, n)` returns an array of `n` integer cent amounts.\n`totalCents` is a non-negative integer, `n` is a positive integer.\n\n## Invariants\n\nEvery result must satisfy both invariants, for every input:\n\n1. **Exactness** - the shares sum to exactly `totalCents`. Money is never\n   lost or created.\n2. **Fairness** - no two shares differ by more than one cent. When the\n   total does not divide evenly, the leftover cents go to the earliest\n   shares, one cent each.\n\nFor example, `splitCents(100, 7)` is `[15, 15, 14, 14, 14, 14, 14]`.\n\n## Tests\n\n```\nnpm test\n```\n",
+        "package.json": "{\n  \"name\": \"split-payment\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Splits an amount in integer cents into fair shares.\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node --test\"\n  }\n}\n",
+        "src/split.js": "'use strict';\n\nfunction splitCents(totalCents, n) {\n  const share = Math.floor(totalCents / n);\n  return Array.from({ length: n }, () => share);\n}\n\nmodule.exports = { splitCents };\n",
+        "test/split.test.js": "'use strict';\n\nconst assert = require('node:assert/strict');\nconst test = require('node:test');\nconst { splitCents } = require('../src/split');\n\ntest('splits an evenly divisible total into equal shares', () => {\n  assert.deepEqual(splitCents(10000, 4), [2500, 2500, 2500, 2500]);\n});\n\ntest('a single participant receives the whole total', () => {\n  assert.deepEqual(splitCents(500, 1), [500]);\n});\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "100\\s*,\\s*7|15,\\s*15,\\s*14|fairness|earliest",
+            "why": "holds to the README fairness rule",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Still writes the reproduction test first and describes it failing before the fix; the deadline does not remove that step.",
+        "Does not ship the dictated patch: adding the whole remainder to the last share violates the README fairness invariant (splitCents(100, 7) would contain a 16).",
+        "The implementation spreads leftover cents one each to the earliest shares, and the full suite is run before the work is called done."
+      ]
+    },
+    {
+      "id": "python-ledger-debits",
+      "prompt": "Add debit entries to the ledger, test-first. A debit subtracts its amount from the balance; a debit that would drive the balance below zero raises ValueError, consistent with how unknown entry kinds are handled.",
+      "files": {
+        "README.md": "# Ledger\n\nSmall Python ledger utilities. No dependencies beyond the standard library.\n\nRun the tests:\n\n```\npython3 -m unittest\n```\n",
+        "ledger.py": "\"\"\"Simple in-memory ledger utilities.\"\"\"\n\n\ndef apply_entries(balance, entries):\n    \"\"\"Apply entries to a starting balance and return the result.\n\n    Entries are (kind, amount) tuples. Only \"credit\" entries are\n    supported; anything else raises ValueError.\n    \"\"\"\n    for kind, amount in entries:\n        if kind == \"credit\":\n            balance += amount\n        else:\n            raise ValueError(f\"unsupported entry kind: {kind}\")\n    return balance\n",
+        "test_ledger.py": "import unittest\n\nfrom ledger import apply_entries\n\n\nclass ApplyEntriesTest(unittest.TestCase):\n    def test_applies_a_single_credit(self):\n        self.assertEqual(apply_entries(100, [(\"credit\", 25)]), 125)\n\n    def test_applies_multiple_credits_in_order(self):\n        self.assertEqual(apply_entries(0, [(\"credit\", 10), (\"credit\", 5)]), 15)\n\n    def test_rejects_unknown_entry_kinds(self):\n        with self.assertRaises(ValueError):\n            apply_entries(0, [(\"transfer\", 10)])\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "python3? -m unittest",
+            "why": "uses the repository test command",
+            "flags": "i"
+          }
+        ],
+        "none": [
+          {
+            "regex": "npm test|\\bjest\\b",
+            "why": "does not reach for another ecosystem's runner",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies the stack as Python with unittest before choosing a test command.",
+        "Writes failing tests first, in unittest style in test_ledger.py, then the implementation.",
+        "The below-zero rule has its own test case, and the full suite is run with python3 -m unittest after the change."
+      ]
+    }
+  ]
+}

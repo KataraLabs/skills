@@ -1,0 +1,57 @@
+{
+  "skill": "libafl",
+  "path": "skills/trailofbits/libafl",
+  "cases": [
+    {
+      "id": "pick-the-simpler-fuzzer",
+      "prompt": "We just want to start fuzzing our C JSON library. Should we use LibAFL?",
+      "checks": {
+        "any": [
+          {
+            "regex": "libFuzzer|AFL\\+\\+",
+            "flags": "i",
+            "why": "points to a standard fuzzer for a quick start"
+          }
+        ]
+      },
+      "expectations": [
+        "Recommends starting with libFuzzer (or AFL++ for multi-core) because the target is a standard C library and LibAFL adds complexity.",
+        "Names when LibAFL is the right choice: custom mutators or feedback, unsupported targets or architectures, or research.",
+        "Mentions that LibAFL can later act as a libFuzzer drop-in using the same harness."
+      ]
+    },
+    {
+      "id": "custom-fuzzer-components",
+      "prompt": "We need a custom mutator for our bytecode VM, so we are building a LibAFL fuzzer. Outline its parts.",
+      "checks": {
+        "all": [
+          {
+            "regex": "observer",
+            "flags": "i",
+            "why": "includes observers"
+          },
+          {
+            "regex": "feedback",
+            "flags": "i",
+            "why": "includes feedback"
+          },
+          {
+            "regex": "scheduler",
+            "flags": "i",
+            "why": "includes a scheduler"
+          },
+          {
+            "regex": "executor",
+            "flags": "i",
+            "why": "includes an executor"
+          }
+        ]
+      },
+      "expectations": [
+        "Lists the components: observers, feedback, objective (crashes or timeouts), state with corpus, mutators, scheduler and executor.",
+        "Places the custom bytecode mutator in the mutator stage.",
+        "Mentions building the target through a LibAFL compiler wrapper (libafl_cc) to get coverage instrumentation."
+      ]
+    }
+  ]
+}

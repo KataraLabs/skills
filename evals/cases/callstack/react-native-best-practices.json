@@ -1,0 +1,63 @@
+{
+  "skill": "react-native-best-practices",
+  "path": "skills/callstack/react-native-best-practices",
+  "cases": [
+    {
+      "id": "measure-before-memoizing",
+      "prompt": "Our feed screen janks badly when scrolling. Should we wrap everything in useMemo and useCallback?",
+      "files": {
+        "src/screens/FeedScreen.tsx": "import { ScrollView } from \"react-native\";\nimport { PostCard } from \"../components/PostCard\";\nimport { useFeed } from \"../hooks/useFeed\";\n\nexport function FeedScreen() {\n  const { posts } = useFeed(); // typically 1,500 to 3,000 posts\n\n  return (\n    <ScrollView>\n      {posts.map((post) => (\n        <PostCard key={post.id} post={post} />\n      ))}\n    </ScrollView>\n  );\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "FlatList|FlashList|Legend ?List",
+            "flags": "i",
+            "why": "replaces ScrollView with a virtualized list"
+          }
+        ],
+        "any": [
+          {
+            "regex": "profil|measure|baseline|FPS",
+            "flags": "i",
+            "why": "measures before and after"
+          }
+        ]
+      },
+      "expectations": [
+        "Recommends measuring first (FPS or a React profiler recording of the scroll) to get a baseline before changing code.",
+        "Identifies rendering thousands of posts in a ScrollView as the likely cause and replaces it with FlatList, FlashList or Legend List.",
+        "Does not recommend blanket useMemo/useCallback without profiling evidence of wasted renders.",
+        "Says to re-measure after the change and compare against the baseline."
+      ]
+    },
+    {
+      "id": "analyze-bundle-size",
+      "prompt": "Our iOS JS bundle grew to 9 MB. How do we bring it down?",
+      "files": {
+        "src/screens/Checkout.tsx": "import { Button, Card, Spinner } from \"@/components\";\nimport _ from \"lodash\";\n\nexport function Checkout({ items }) {\n  const total = _.sumBy(items, \"price\");\n  return <Card><Button title={\"Pay \" + total} /></Card>;\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "source-map-explorer|sourcemap",
+            "flags": "i",
+            "why": "analyzes the bundle with a source map"
+          }
+        ],
+        "any": [
+          {
+            "regex": "barrel",
+            "flags": "i",
+            "why": "calls out barrel imports"
+          }
+        ]
+      },
+      "expectations": [
+        "Starts by building a production bundle with a source map and analyzing it (for example with source-map-explorer), recording the baseline size.",
+        "Flags the barrel import from \"@/components\" and the whole-lodash import, and imports directly from source files or per-function modules instead.",
+        "Says to rebuild the bundle after the changes and compare its size against the baseline."
+      ]
+    }
+  ]
+}

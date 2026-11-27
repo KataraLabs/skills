@@ -1,0 +1,57 @@
+{
+  "skill": "capybara-skill",
+  "path": "skills/lambdatest/capybara-skill",
+  "cases": [
+    {
+      "id": "signup-feature",
+      "prompt": "Write a Capybara feature spec for signing up.",
+      "checks": {
+        "all": [
+          {
+            "regex": "visit",
+            "flags": "",
+            "why": "visits the page"
+          },
+          {
+            "regex": "fill_in",
+            "flags": "",
+            "why": "fills the form"
+          }
+        ],
+        "any": [
+          {
+            "regex": "have_content|have_text|have_current_path",
+            "flags": "",
+            "why": "uses waiting matchers"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses an RSpec feature or system spec with click_button.",
+        "Asserts with Capybara matchers that wait, not raw text comparisons.",
+        "Uses no sleep calls."
+      ]
+    },
+    {
+      "id": "flaky-flash",
+      "prompt": "This Capybara test is flaky. Fix it.",
+      "files": {
+        "spec/features/save_spec.rb": "scenario 'saves profile' do\n  visit edit_profile_path\n  fill_in 'Name', with: 'Ana'\n  click_button 'Save'\n  sleep 2\n  expect(page.find('.flash').text).to eq('Saved')\nend\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "have_(content|text|css|selector)",
+            "flags": "",
+            "why": "uses a retrying matcher"
+          }
+        ]
+      },
+      "expectations": [
+        "Removes sleep 2.",
+        "Replaces the find().text comparison with a retrying matcher such as have_css(\".flash\", text: \"Saved\").",
+        "Explains that Capybara matchers retry until the wait time while .text does not."
+      ]
+    }
+  ]
+}

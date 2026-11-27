@@ -1,0 +1,49 @@
+{
+  "skill": "api-fetcher-specific-domains",
+  "path": "skills/lambdatest/api-skill/popular-api-fetcher",
+  "cases": [
+    {
+      "id": "stripe-payment",
+      "prompt": "What does the Stripe API look like for taking a card payment?",
+      "checks": {
+        "any": [
+          {
+            "regex": "payment_intents|PaymentIntent",
+            "flags": "i",
+            "why": "uses PaymentIntents"
+          }
+        ]
+      },
+      "expectations": [
+        "Shows POST /v1/payment_intents with amount in the smallest currency unit and currency.",
+        "Explains authentication with the secret key and that it stays server side.",
+        "Mentions idempotency keys or confirming the intent on the client."
+      ]
+    },
+    {
+      "id": "github-issues",
+      "prompt": "Which GitHub REST API endpoint lists a repository's open issues?",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\/repos\\/[^\\s]*\\/issues",
+            "flags": "i",
+            "why": "gives the issues endpoint"
+          }
+        ],
+        "any": [
+          {
+            "regex": "state=open|state",
+            "flags": "i",
+            "why": "filters by state"
+          }
+        ]
+      },
+      "expectations": [
+        "Gives GET /repos/{owner}/{repo}/issues with state=open.",
+        "Mentions pagination (per_page, page or Link header).",
+        "Notes that pull requests also appear in this list, or mentions auth for private repos."
+      ]
+    }
+  ]
+}

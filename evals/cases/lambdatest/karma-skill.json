@@ -1,0 +1,49 @@
+{
+  "skill": "karma-skill",
+  "path": "skills/lambdatest/karma-skill",
+  "cases": [
+    {
+      "id": "karma-headless-ci",
+      "prompt": "Set up Karma for my Jasmine tests to run in headless Chrome in CI with coverage.",
+      "checks": {
+        "all": [
+          {
+            "regex": "ChromeHeadless",
+            "flags": "",
+            "why": "uses headless Chrome"
+          }
+        ],
+        "any": [
+          {
+            "regex": "singleRun|single-run",
+            "flags": "",
+            "why": "runs once in CI"
+          }
+        ]
+      },
+      "expectations": [
+        "Shows karma.conf.js with frameworks, files and browsers.",
+        "Adds coverage preprocessing and a coverage reporter.",
+        "Sets singleRun true for CI."
+      ]
+    },
+    {
+      "id": "karma-docker-hang",
+      "prompt": "Karma tests hang in our Docker CI container when Chrome starts. Fix?",
+      "checks": {
+        "any": [
+          {
+            "regex": "--no-sandbox|customLaunchers",
+            "flags": "",
+            "why": "adds a no-sandbox launcher"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines a custom launcher based on ChromeHeadless with --no-sandbox.",
+        "Explains Chrome sandboxing fails as root in containers.",
+        "Mentions increasing captureTimeout or browserNoActivityTimeout if needed."
+      ]
+    }
+  ]
+}

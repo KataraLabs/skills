@@ -1,0 +1,49 @@
+{
+  "skill": "junit-5-skill",
+  "path": "skills/lambdatest/junit-5-skill",
+  "cases": [
+    {
+      "id": "parameterized-prices",
+      "prompt": "Write JUnit 5 tests for PriceCalculator.total(quantity, unitPrice) across many input cases, and check it throws on negative quantity.",
+      "checks": {
+        "all": [
+          {
+            "regex": "@ParameterizedTest",
+            "flags": "",
+            "why": "uses parameterized tests"
+          }
+        ],
+        "any": [
+          {
+            "regex": "@(CsvSource|MethodSource|ValueSource)",
+            "flags": "",
+            "why": "supplies arguments"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses @ParameterizedTest with @CsvSource or @MethodSource.",
+        "Uses assertThrows for the negative case.",
+        "Uses JUnit 5 (org.junit.jupiter) imports, not JUnit 4."
+      ]
+    },
+    {
+      "id": "assert-all",
+      "prompt": "I want to check several fields of a returned User without stopping at the first failed assertion. How in JUnit 5?",
+      "checks": {
+        "all": [
+          {
+            "regex": "assertAll",
+            "flags": "",
+            "why": "uses assertAll"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses assertAll with lambdas for each field.",
+        "Explains all failures are reported together.",
+        "Uses org.junit.jupiter.api.Assertions."
+      ]
+    }
+  ]
+}

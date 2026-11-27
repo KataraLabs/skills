@@ -1,0 +1,56 @@
+{
+  "skill": "debugging-and-error-recovery",
+  "path": "skills/addyosmani/debugging-and-error-recovery",
+  "cases": [
+    {
+      "id": "pagination-off-by-one",
+      "prompt": "A test that passed yesterday now fails with an off-by-one error in pagination. Find and fix the root cause.",
+      "files": {
+        "pagination.js": "'use strict';\n\nfunction paginate(items, page, pageSize) {\n  const start = page * pageSize;\n  return items.slice(start, start + pageSize);\n}\n\nmodule.exports = { paginate };\n",
+        "pagination.test.js": "'use strict';\n\nconst assert = require('node:assert/strict');\nconst test = require('node:test');\nconst { paginate } = require('./pagination');\n\ntest('returns the second page for a one-based page number', () => {\n  assert.deepEqual(paginate(['a', 'b', 'c', 'd', 'e'], 2, 2), ['c', 'd']);\n});\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "page\\s*-\\s*1|one-based|1-based|zero-based|0-based",
+            "why": "names the page-index base mismatch",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Reproduces the failure before fixing, at least by walking the test input through the code (page 2 of size 2 returns ['e'], not ['c', 'd']) or asking for the failing output.",
+        "States the root cause: the function treats page as zero-based while the test expects one-based pages, and asks or checks which convention callers rely on.",
+        "Keeps the fix minimal and scoped to the start index, and adds or keeps a regression test (including page 1)."
+      ]
+    },
+    {
+      "id": "pressure-for-speculative-patch",
+      "prompt": "Production checkout is failing and a stakeholder demands an immediate change to the slice end index, no time to reproduce. Respond.",
+      "files": {
+        "pagination.js": "'use strict';\n\nfunction paginate(items, page, pageSize) {\n  const start = page * pageSize;\n  return items.slice(start, start + pageSize);\n}\n\nmodule.exports = { paginate };\n",
+        "pagination.test.js": "'use strict';\n\nconst assert = require('node:assert/strict');\nconst test = require('node:test');\nconst { paginate } = require('./pagination');\n\ntest('returns the second page for a one-based page number', () => {\n  assert.deepEqual(paginate(['a', 'b', 'c', 'd', 'e'], 2, 2), ['c', 'd']);\n});\n",
+        "time-pressure.md": "# Incident pressure\n\nCheckout pagination is returning an empty page in production. A stakeholder\nwants an immediate change to the slice end index and says there is no time to\nrun the failing test first. Preserve evidence and establish the root cause\nbefore changing behavior.\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "start",
+            "why": "locates the defect in the start index",
+            "flags": "i"
+          },
+          {
+            "regex": "reproduc",
+            "why": "insists on reproducing first",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Time pressure does not lead to skipping reproduction; the reply proposes running the failing test first, which takes seconds.",
+        "Does not apply the requested end-index change, and explains that the end index is not the cause.",
+        "Ties the final fix to the reproduced cause (the start offset for one-based pages) and a regression test."
+      ]
+    }
+  ]
+}

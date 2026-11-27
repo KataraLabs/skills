@@ -1,0 +1,69 @@
+{
+  "skill": "accessibility-engineering",
+  "path": "skills/addyosmani/accessibility-engineering",
+  "cases": [
+    {
+      "id": "audit-checkout-form",
+      "prompt": "Support has three accessibility complaints about checkout-form.html from assistive-technology users, and product wants to know whether the page passes WCAG before we ship. Audit it and write up the findings. See AUDIT-REQUEST.md.",
+      "files": {
+        "checkout-form.html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Checkout</title>\n  <style>\n    body { font-family: system-ui, sans-serif; background: #fff; }\n    .hint { color: #9aa0a6; font-size: 16px; }\n    .icon-btn { width: 20px; height: 20px; border: 0; background: none; }\n    .btn:focus, input:focus { outline: none; }\n    .btn { padding: 12px 20px; background: #1a73e8; color: #fff; border: 0; border-radius: 4px; }\n    .error { color: #d93025; font-size: 14px; }\n  </style>\n</head>\n<body>\n  <main>\n    <h1>Checkout</h1>\n\n    <h3>Payment details</h3>\n\n    <form action=\"/orders\" method=\"post\">\n      <input type=\"email\" name=\"email\" placeholder=\"Email address\">\n\n      <label>Card number</label>\n      <input type=\"text\" name=\"card\" inputmode=\"numeric\">\n\n      <span class=\"error\">That card number is invalid.</span>\n\n      <div class=\"btn\" onclick=\"submitOrder()\">Place order</div>\n\n      <button class=\"icon-btn\" type=\"button\" onclick=\"clearCart()\">\n        <svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M2 2l12 12M14 2L2 14\" stroke=\"currentColor\"/></svg>\n      </button>\n    </form>\n\n    <p>Questions about your order? <a href=\"/help\">Click here</a>.</p>\n\n    <p class=\"hint\">Free returns within 30 days.</p>\n  </main>\n\n  <script>\n    function submitOrder() { document.querySelector('form').submit(); }\n    function clearCart() { /* ... */ }\n  </script>\n</body>\n</html>\n",
+        "AUDIT-REQUEST.md": "# Checkout form - audit request\n\n\n`checkout-form.html` is the checkout page as it currently stands. Support has\nthree complaints from assistive-technology users:\n\n1. A screen reader user could not tell what the email field was for once they\n   had started typing in it.\n2. A keyboard-only user could not submit the order.\n3. The order-confirmation link \"Click here\" was reported as meaningless when\n   navigating by link.\n\nThe team wants the audit written up before the next release. Product has asked\ntwice whether the page \"passes WCAG\" - the answer needs to distinguish what\nautomated tooling can establish from what only a real screen reader test can.\n\nNo automated report has been produced yet. `checkout-form.html` is the only\ninput available.\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "1\\.4\\.3",
+            "why": "maps the grey hint text to the contrast criterion",
+            "flags": "i"
+          },
+          {
+            "regex": "manual",
+            "why": "separates manual checks from what the source shows",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "<button",
+            "why": "recommends a native button for the div control",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Each finding maps to a WCAG success criterion, and no finding presents a 44x44px touch target as an AA requirement (24x24 CSS px is SC 2.5.8 at AA; 44x44 is SC 2.5.5 at AAA).",
+        "The icon-only clear-cart button is reported as having no accessible name, and the #9aa0a6 hint text is reported as failing SC 1.4.3 contrast on the white background.",
+        "The div-based 'Place order' control is reported as not keyboard operable, and the fix is a native <button> rather than adding role and tabindex to the div.",
+        "The email input is reported as relying on its placeholder with no persistent visible label, and an associated <label> is recommended ahead of an ARIA-only fix; the reply does not claim the page passes WCAG, and screen-reader behavior is marked as needing a manual check with a named browser and screen reader pair."
+      ]
+    },
+    {
+      "id": "clean-axe-run-is-not-conformance",
+      "prompt": "axe reports zero violations on our new modal. Can I tell product it is WCAG 2.2 AA compliant and close the ticket?",
+      "files": {
+        "Modal.jsx": "export function Modal({ open, onClose, title, children }) {\n  if (!open) return null;\n  return (\n    <div className=\"backdrop\" onClick={onClose}>\n      <div role=\"dialog\" aria-modal=\"true\" aria-label={title} className=\"modal\">\n        <h2>{title}</h2>\n        {children}\n        <button onClick={onClose} aria-label=\"Close\">x</button>\n      </div>\n    </div>\n  );\n}\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "focus",
+            "why": "raises focus handling, which axe cannot check",
+            "flags": "i"
+          }
+        ],
+        "none": [
+          {
+            "regex": "^\\s*yes[,.!]",
+            "why": "does not open with a plain yes",
+            "flags": "im"
+          }
+        ]
+      },
+      "expectations": [
+        "States that a clean automated scan is not proof of WCAG conformance and that keyboard and screen-reader behavior need manual testing.",
+        "Points out concrete gaps axe would not catch in this modal: focus is not moved into the dialog on open, not kept inside it, and not returned to the trigger on close, and Escape does not close it.",
+        "Gives a specific manual test plan or code changes to address those gaps before the ticket is closed."
+      ]
+    }
+  ]
+}

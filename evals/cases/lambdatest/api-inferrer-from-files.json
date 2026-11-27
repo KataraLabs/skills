@@ -1,0 +1,56 @@
+{
+  "skill": "api-inferrer-from-files",
+  "path": "skills/lambdatest/api-skill/api-inference-from-files",
+  "cases": [
+    {
+      "id": "infer-from-file-list",
+      "prompt": "What APIs can I infer from these files?\ncontrollers/userController.js\nmodels/Order.js\nroutes/products.js\nservices/paymentService.js",
+      "checks": {
+        "all": [
+          {
+            "regex": "products",
+            "flags": "i",
+            "why": "covers products"
+          }
+        ],
+        "any": [
+          {
+            "regex": "(GET|POST)\\s+\\/(api\\/)?(v1\\/)?users",
+            "flags": "i",
+            "why": "lists user endpoints"
+          }
+        ]
+      },
+      "expectations": [
+        "Lists CRUD endpoints for users, products and orders with methods and paths.",
+        "Infers payment endpoints from the payment service.",
+        "Groups endpoints by resource."
+      ]
+    },
+    {
+      "id": "infer-from-django-tree",
+      "prompt": "Here is my Django project layout. What REST endpoints does it imply?\n\nshop/\n  catalog/models.py (Category, Product)\n  catalog/views.py\n  orders/models.py (Order, OrderItem)\n  accounts/views.py (login, logout, register)",
+      "checks": {
+        "all": [
+          {
+            "regex": "categor",
+            "flags": "i",
+            "why": "covers categories"
+          }
+        ],
+        "any": [
+          {
+            "regex": "login|register",
+            "flags": "i",
+            "why": "covers auth endpoints"
+          }
+        ]
+      },
+      "expectations": [
+        "Proposes endpoints for categories, products, orders and order items.",
+        "Includes authentication endpoints for login, logout and register.",
+        "Shows nested or filtered routes where sensible, such as items within an order."
+      ]
+    }
+  ]
+}

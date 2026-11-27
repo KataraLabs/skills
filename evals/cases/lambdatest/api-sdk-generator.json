@@ -1,0 +1,54 @@
+{
+  "skill": "api-sdk-generator",
+  "path": "skills/lambdatest/api-skill/api-sdk-generator",
+  "cases": [
+    {
+      "id": "typescript-sdk",
+      "prompt": "Generate a TypeScript SDK for our API: GET /projects, POST /projects, GET /projects/{id}. Auth is a bearer token.",
+      "checks": {
+        "all": [
+          {
+            "regex": "class\\s+\\w+",
+            "flags": "",
+            "why": "uses classes"
+          },
+          {
+            "regex": "Error",
+            "flags": "",
+            "why": "defines errors"
+          }
+        ]
+      },
+      "expectations": [
+        "Has a base client holding the base URL and bearer token.",
+        "Has a projects resource with list, create and get methods typed with interfaces.",
+        "Defines typed error classes for HTTP failures (for example NotFound, Unauthorized)."
+      ]
+    },
+    {
+      "id": "python-cursor-pagination",
+      "prompt": "Generate a Python client for a cursor-paginated GET /items endpoint (response has items and next_cursor).",
+      "checks": {
+        "all": [
+          {
+            "regex": "cursor",
+            "flags": "i",
+            "why": "uses the cursor"
+          }
+        ],
+        "any": [
+          {
+            "regex": "yield|__iter__|iterator|generator",
+            "flags": "i",
+            "why": "iterates pages"
+          }
+        ]
+      },
+      "expectations": [
+        "Provides an iterator or generator that follows next_cursor until it is empty.",
+        "Sets request timeouts and raises typed exceptions on errors.",
+        "Keeps the HTTP session in a reusable client object."
+      ]
+    }
+  ]
+}

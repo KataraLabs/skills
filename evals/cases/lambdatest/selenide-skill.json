@@ -1,0 +1,56 @@
+{
+  "skill": "selenide-skill",
+  "path": "skills/lambdatest/selenide-skill",
+  "cases": [
+    {
+      "id": "selenide-login",
+      "prompt": "Write a Selenide Java test for logging in.",
+      "checks": {
+        "all": [
+          {
+            "regex": "should(Be|Have)",
+            "flags": "",
+            "why": "uses conditions"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\\$\\(|\\$x\\(",
+            "flags": "",
+            "why": "uses $ selectors"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses open() and $ selectors with setValue and click.",
+        "Uses shouldBe or shouldHave conditions which wait automatically.",
+        "Configures Selenide via Configuration (browser, baseUrl) instead of creating a WebDriver by hand."
+      ]
+    },
+    {
+      "id": "selenide-collection",
+      "prompt": "With Selenide, how do I assert the search results list has 5 items, each containing \"phone\"?",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\$\\$",
+            "flags": "",
+            "why": "uses $$ collections"
+          }
+        ],
+        "any": [
+          {
+            "regex": "size\\(5\\)|CollectionCondition",
+            "flags": "",
+            "why": "asserts the size"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses $$ with shouldHave(size(5)).",
+        "Checks each item contains the text, for example with a collection condition or loop of shouldHave(text(...)).",
+        "Relies on built-in waiting."
+      ]
+    }
+  ]
+}

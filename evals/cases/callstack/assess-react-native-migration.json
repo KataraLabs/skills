@@ -1,0 +1,72 @@
+{
+  "skill": "assess-react-native-migration",
+  "path": "skills/callstack/assess-react-native-migration",
+  "cases": [
+    {
+      "id": "scope-gate-question",
+      "prompt": "Should our company migrate our mobile app to React Native? The repo below is our iOS app.",
+      "files": {
+        "ios/Podfile": "platform :ios, '16.0'\ntarget 'Ledgerly' do\n  use_frameworks!\n  pod 'Firebase/Messaging'\n  pod 'Plaid'\nend\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "\\*\\*Question:\\*\\*",
+            "flags": "i",
+            "why": "uses the Question line"
+          },
+          {
+            "regex": "\\*\\*Why it matters:\\*\\*",
+            "flags": "i",
+            "why": "uses the Why it matters line"
+          },
+          {
+            "regex": "Android",
+            "flags": "i",
+            "why": "asks about the other client platforms"
+          }
+        ],
+        "none": [
+          {
+            "regex": "Path [ABC]\\b|Recommendation",
+            "flags": "i",
+            "why": "gives no path or recommendation yet"
+          }
+        ]
+      },
+      "expectations": [
+        "The reply asks one question: where to access the production codebase for each client platform, including iOS and Android.",
+        "It gives a one-sentence reason and nothing else: no questionnaire, recommendation or implementation guidance."
+      ]
+    },
+    {
+      "id": "driver-question-once-scope-known",
+      "prompt": "Our only clients are the iOS app in ios-app/ and the Android app in android-app/, both production, and you can read both repos. Should we migrate to React Native?",
+      "checks": {
+        "all": [
+          {
+            "regex": "\\*\\*Question:\\*\\*",
+            "flags": "i",
+            "why": "uses the Question line"
+          },
+          {
+            "regex": "measurable",
+            "flags": "i",
+            "why": "asks for the measurable driver"
+          }
+        ],
+        "none": [
+          {
+            "regex": "\\?.*\\?",
+            "flags": "s",
+            "why": "asks no second question"
+          }
+        ]
+      },
+      "expectations": [
+        "Asks a single question about the measurable delivery or business problem the migration should solve.",
+        "Gives a one-sentence reason and stops, without a recommendation, path choice or list of further questions."
+      ]
+    }
+  ]
+}

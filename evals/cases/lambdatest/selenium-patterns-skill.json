@@ -1,0 +1,52 @@
+{
+  "skill": "selenium-patterns-skill",
+  "path": "skills/lambdatest/selenium-patterns-skill",
+  "cases": [
+    {
+      "id": "review-sleeps",
+      "prompt": "Review this Selenium test.",
+      "files": {
+        "CheckoutTest.java": "driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));\ndriver.get(baseUrl + \"/cart\");\ndriver.findElement(By.xpath(\"/html/body/div[2]/div[1]/button\")).click();\nThread.sleep(3000);\nString msg = driver.findElement(By.cssSelector(\".msg\")).getText();\nassertEquals(\"Order placed\", msg);\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "WebDriverWait",
+            "flags": "",
+            "why": "uses explicit waits"
+          }
+        ],
+        "any": [
+          {
+            "regex": "ExpectedConditions|elementToBeClickable|visibilityOf|textToBe",
+            "flags": "",
+            "why": "uses expected conditions"
+          }
+        ]
+      },
+      "expectations": [
+        "Removes Thread.sleep in favour of an explicit wait.",
+        "Warns against mixing implicit and explicit waits.",
+        "Replaces the absolute XPath with an id, data attribute or meaningful CSS selector."
+      ]
+    },
+    {
+      "id": "stale-element",
+      "prompt": "I get StaleElementReferenceException after clicking a filter and then reading the result rows. Why?",
+      "checks": {
+        "any": [
+          {
+            "regex": "re-?locate|re-?find|refetch|look (it|them) up again|find .* again|stalenessOf",
+            "flags": "i",
+            "why": "re-locates elements"
+          }
+        ]
+      },
+      "expectations": [
+        "Explains the DOM was re-rendered so the old element reference is invalid.",
+        "Fixes by locating elements again after the action, or waiting for staleness and then re-finding.",
+        "Advises against catching and retrying blindly."
+      ]
+    }
+  ]
+}

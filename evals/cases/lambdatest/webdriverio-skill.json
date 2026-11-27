@@ -1,0 +1,57 @@
+{
+  "skill": "webdriverio-skill",
+  "path": "skills/lambdatest/webdriverio-skill",
+  "cases": [
+    {
+      "id": "wdio-login",
+      "prompt": "Write a WebdriverIO Mocha test for logging in, running on local Chrome.",
+      "checks": {
+        "all": [
+          {
+            "regex": "toBeDisplayed|toHaveText|toHaveUrl|expect\\(",
+            "flags": "",
+            "why": "uses expect-webdriverio"
+          }
+        ],
+        "any": [
+          {
+            "regex": "\\$\\(|browser\\.url",
+            "flags": "",
+            "why": "uses WDIO commands"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses async/await with $ selectors.",
+        "Uses expect-webdriverio matchers or waitForDisplayed instead of browser.pause.",
+        "Shows wdio.conf capabilities for local Chrome.",
+        "Runs against a local browser, emulator or app; it does not require a hosted cloud grid or vendor account."
+      ]
+    },
+    {
+      "id": "wdio-page-object",
+      "prompt": "Write a WebdriverIO page object for our login page.",
+      "checks": {
+        "all": [
+          {
+            "regex": "class\\s+\\w+",
+            "flags": "",
+            "why": "uses a class"
+          }
+        ],
+        "any": [
+          {
+            "regex": "get\\s+\\w+\\s*\\(\\)",
+            "flags": "",
+            "why": "uses getters for elements"
+          }
+        ]
+      },
+      "expectations": [
+        "Defines element getters returning $ selectors.",
+        "Adds an async login method.",
+        "Exports an instance and uses it in a spec."
+      ]
+    }
+  ]
+}

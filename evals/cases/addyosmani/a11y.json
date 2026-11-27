@@ -1,0 +1,60 @@
+{
+  "skill": "a11y",
+  "path": "skills/addyosmani/a11y",
+  "cases": [
+    {
+      "id": "quick-mode-source-scan",
+      "prompt": "Do an accessibility check on this component. No tool reports are available.",
+      "files": {
+        "ProductTile.jsx": "export function ProductTile({ product, onAdd }) {\n  return (\n    <section className=\"tile\">\n      <h4>{product.name}</h4>\n      <img src={product.image} />\n      <span className=\"price\">{product.price}</span>\n      <div className=\"add\" onClick={() => onAdd(product.id)}>Add to cart</div>\n      <input type=\"number\" defaultValue={1} />\n    </section>\n  );\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "WCAG",
+            "why": "maps findings to WCAG",
+            "flags": "i"
+          },
+          {
+            "regex": "\\balt\\b",
+            "why": "flags the missing alt text",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Treats this as a quick source scan and says that contrast, rendering and screen reader behavior still need a live or tool-based check.",
+        "Flags the missing alt text, the div used as a button, the unlabeled quantity input and the h4 heading level, each mapped to a WCAG criterion and ranked by severity.",
+        "Gives remediation with code examples, mentions what the component already does well, and includes a scorecard or summary."
+      ]
+    },
+    {
+      "id": "deep-mode-axe-report",
+      "prompt": "Here is the axe report for our login page. Give me the audit.",
+      "files": {
+        "axe.json": "{\n  \"url\": \"http://localhost:3000/login\",\n  \"violations\": [\n    { \"id\": \"color-contrast\", \"impact\": \"serious\", \"nodes\": [{ \"target\": [\".forgot-link\"], \"failureSummary\": \"contrast ratio 2.9:1, expected 4.5:1\" }] },\n    { \"id\": \"label\", \"impact\": \"critical\", \"nodes\": [{ \"target\": [\"#password\"] }] },\n    { \"id\": \"region\", \"impact\": \"moderate\", \"nodes\": [{ \"target\": [\"footer > div\"] }] }\n  ],\n  \"passes\": [{ \"id\": \"html-has-lang\" }, { \"id\": \"document-title\" }]\n}\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "1\\.4\\.3",
+            "why": "maps the contrast failure",
+            "flags": "i"
+          }
+        ],
+        "any": [
+          {
+            "regex": "manual|keyboard|screen reader",
+            "why": "notes what axe cannot check",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Ranks the missing password label first, then the 2.9:1 contrast on the forgot-password link (SC 1.4.3), then the landmark issue.",
+        "Gives concrete fixes for each, such as a <label for=\"password\"> and a darker link color.",
+        "States that the report does not cover keyboard or screen reader behavior and lists the manual checks still needed, without claiming the page passes WCAG."
+      ]
+    }
+  ]
+}

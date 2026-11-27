@@ -1,0 +1,53 @@
+{
+  "skill": "cicd-pipeline-skill",
+  "path": "skills/lambdatest/cicd-pipeline-skill",
+  "cases": [
+    {
+      "id": "playwright-gha-shards",
+      "prompt": "Write a GitHub Actions workflow that runs our Playwright tests on every pull request, sharded 4 ways, with the HTML report uploaded.",
+      "checks": {
+        "all": [
+          {
+            "regex": "--shard",
+            "flags": "",
+            "why": "shards tests"
+          },
+          {
+            "regex": "upload-artifact",
+            "flags": "",
+            "why": "uploads the report"
+          }
+        ]
+      },
+      "expectations": [
+        "Uses a matrix of four shards passing --shard=N/4.",
+        "Installs dependencies with caching and installs Playwright browsers with system deps.",
+        "Uploads reports with if: always() (or merges blob reports).",
+        "Triggers on pull_request."
+      ]
+    },
+    {
+      "id": "gitlab-pytest",
+      "prompt": "Write a GitLab CI pipeline for our pytest suite with coverage and a JUnit report.",
+      "checks": {
+        "all": [
+          {
+            "regex": "junit",
+            "flags": "i",
+            "why": "produces JUnit"
+          },
+          {
+            "regex": "artifacts:",
+            "flags": "",
+            "why": "stores artifacts"
+          }
+        ]
+      },
+      "expectations": [
+        "Runs pytest with --junitxml and coverage options.",
+        "Publishes the JUnit file under artifacts:reports:junit.",
+        "Caches pip dependencies."
+      ]
+    }
+  ]
+}

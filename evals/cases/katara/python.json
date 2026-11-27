@@ -1,0 +1,80 @@
+{
+  "skill": "python",
+  "path": "skills/katara/python",
+  "cases": [
+    {
+      "id": "uv-project-run-one-test",
+      "prompt": "Add pytest tests for `slugify` covering the edge cases, and tell me the command to run just those tests.",
+      "files": {
+        "pyproject.toml": "[project]\nname = \"blogkit\"\nversion = \"0.3.0\"\nrequires-python = \">=3.11\"\ndependencies = []\n\n[dependency-groups]\ndev = [\"pytest>=8\", \"ruff>=0.6\"]\n\n[tool.pytest.ini_options]\ntestpaths = [\"tests\"]\n\n# uv.lock is committed next to this file\n",
+        "src/blogkit/text.py": "import re\nimport unicodedata\n\n\ndef slugify(title: str) -> str:\n    normalized = unicodedata.normalize(\"NFKD\", title).encode(\"ascii\", \"ignore\").decode()\n    return re.sub(r\"[^a-z0-9]+\", \"-\", normalized.lower()).strip(\"-\")\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "uv run (python -m )?pytest",
+            "flags": "i",
+            "why": "runs pytest through uv"
+          },
+          {
+            "regex": "parametrize",
+            "flags": "i",
+            "why": "uses pytest.mark.parametrize for the cases"
+          }
+        ]
+      },
+      "expectations": [
+        "The tests go in tests/ (for example tests/test_text.py), matching the configured testpaths.",
+        "The cases include edge cases such as an empty string, accented or other non-ASCII input, and a title made only of punctuation.",
+        "The command selects only the new tests, by file path or node id, through `uv run pytest`."
+      ]
+    },
+    {
+      "id": "mutable-default-and-none-compare",
+      "prompt": "Review this module and fix the bugs.",
+      "files": {
+        "tags.py": "def add_tag(tag, tags=[]):\n    tags.append(tag)\n    return tags\n\n\ndef owner_label(owner):\n    if owner == None:\n        return \"unassigned\"\n    return owner.name\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "tags\\s*(:\\s*[^=\\n]+)?=\\s*None",
+            "flags": "i",
+            "why": "replaces the mutable default with None"
+          },
+          {
+            "regex": "\\bis None\\b",
+            "flags": "i",
+            "why": "compares to None with is"
+          }
+        ]
+      },
+      "expectations": [
+        "Explains that the default list is created once and shared between calls, so tags leak from one call into the next.",
+        "Creates a new list inside the function when `tags` is None.",
+        "Replaces `owner == None` with `owner is None`."
+      ]
+    },
+    {
+      "id": "shell-true-and-swallowed-error",
+      "prompt": "Is this safe? `name` comes straight from the upload form.",
+      "files": {
+        "thumbs.py": "import subprocess\n\n\ndef make_thumbnail(name: str) -> bool:\n    try:\n        subprocess.run(f\"convert uploads/{name} -resize 200x200 thumbs/{name}\", shell=True, check=True)\n        return True\n    except Exception:\n        return False\n"
+      },
+      "checks": {
+        "all": [
+          {
+            "regex": "subprocess\\.run\\(\\s*\\[",
+            "flags": "i",
+            "why": "passes the command as an argument list"
+          }
+        ]
+      },
+      "expectations": [
+        "Identifies shell command injection through `name` with shell=True.",
+        "The fix passes an argument list without shell=True and checks the name (for example rejecting path separators or using a safe basename).",
+        "It no longer catches every Exception silently: it catches the specific error (such as subprocess.CalledProcessError) and logs or re-raises it, keeping the cause."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "skill": "spec-driven-development",
+  "path": "skills/addyosmani/spec-driven-development",
+  "cases": [
+    {
+      "id": "usage-billing-spec",
+      "prompt": "We want usage-based billing. Produce the spec before any implementation. Brief attached.",
+      "files": {
+        "billing-brief.md": "# Usage-based billing brief\n\nThe product currently charges one flat monthly price. Leadership wants usage-\nbased billing next quarter, but \"usage\" has not been defined. Candidate meters\ninclude API requests, processed records, and successful jobs.\n\nKnown constraints:\n\n- Existing customers need a migration path.\n- Billing events must be auditable and idempotent.\n- Late-arriving events occur for up to seven days.\n- Finance requires invoice reconciliation.\n\nUnknowns include pricing tiers, free allowances, meter ownership, correction\nrules, customer-facing usage visibility, and regional tax behavior. Produce a\nspec and surface these decisions; do not implement them by assumption.\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "non-?goals|out of scope|never do|boundar",
+            "why": "states boundaries or non-goals",
+            "flags": "i"
+          }
+        ],
+        "none": [
+          {
+            "regex": "```(js|javascript|ts|typescript|python|go|java|sql)\\b",
+            "why": "writes no implementation code",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "The spec states explicit boundaries and non-goals.",
+        "The open decisions (meter definition, tiers, free allowance, corrections for late events, customer visibility, tax) are listed as questions rather than silently resolved.",
+        "Includes a testing strategy covering idempotency, the seven-day late-event window and invoice reconciliation.",
+        "Writes no implementation code."
+      ]
+    },
+    {
+      "id": "portal-capability-map",
+      "prompt": "Read portal-brief.md and produce the spec work for the customer portal initiative.",
+      "files": {
+        "portal-brief.md": "# Customer portal - product brief\n\nLeadership wants a self-serve customer portal shipped as one initiative. The\nrequest, as handed down:\n\n- Customers sign in with email/password or company SSO and manage their\n  account and team members.\n- Customers pick a plan, enter payment details, and receive monthly invoices;\n  plan changes prorate.\n- Customers get email notifications for invoices, payment failures, and team\n  invitations; enterprise customers can register webhooks for the same events.\n- Admins see a usage dashboard: seats, API calls, and spend per month.\n\nConstraints gathered so far:\n\n- Billing must know who the customer is, so it depends on account data.\n- Notifications fire on billing and account events.\n- The dashboard reads from billing and notification delivery records.\n- The four areas have different reviewers: platform owns accounts, finance\n  owns billing, and growth owns notifications and the dashboard.\n- Each area should be shippable and verifiable on its own; finance wants to\n  sign off on billing without waiting for the dashboard.\n"
+      },
+      "checks": {
+        "any": [
+          {
+            "regex": "capability map|module",
+            "why": "proposes a capability map of modules",
+            "flags": "i"
+          }
+        ]
+      },
+      "expectations": [
+        "Proposes a capability map with module ids (accounts, billing, notifications, dashboard) and their dependencies before writing any full spec.",
+        "Dependencies point one way with no cycles (accounts, then billing, then notifications, then dashboard) and drive the build order.",
+        "Asks for approval of the map before drafting per-module specs; any module spec shown covers a single module only.",
+        "Writes no implementation code."
+      ]
+    }
+  ]
+}
