@@ -67,7 +67,7 @@ test('the repository index lists every skill once with a valid id and digest', (
   const bundled = idx.skills.filter((s) => s.id.startsWith('bundled:'));
   assert.equal(bundled.length, 35);
   assert.ok(bundled.every((s) => s.folder.startsWith('skills/addyosmani/') && s.kind === 'workflow'));
-  assert.deepEqual(idx.skills.filter((s) => s.default === 'on').map((s) => s.name).sort(),
+  assert.deepEqual(idx.skills.filter((s) => s.kind === 'workflow' && s.default === 'on').map((s) => s.name).sort(),
     ['code-review-and-quality', 'debugging-and-error-recovery', 'planning-and-task-breakdown', 'test-driven-development']);
   for (const n of ['typescript', 'react', 'python', 'go', 'swift', 'rust', 'sql']) {
     const s = idx.skills.find((x) => x.id === `catalog:${n}`);
@@ -78,11 +78,15 @@ test('the repository index lists every skill once with a valid id and digest', (
   for (const s of idx.skills) {
     assert.ok(['language', 'framework', 'workflow'].includes(s.kind), `${s.id} kind`);
     assert.equal(typeof s.servable, 'boolean');
-    assert.equal(s.kind === 'workflow', 'default' in s, `${s.id}: default only on workflow skills`);
+    assert.ok(['on', 'off'].includes(s.default), `${s.id} default`);
+    if (s.kind !== 'workflow') assert.equal(s.default, 'on');
+    assert.equal(s.sha256, s.servable ? s.digest : null, `${s.id} sha256`);
+    for (const k of ['id', 'name', 'description', 'version', 'kind', 'default', 'servable']) assert.ok(k in s, `${s.id} lacks ${k}`);
+    assert.ok('license' in s && 'sha256' in s);
   }
   const vercel = idx.skills.filter((s) => s.source.external);
   assert.equal(vercel.length, 5);
-  assert.ok(vercel.every((s) => s.servable === false && s.digest.length === 64));
+  assert.ok(vercel.every((s) => s.servable === false && s.sha256 === null && s.digest.length === 64));
   assert.ok(idx.skills.filter((s) => s.folder?.startsWith('skills/trailofbits/')).every((s) => s.kind === 'workflow' && s.default === 'off' && s.id.startsWith('catalog:')));
   assert.ok(idx.skills.filter((s) => s.folder?.startsWith('skills/callstack/react-')).every((s) => s.kind === 'framework'));
   assert.equal(idx.skills.find((s) => s.name === 'pytest-skill').kind, 'framework');
@@ -96,15 +100,17 @@ test('classify applies own entry over folder, defaults and servable', () => {
     skills: { fw: { kind: 'framework', detect: { project_files: ['x.config.js'] } }, bad: { kind: 'framework' } },
   };
   const e = (name, extra = {}) => ({ name, folder: `skills/a/${name}`, license: 'MIT', source: {}, ...extra });
-  assert.deepEqual(classify(e('core'), c), { ...e('core'), kind: 'workflow', default: 'on', servable: true });
+  assert.deepEqual(classify({ ...e('core'), digest: 'd' }, c), { ...e('core'), digest: 'd', kind: 'workflow', default: 'on', servable: true, sha256: 'd' });
   assert.equal(classify(e('other'), c).default, 'off');
   const fw = classify(e('fw'), c);
   assert.equal(fw.kind, 'framework');
-  assert.equal('default' in fw, false);
+  assert.equal(fw.default, 'on');
   assert.deepEqual(fw.detect, { project_files: ['x.config.js'] });
   assert.throws(() => classify(e('bad'), c), /needs detect signals/);
   assert.throws(() => classify(e('k'), { skills: { k: { kind: 'tool' } } }), /unknown kind/);
-  assert.equal(classify({ name: 'ext', folder: null, license: null, source: { external: true } }, c).servable, false);
+  const ext = classify({ name: 'ext', folder: null, license: null, digest: 'd', source: { external: true } }, c);
+  assert.equal(ext.servable, false);
+  assert.equal(ext.sha256, null);
 });
 
 test('detectHints reads space-separated lists and ignores other metadata', () => {

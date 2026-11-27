@@ -66,12 +66,17 @@ export function classify(entry, c) {
   if (!KINDS.has(kind)) throw new Error(`${entry.name}: unknown kind ${kind}`);
   entry.kind = kind;
   if (own.detect) entry.detect = { ...(entry.detect ?? {}), ...own.detect };
+  // Language and framework skills are attached whenever their signals match, so their default
+  // is on and not switchable; workflow skills are off unless listed in default_on.
   if (kind === 'workflow') entry.default = (c.default_on ?? []).includes(entry.name) ? 'on' : 'off';
   else if (!entry.detect || !Object.values(entry.detect).some((v) => v.length)) {
     throw new Error(`${entry.name}: a ${kind} skill needs detect signals`);
-  }
+  } else entry.default = 'on';
   const blocked = (c.not_servable_licenses ?? []).includes(entry.license);
   entry.servable = !entry.source?.external && !blocked;
+  // sha256 is the digest of what a server may hand out; null when it may not hand it out.
+  // digest stays set either way, so a client that fetches an external skill can still check it.
+  entry.sha256 = entry.servable ? entry.digest : null;
   return entry;
 }
 
