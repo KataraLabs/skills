@@ -131,7 +131,7 @@
           "upstream": "skills/constraint-driven-development/SKILL.md",
           "sha256": "4b8934e4026745ae663dbe80150230f2bbcdbb3dec49a6fbcaef23e07f34b22a",
           "local": "skills/addyosmani/constraint-driven-development/SKILL.md",
-          "local_sha256": "f37570bbad2595c70c70976901f7c98a8b2b90e198087fad9e7dcc1551bdc200"
+          "local_sha256": "ac5d85ef93f4f47d3e1ce99cb8b2e8a5126344055ca068ce9c6a982cea16834f"
         },
         {
           "upstream": "skills/constraint-driven-development/references/floor-guard.md",
@@ -155,7 +155,7 @@
           "upstream": "skills/debugging-and-error-recovery/SKILL.md",
           "sha256": "95e393819043b50b3ba6f4d89f0fea620d03e560eb52b592b3eb7a41836aaea1",
           "local": "skills/addyosmani/debugging-and-error-recovery/SKILL.md",
-          "local_sha256": "39b8ec63b90e2e7dc9018819c6ddde1546c32c70c1cee17875a929a7aa195547"
+          "local_sha256": "8c814e81071726a38d3e85fdd2dd443a4c1547b653eb91fe60bafb4483f3c113"
         },
         {
           "upstream": "skills/deprecation-and-migration/SKILL.md",
@@ -347,7 +347,7 @@
           "upstream": "skills/spec-driven-development/SKILL.md",
           "sha256": "516eaa5fbe8b1dd2e3a675f0a4361443d3828c41aec04750ae4b3143bb4f82ed",
           "local": "skills/addyosmani/spec-driven-development/SKILL.md",
-          "local_sha256": "c201b60e0c263b19dfe3d45361d6efd51578f3a992903215fc5f41808657bc9e"
+          "local_sha256": "d617bc993f08846db1990c154cf9e76c89ba50396a164202e9bfaac30b37f1cf"
         },
         {
           "upstream": "skills/test-driven-development/SKILL.md",

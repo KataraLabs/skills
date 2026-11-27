@@ -1,6 +1,6 @@
 ---
 name: sql
-description: Use when writing, changing, reviewing or testing SQL: queries, schema changes, migrations, views, functions or indexes (.sql files, a migrations folder, or SQL inside application code). Covers finding the database and migration tool, query style, safe migrations, testing against a disposable database, and common SQL mistakes.
+description: "Use when writing, changing, reviewing or testing SQL: queries, schema changes, migrations, views, functions or indexes (.sql files, a migrations folder, or SQL inside application code). Covers finding the database and migration tool, query style, safe migrations, testing against a disposable database, and common SQL mistakes."
 license: MIT
 metadata:
   file-types: "*.sql"

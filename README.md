@@ -67,7 +67,7 @@ shared under the same license. [NOTICE](NOTICE) lists every source.
 
 ## Checks
 
-Node.js 20 or later; no dependencies.
+Node.js 20 or later. `npm install` fetches the one test dependency, a YAML parser.
 
 ```bash
 npm test

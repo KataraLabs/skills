@@ -1,16 +1,21 @@
 {
   "name": "katara-skills",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Agent skills for coding agents, with pinned sources and evals.",
   "license": "MIT",
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "verify": "node scripts/sources.mjs verify",
     "drift": "node scripts/sources.mjs drift",
     "release": "node scripts/release.mjs",
     "evals": "node evals/run.mjs"
+  },
+  "devDependencies": {
+    "yaml": "2.9.1"
   }
 }
