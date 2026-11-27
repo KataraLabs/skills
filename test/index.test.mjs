@@ -94,7 +94,7 @@ test('the repository index lists every skill once with a valid id and digest', (
     assert.equal(idx.skills.find((s) => s.name === n).kind, 'framework', n);
   }
   assert.deepEqual(idx.skills.find((s) => s.name === 'github-actions').detect.requires, { package_dependencies: ['react-native'] });
-  assert.equal(idx.skills.find((s) => s.name === 'accessibility-skill').kind, 'workflow');
+  for (const n of ['accessibility-skill', 'cicd-pipeline-skill', 'agent-testing-checks-skill']) assert.equal(idx.skills.find((s) => s.name === n), undefined, n);
 });
 
 test('classify applies own entry over folder, defaults and servable', () => {
