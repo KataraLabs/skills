@@ -104,8 +104,17 @@ any. Every request is charged at whatever the endpoint charges. Results go to `e
 node scripts/release.mjs 0.1.0
 ```
 
-This writes `dist/skills-0.1.0.tar.gz`, its sha256, and a manifest with the sha256 of every
-file. The archive is reproducible: the same commit gives the same bytes.
+This writes `dist/skills-0.1.0.tar.gz`, its sha256, a manifest with the sha256 of every file,
+and `index.json`, which lists every skill with its id, description, folder, source, license and
+digest. The index and manifest are also inside the archive. The archive is reproducible: the
+same commit gives the same bytes.
+
+Skills named in `bundle.json` get ids of the form `bundled:<name>`; the rest are
+`catalog:<name>`. `catalog-external.json` lists skills offered from other repositories by
+repository, commit, path and digest, without copying their files. A skill's digest is the
+sha256 of its files' paths and sha256 values: sort the files by path in byte order and join
+`path`, a newline, the file's lowercase hex sha256 and a newline for each. Nested skill folders
+are left out of their parent's digest.
 
 ## Contributing
 

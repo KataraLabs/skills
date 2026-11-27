@@ -1,0 +1,80 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { buildIndex, detectHints, digestOf, skillFiles } from '../scripts/lib/index.mjs';
+import { index } from '../scripts/release.mjs';
+
+const h = (s) => createHash('sha256').update(s).digest('hex');
+
+test('digestOf follows the shared rule: byte-order paths, path NL hex NL', () => {
+  // "Z" (0x5a) sorts before "a" (0x61) in byte order, unlike a locale sort.
+  const files = [{ path: 'a.md', sha256: h('a') }, { path: 'SKILL.md', sha256: h('s') }, { path: 'Z.md', sha256: h('z') }];
+  const expected = h(`SKILL.md\n${h('s')}\nZ.md\n${h('z')}\na.md\n${h('a')}\n`);
+  assert.equal(digestOf(files), expected);
+  assert.equal(digestOf([...files].reverse()), expected);
+});
+
+function tree(files) {
+  const dir = mkdtempSync(join(tmpdir(), 'skills-index-'));
+  for (const [p, text] of Object.entries(files)) {
+    mkdirSync(join(dir, p, '..'), { recursive: true });
+    writeFileSync(join(dir, p), text);
+  }
+  return dir;
+}
+
+test('skillFiles leaves nested skills out of the parent', () => {
+  const dir = tree({ 'SKILL.md': 's', 'ref/a.md': 'a', 'child/SKILL.md': 'c', 'child/x.md': 'x' });
+  try {
+    assert.deepEqual(skillFiles(dir).map((f) => f.path), ['SKILL.md', 'ref/a.md']);
+  } finally { rmSync(dir, { recursive: true }); }
+});
+
+test('buildIndex assigns bundled and catalog ids, sources and licenses', () => {
+  const root = tree({
+    'skills/katara/go/SKILL.md': '---\nname: go\ndescription: >\n  Use for\n  Go.\n---\nbody\n',
+    'skills/up/x/SKILL.md': '---\nname: x\ndescription: X.\n---\nbody\n',
+  });
+  try {
+    const sources = { sources: [{ folder: 'skills/up', repository: 'https://example.com/up', commit: 'c'.repeat(40), license: 'CC-BY-SA-4.0', modified: false }] };
+    const idx = buildIndex({ root, version: '1.0.0', skills: ['skills/katara/go', 'skills/up/x'], sources, bundled: new Set(['go']),
+      external: [{ name: 'ext', description: 'E.', repository: 'https://example.com/e', commit: 'e'.repeat(40), path: 'skills/ext', digest: 'd'.repeat(64) }] });
+    assert.deepEqual(idx.skills.map((s) => s.id), ['bundled:go', 'catalog:ext', 'catalog:x']);
+    const go = idx.skills[0];
+    assert.equal(go.description, 'Use for Go.');
+    assert.equal(go.license, 'MIT');
+    assert.equal(go.digest, digestOf([{ path: 'SKILL.md', sha256: h('---\nname: go\ndescription: >\n  Use for\n  Go.\n---\nbody\n') }]));
+    assert.equal(idx.skills[2].license, 'CC-BY-SA-4.0');
+    assert.equal(idx.skills[1].source.external, true);
+    assert.throws(() => buildIndex({ root, version: '1', skills: ['skills/katara/go'], sources, bundled: new Set(['nope']) }), /do not exist/);
+    assert.throws(() => buildIndex({ root, version: '1', skills: ['skills/katara/go'], sources, bundled: new Set(), external: [{ name: 'go', description: 'd', repository: 'r', commit: 'c', path: 'p', digest: 'd' }] }), /clashes/);
+    assert.throws(() => buildIndex({ root, version: '1', skills: [], sources, bundled: new Set(), external: [{ name: 'e' }] }), /lacks/);
+  } finally { rmSync(root, { recursive: true }); }
+});
+
+test('the repository index lists every skill once with a valid id and digest', () => {
+  const idx = index('0.0.0');
+  assert.ok(idx.skills.length > 100);
+  for (const s of idx.skills) {
+    assert.match(s.id, /^(bundled|catalog):[a-z0-9]+(-[a-z0-9]+)*$/);
+    assert.ok(s.name.length <= 64, `${s.name} longer than 64`);
+    assert.match(s.digest, /^[0-9a-f]{64}$/);
+    assert.ok(s.description, `${s.id} has no description`);
+  }
+  assert.equal(idx.skills.filter((s) => s.id.startsWith('bundled:')).length, 42);
+  for (const n of ['typescript', 'react', 'python', 'go', 'swift', 'rust', 'sql']) {
+    const s = idx.skills.find((x) => x.id === `bundled:${n}`);
+    assert.ok(s.detect?.file_types?.length, `${n} has no file types`);
+  }
+  assert.deepEqual(idx.skills.find((x) => x.id === 'bundled:go').detect, { file_types: ['*.go'], project_files: ['go.mod', 'go.work'] });
+  assert.ok(idx.skills.filter((s) => s.id.startsWith('catalog:vercel-')).every((s) => s.source.external && s.digest.length === 64));
+});
+
+test('detectHints reads space-separated lists and ignores other metadata', () => {
+  assert.deepEqual(detectHints('  file-types: "*.ts *.tsx"\n  project-files: tsconfig.json\n  source: x'), { file_types: ['*.ts', '*.tsx'], project_files: ['tsconfig.json'] });
+  assert.equal(detectHints('  source: x'), null);
+  assert.equal(detectHints(undefined), null);
+});

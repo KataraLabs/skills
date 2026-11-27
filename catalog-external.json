@@ -1,0 +1,50 @@
+{
+  "notes": "Skills offered from other repositories without copying their files. Each entry pins a repository, commit and folder path, with the digest of that folder computed by the index digest rule, so a client that fetches the folder can check it. The name is the skill's own front-matter name; the description is our own wording. The source repository has no license file, so nothing from it is copied here.",
+  "entries": [
+    {
+      "name": "vercel-composition-patterns",
+      "description": "React component composition: compound components, context providers and avoiding boolean prop sprawl.",
+      "repository": "https://github.com/vercel-labs/agent-skills",
+      "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
+      "path": "skills/composition-patterns",
+      "license": null,
+      "digest": "b87f4ba02c128076935fce31ce18344d472df280a0bd3f523b0359c1b76b782e"
+    },
+    {
+      "name": "vercel-react-best-practices",
+      "description": "React and Next.js performance rules: data fetching waterfalls, bundle size, rendering and re-renders.",
+      "repository": "https://github.com/vercel-labs/agent-skills",
+      "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
+      "path": "skills/react-best-practices",
+      "license": null,
+      "digest": "f2f84bebf241f5ef0409136d45aff16f47b376c8f12160f27edca0352428d8e8"
+    },
+    {
+      "name": "vercel-react-native-skills",
+      "description": "React Native and Expo rules for list performance, animation, navigation and native modules.",
+      "repository": "https://github.com/vercel-labs/agent-skills",
+      "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
+      "path": "skills/react-native-skills",
+      "license": null,
+      "digest": "f57618898ed4f525e979bac33dedfbc4c1c0342e0198aa9220b199ae94eca19d"
+    },
+    {
+      "name": "vercel-react-view-transitions",
+      "description": "Animating page and state changes in React with the View Transitions API.",
+      "repository": "https://github.com/vercel-labs/agent-skills",
+      "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
+      "path": "skills/react-view-transitions",
+      "license": null,
+      "digest": "902cc49b889d3e2a9f01f715ce749fabf89d4c41469e0fd08fe26530e94cff59"
+    },
+    {
+      "name": "web-design-guidelines",
+      "description": "Reviews web interface code against published interface and accessibility guidelines.",
+      "repository": "https://github.com/vercel-labs/agent-skills",
+      "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
+      "path": "skills/web-design-guidelines",
+      "license": null,
+      "digest": "ea97d3e634a04a6dec778fa7e7e5f284d51d3386a0908dbea34f3804bbac8058"
+    }
+  ]
+}
